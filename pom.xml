@@ -13,6 +13,7 @@
         <version.spring>4.2.3.RELEASE</version.spring>
         <version.junit>4.12</version.junit>
         <version.servlet-api>3.1.0</version.servlet-api>
+        <version.liquibase-core>3.4.2</version.liquibase-core>
     </properties>
 
 
@@ -27,6 +28,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
