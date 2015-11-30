@@ -26,16 +26,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * Method for configuring data store options.
      * Configure Spring Security to authenticate against a JDBC user store.
      * use MD5 encoding
+     *
      * @param auth
      * @throws Exception
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery("select username, password, enabled " +
-                "from sec_user where username = ?").authoritiesByUsernameQuery("select username, authority " +
-                "from sec_user join sec_user_authority on sec_user.id = sec_user_authority.sec_user_id " +
-                "join authority on sec_user_authority.authority_id = authority.id" +
-                " where sec_user.username = ?")
+
+        String usersByUserNameQuery = "select username, password, enabled from sec_user where username = ?";
+
+        String authoritiesByUsernameQuery = "select username, authority from sec_user " +
+                "join sec_user_authority on sec_user.id = sec_user_authority.sec_user_id " +
+                "join authority on sec_user_authority.authority_id = authority.id " +
+                "where sec_user.username = ?";
+
+        auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery(usersByUserNameQuery)
+                .authoritiesByUsernameQuery(authoritiesByUsernameQuery)
                 .passwordEncoder(new Md5PasswordEncoder());
     }
 
@@ -43,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * Method for configuring access to variety of URLs.
      * in future we will need to add URLs that needed to be available by authorized user
      * and add log page
+     *
      * @param http
      * @throws Exception
      */
