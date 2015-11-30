@@ -22,8 +22,6 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>event-app-log-%d{yyyy-MM-dd_HH-mm}%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>3</maxIndex>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>10MB</MaxFileSize>

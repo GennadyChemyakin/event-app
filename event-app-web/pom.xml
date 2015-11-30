@@ -15,7 +15,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.epam</groupId>
+            <groupId>com.epam.farm</groupId>
             <artifactId>event-app-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
