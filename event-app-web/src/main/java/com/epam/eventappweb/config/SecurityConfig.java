@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import javax.sql.DataSource;
 
 /**
- * Created by gennady on 28.11.15.
  * Configuration for Spring Security. Extends WebSecurityConfigurerAdapter to override method for configuration
  * user store and access to variety of URLs.
  */
@@ -33,8 +32,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery("select username, password, enabled " +
-                "from sec_user where username = ?").authoritiesByUsernameQuery("select username, authority" +
-                "from sec_user join authority on sec_user.id = authority.sec_user_id where sec_user.username = ?")
+                "from sec_user where username = ?").authoritiesByUsernameQuery("select username, authority " +
+                "from sec_user join sec_user_authority on sec_user.id = sec_user_authority.sec_user_id " +
+                "join authority on sec_user_authority.authority_id = authority.id" +
+                " where sec_user.username = ?")
                 .passwordEncoder(new Md5PasswordEncoder());
     }
 
