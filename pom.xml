@@ -13,6 +13,7 @@
         <version.spring>4.2.3.RELEASE</version.spring>
         <version.junit>4.12</version.junit>
         <version.servlet-api>3.1.0</version.servlet-api>
+        <version.spring-security>4.0.3.RELEASE</version.spring-security>
     </properties>
 
 
@@ -45,6 +46,18 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
                 <version>${version.spring}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${version.spring-security}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${version.spring-security}</version>
             </dependency>
 
             <!-- Testing -->
