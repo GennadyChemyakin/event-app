@@ -17,14 +17,14 @@ CREATE TABLE SEC_USER
 , CONSTRAINT CHECK_GENDER CHECK (GENDER in ('MALE', 'FEMALE'))
 );
 
-COMMENT ON TABLE SEC_USER IS 'The table for storing Users'
+COMMENT ON TABLE SEC_USER IS 'The table for storing Users';
 
 
 CREATE TABLE EVENT 
 (
   ID NUMBER(10) NOT NULL
 , NAME VARCHAR2(64 CHAR) NOT NULL 
-, USER_ID NUMBER(10) NOT NULL 
+, SEC_USER_ID NUMBER(10) NOT NULL
 , DECRIPTION NCLOB 
 , COUNTRY VARCHAR2(64 CHAR) 
 , CITY VARCHAR2(64 CHAR) 
@@ -38,7 +38,7 @@ CREATE TABLE EVENT
 	REFERENCES SEC_USER (ID)
 );
 
-COMMENT ON TABLE EVENT IS 'The table for storing Events'
+COMMENT ON TABLE EVENT IS 'The table for storing Events';
 
 
 CREATE TABLE COMMENTARY
@@ -57,7 +57,7 @@ CREATE TABLE COMMENTARY
 	REFERENCES SEC_USER (ID)
 );
 
-COMMENT ON TABLE COMMENTARY IS 'The table for storing Commentaries on Events'
+COMMENT ON TABLE COMMENTARY IS 'The table for storing Commentaries on Events';
 
 
 CREATE TABLE VIDEO
@@ -71,7 +71,7 @@ CREATE TABLE VIDEO
 	REFERENCES EVENT (ID)
 );
 
-COMMENT ON TABLE VIDEO IS 'The table for storing Videos to Events'
+COMMENT ON TABLE VIDEO IS 'The table for storing Videos to Events';
 
 CREATE TABLE PHOTO
 (
@@ -84,7 +84,7 @@ CREATE TABLE PHOTO
 	REFERENCES EVENT (ID)
 );
 
-COMMENT ON TABLE PHOTO IS 'The table for storing Photos to Events'
+COMMENT ON TABLE PHOTO IS 'The table for storing Photos to Events';
 
 
 CREATE TABLE TAG
@@ -97,4 +97,4 @@ CREATE TABLE TAG
 	REFERENCES EVENT (ID)
 );
 
-COMMENT ON TABLE TAG IS 'The table for storing Event Tags'
+COMMENT ON TABLE TAG IS 'The table for storing Event Tags';
