@@ -24,37 +24,11 @@
             <version>${version.liquibase-core}</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.codehaus.mojo</groupId>-->
-            <!--<artifactId>properties-maven-plugin</artifactId>-->
-            <!--<version>1.0.0</version>-->
-        <!--</dependency>-->
-
     </dependencies>
 
     <artifactId>event-app-db</artifactId>
     <build>
     <plugins>
-
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>properties-maven-plugin</artifactId>
-            <version>1.0.0</version>
-            <executions>
-                <execution>
-                    <phase>initialize</phase>
-                    <goals>
-                        <goal>read-project-properties</goal>
-                    </goals>
-                    <configuration>
-                        <files>
-                            <file>src\main\resources\liquibase\liquibase.properties</file>
-                        </files>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-
 
         <plugin>
             <groupId>org.liquibase</groupId>
@@ -63,16 +37,10 @@
             <configuration>
                 <changeLogFile>src\main\resources\changelog.xml</changeLogFile>
                 <propertyFile>src\main\resources\liquibase\liquibase.properties</propertyFile>
+                <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
             </configuration>
 
-            <!--<expression>-->
-                <!--<property>-->
-                    <!--<name>Dliquibase.databaseChangeLogLockTableName</name>-->
-                    <!--<value>eventapp_tablespace</value>-->
-                <!--</property>-->
-            <!--</expression>-->
-
-            <executions>
+              <executions>
                 <execution>
                     <phase>process-resources</phase>
                     <goals>
