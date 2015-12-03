@@ -1,1 +1,0 @@
-java -jar liquibase.jar --driver=oracle.jdbc.driver.OracleDriver --classpath=ojdbc6.jar --changeLogFile=changeLog.xml --url=jdbc:oracle:thin:@EPRUPETW0518:1521:xe --username=eventapp --password=eventapppsw --databaseChangeLogLockTableName=eventapp_tablespace migrate
