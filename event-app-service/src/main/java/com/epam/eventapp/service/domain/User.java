@@ -1,7 +1,7 @@
 package com.epam.eventapp.service.domain;
 
 /**
- * domain class describes SEC_USER table
+ * class describes User domain
  */
 public class User {
     private final int id;
@@ -30,7 +30,9 @@ public class User {
         this.bio = builder.bio;
     }
 
-
+    public static UserBuilder builder(String username, String email){
+        return new UserBuilder(username,email);
+    }
 
     public static class UserBuilder {
         private int id;
@@ -46,7 +48,7 @@ public class User {
         private String city;
         private String bio;
 
-        public UserBuilder(String username, String email){
+        private UserBuilder(String username, String email){
             this.username = username;
             this.email = email;
         }

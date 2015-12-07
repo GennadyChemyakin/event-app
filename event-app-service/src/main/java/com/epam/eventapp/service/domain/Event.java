@@ -3,7 +3,7 @@ package com.epam.eventapp.service.domain;
 import java.time.LocalDateTime;
 
 /**
- * domain class describes EVENT table
+ * class describes EVENT domain
  * without collections for storing photo and video objects
  */
 public class Event {
@@ -31,6 +31,10 @@ public class Event {
         this.timeStamp = builder.timeStamp;
     }
 
+    public static EventBuilder builder(User user, String name){
+        return new EventBuilder(user,name);
+    }
+
     public static class EventBuilder {
         private int id;
         private User user;
@@ -44,7 +48,7 @@ public class Event {
         private double gpsLongitude;
         private LocalDateTime timeStamp;
 
-        public EventBuilder(User user, String name) {
+        private EventBuilder(User user, String name) {
             this.user = user;
             this.name = name;
         }
