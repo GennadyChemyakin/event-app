@@ -9,12 +9,8 @@
 		<sqlFile relativeToChangelogFile="true" path="sql/1.create.tables.sql" />
 	</changeSet>
 
-	<changeSet id="2" author="Denys_Iakibchuk">
-		<sqlFile relativeToChangelogFile="true" path="sql/2.change.columns.in.photo.and.video.tables.sql"/>
-	</changeSet>
-
-	<changeSet id="3" author="Gennady Chemyakin">
-		<sqlFile relativeToChangelogFile="true" path="sql/3.added.authority.tables.for.spring.security.sql"/>
+	<changeSet id="2" author="Gennady_Chemyakin">
+		<sqlFile relativeToChangelogFile="true" path="sql/2.added.authority.tables.for.spring.security.sql"/>
 	</changeSet>
 
 </databaseChangeLog>
