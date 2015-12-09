@@ -18,9 +18,37 @@
             <version>11.2.0.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${version.liquibase-core}</version>
+        </dependency>
+
     </dependencies>
 
     <artifactId>event-app-db</artifactId>
+    <build>
+    <plugins>
 
+        <plugin>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <version>3.0.7</version>
+            <configuration>
+                <changeLogFile>src\main\resources\changelog.xml</changeLogFile>
+                <propertyFile>src\main\resources\liquibase\liquibase.properties</propertyFile>
+                <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+            </configuration>
 
+              <executions>
+                <execution>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>update</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    </build>
 </project>
