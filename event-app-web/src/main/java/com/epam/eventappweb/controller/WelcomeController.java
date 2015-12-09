@@ -2,23 +2,27 @@ package com.epam.eventappweb.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping("/")
+/**
+ * Test controller
+ */
+
+@RestController
 public class WelcomeController {
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String sayHello(ModelMap model) {
-        model.addAttribute("greeting", "Hello World from Spring 4 MVC");
-        return "welcome";
+    @RequestMapping("/")
+    public String message() {
+        String msg = new String("Welcome");
+        return msg;
     }
 
-    @RequestMapping(value = "/helloagain", method = RequestMethod.GET)
-    public String sayHelloAgain(ModelMap model) {
-        model.addAttribute("greeting", "Hello World Again");
-        return "welcome";
+    @RequestMapping("/hello/{name}")
+    public String sayHelloAgain(@PathVariable String name) {
+        String msg = new String("Hello " + name);
+        return msg;
     }
-
 }

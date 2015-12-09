@@ -2,6 +2,7 @@ package com.epam.eventappweb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,8 +20,8 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //dataSource bean has to be described in spring db config class
-    @Autowired
-    private DataSource dataSource;
+    //@Autowired
+    private DataSource dataSource = new DriverManagerDataSource();
 
     /**
      * Method for configuring data store options.
@@ -55,6 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+        http.authorizeRequests().anyRequest().permitAll();
     }
 }
