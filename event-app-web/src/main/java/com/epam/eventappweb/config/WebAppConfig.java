@@ -15,6 +15,6 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.epam.eventappweb")
-public class WebAppConfiguration {
+public class WebAppConfig {
 
 }

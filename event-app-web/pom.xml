@@ -69,20 +69,6 @@
             <version>${version.spring-security}</version>
         </dependency>
 
-        <!-- JSON -->
-
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>${version.jackson-mapper-asl}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${version.jackson-databind}</version>
-        </dependency>
-
         <!-- Testing -->
 
         <dependency>
@@ -110,6 +96,11 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${version.jetty}</version>
+                <configuration>
+                <webApp>
+                    <contextPath>/event-app</contextPath>
+                </webApp>
+                </configuration>
             </plugin>
 
         </plugins>

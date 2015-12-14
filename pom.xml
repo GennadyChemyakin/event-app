@@ -22,9 +22,6 @@
         <version.war-plugin>2.6</version.war-plugin>
         <version.jstl>1.2</version.jstl>
         <version.jsp-api>2.3.1</version.jsp-api>
-        <version.jackson-mapper-asl>1.9.13</version.jackson-mapper-asl>
-        <version.jackson-databind>2.6.4</version.jackson-databind>
-
     </properties>
 
     <modules>
