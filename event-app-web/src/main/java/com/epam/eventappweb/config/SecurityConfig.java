@@ -5,11 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 
 import javax.sql.DataSource;
 
@@ -22,7 +20,7 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //dataSource bean has to be described in spring db config class
-//    @Autowired
+    //@Autowired
     private DataSource dataSource = new DriverManagerDataSource();
 
     /**
@@ -46,24 +44,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery(usersByUserNameQuery)
                 .authoritiesByUsernameQuery(authoritiesByUsernameQuery)
                 .passwordEncoder(new Md5PasswordEncoder());
-
     }
 
     /**
      * Method for configuring access to variety of URLs.
      * in future we will need to add URLs that needed to be available by authorized user
-     * and add login page
+     * and add log page
      *
      * @param http
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-         .authorizeRequests()
-                .anyRequest().permitAll().and()
-        .csrf().disable()
-        .formLogin().loginPage("/login")
-        ;
+        http.authorizeRequests().anyRequest().permitAll();
     }
 }
