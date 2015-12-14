@@ -20,8 +20,8 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //dataSource bean has to be described in spring db config class
-    //@Autowired
-    private DataSource dataSource = new DriverManagerDataSource();
+    @Autowired
+    private DataSource dataSource;
 
     /**
      * Method for configuring data store options.
@@ -48,14 +48,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * Method for configuring access to variety of URLs.
+     * Right now it redirects to default spring login page from any url
      * in future we will need to add URLs that needed to be available by authorized user
-     * and add log page
+     * and add custom log page
      *
      * @param http
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().permitAll();
+        http
+                .formLogin()
+                .and()
+                .authorizeRequests()
+                .anyRequest().authenticated();
+
     }
 }
