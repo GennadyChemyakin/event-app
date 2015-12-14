@@ -82,17 +82,17 @@
                 <version>${version.spring}</version>
                 <scope>test</scope>
             </dependency>
-			
+
 			<!-- slf4j API -->
-			
+
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${version.slf4j}</version>
 			</dependency>
-			
+
 			<!-- logback -->
-			
+
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
@@ -103,7 +103,7 @@
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-core</artifactId>
 				<version>${version.logback}</version>
-			</dependency>			
+			</dependency>
 
         </dependencies>
     </dependencyManagement>
