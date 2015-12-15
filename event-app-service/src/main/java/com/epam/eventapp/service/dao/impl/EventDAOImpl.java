@@ -6,6 +6,7 @@ import com.epam.eventapp.service.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.Collections;
 import java.util.Optional;
 
