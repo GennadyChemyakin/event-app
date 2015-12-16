@@ -34,9 +34,9 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                                 surname(resultSet.getString("u_surname")).
                                 country(resultSet.getString("u_country")).
                                 city(resultSet.getString("u_city")).
-                                bio(resultSet.getClob("u_bio").toString()).build(), resultSet.getString("e_name")).
+                                bio(resultSet.getString("u_bio")).build(), resultSet.getString("e_name")).
                                 id(resultSet.getInt("e_id")).
-                                description(resultSet.getClob("e_description").toString()).
+                                description(resultSet.getString("e_description")).
                                 country(resultSet.getString("e_country")).
                                 city(resultSet.getString("e_city")).
                                 location(resultSet.getString("e_address")).
