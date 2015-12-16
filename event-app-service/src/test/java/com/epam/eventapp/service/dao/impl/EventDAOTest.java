@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -35,7 +33,7 @@ public class EventDAOTest {
         //given
         final int id = 0;
         //when
-        Optional<Event> event = eventDAO.findById(0);
+        Optional<Event> event = eventDAO.findById(id);
         //then
         Assert.assertNotNull(event.get());
         Assert.assertEquals(event.get().getId(), id);
