@@ -2,6 +2,7 @@ package com.epam.eventappweb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,14 +49,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * Method for configuring access to variety of URLs.
+     * Right now it redirects to default spring login page from any url
      * in future we will need to add URLs that needed to be available by authorized user
-     * and add log page
+     * and add custom log page
      *
      * @param http
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+        http
+                .formLogin()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/index.html").permitAll()
+                .anyRequest().authenticated();
+
     }
 }
