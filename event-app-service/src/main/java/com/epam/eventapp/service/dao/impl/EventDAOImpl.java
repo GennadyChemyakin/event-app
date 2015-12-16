@@ -4,6 +4,8 @@ import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 
@@ -16,11 +18,12 @@ import java.util.Optional;
 @Repository("EventDAO")
 public class EventDAOImpl extends GenericDAO implements EventDAO {
 
-
     private final String GET_EVENT_BY_ID = "select e.id, e.name, e.description, e.country, e.city, e.address, " +
             "e.gps_latitude, e.gps_longitude, e.timestamp, u.id, u.username, u.email, u.name, u.surname, u.country, u.city, " +
             "u.bio  from event AS e JOIN sec_user AS u on event.user_id = sec_user.id where event.id=:id";
-
+    private final String UPDATE_EVENT_BY_ID = "UPDATE event SET name=:name, description=:description, country=:country," +
+            " city=:city, address=:address, gps_latitude=:gps_latitude, gps_longitude=:gps_longitude, " +
+            "event_time=:event_time WHERE id=:id";
 
     @Override
     public Optional<Event> findById(int id) {
@@ -48,5 +51,22 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public int updateEventById(Event updatedEvent) {
+        NamedParameterJdbcTemplate eventDB = getNamedParameterJdbcTemplate();
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("id", updatedEvent.getId());
+        namedParameters.addValue("name", updatedEvent.getName());
+        namedParameters.addValue("description", updatedEvent.getDescription());
+        namedParameters.addValue("country", updatedEvent.getCountry());
+        namedParameters.addValue("city", updatedEvent.getCity());
+        namedParameters.addValue("address", updatedEvent.getLocation());
+        namedParameters.addValue("gps_latitude", updatedEvent.getGpsLatitude());
+        namedParameters.addValue("gps_longitude", updatedEvent.getGpsLongitude());
+        namedParameters.addValue("event_time", updatedEvent.getTimeStamp());
+        int updatedRows = eventDB.update(UPDATE_EVENT_BY_ID, namedParameters);
+        return updatedRows;
     }
 }
