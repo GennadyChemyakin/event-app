@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -27,17 +28,31 @@ public class EventDAOTest {
 
     /**
      * testing findById method from EventDAOImpl.
-     * looking for event with id = 0. Checking if it is not null and event name is equal to known string
+     * looking for event with id = 0. Checking if it is not null and event id is equal to expected id
+     */
+    @Test
+    public void shouldFindEventById(){
+        //given
+        final int id = 0;
+        //when
+        Optional<Event> event = eventDAO.findById(0);
+        //then
+        Assert.assertNotNull(event.get());
+        Assert.assertEquals(event.get().getId(), id);
+    }
+
+
+    /**
+     * testing findById method from EventDAOImpl.
      * expect NoSuchElementException when we use nonexistent id
      */
     @Test(expected = NoSuchElementException.class)
-    public void testFindById(){
-
-        Optional<Event> event = eventDAO.findById(0);
+    public void shouldThrowExceptionIfEventNotFoundById(){
+        //given
+        final int id = 1;
+        //when
+        Optional<Event> event = eventDAO.findById(id);
+        //then
         Assert.assertNotNull(event.get());
-        Assert.assertEquals(event.get().getName(), "birthday party y Ivana");
-
-        Optional<Event> event1 = eventDAO.findById(1);
-        Assert.assertNotNull(event1.get());
     }
 }

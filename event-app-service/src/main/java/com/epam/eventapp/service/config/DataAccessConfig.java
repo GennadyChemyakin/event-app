@@ -27,6 +27,7 @@ public class DataAccessConfig {
      * data source bean that represents our OracleDB
      */
     @Bean
+    @Profile("dev")
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(environment.getRequiredProperty("db.driver"));
