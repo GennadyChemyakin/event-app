@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -69,8 +70,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         namedParameters.addValue("address", updatedEvent.getLocation());
         namedParameters.addValue("gps_latitude", updatedEvent.getGpsLatitude());
         namedParameters.addValue("gps_longitude", updatedEvent.getGpsLongitude());
-        namedParameters.addValue("event_time", updatedEvent.getTimeStamp());
-        int updatedRows = eventDB.update(UPDATE_EVENT_BY_ID, namedParameters);
-        return updatedRows;
+        namedParameters.addValue("event_time", Timestamp.valueOf(updatedEvent.getTimeStamp()));
+        return eventDB.update(UPDATE_EVENT_BY_ID, namedParameters);
     }
 }
