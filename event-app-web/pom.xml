@@ -97,6 +97,8 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${version.jetty}</version>
                 <configuration>
+                <stopKey>stop</stopKey>
+                <stopPort>8349</stopPort>
                 <webApp>
                     <contextPath>/event-app</contextPath>
                 </webApp>

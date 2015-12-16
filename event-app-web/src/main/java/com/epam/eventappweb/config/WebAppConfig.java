@@ -21,6 +21,6 @@ import org.springframework.web.servlet.view.JstlView;
 public class WebAppConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/index.html").addResourceLocations("/");
+        registry.addResourceHandler("/*.html").addResourceLocations("/");
     }
 }
