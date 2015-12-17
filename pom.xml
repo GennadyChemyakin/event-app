@@ -25,6 +25,9 @@
         <version.jdbcDriver>11.2.0.4</version.jdbcDriver>
         <version.derby>10.12.1.1</version.derby>
         <version.jackson.databind>2.6.4</version.jackson.databind>
+        <version.hamcrest.library>1.3</version.hamcrest.library>
+        <version.mockito>1.9.5</version.mockito>
+        <version.jayway.jsonpath>0.8.1</version.jayway.jsonpath>
     </properties>
 
     <modules>
@@ -69,6 +72,13 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${version.spring}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${version.mockito}</version>
                 <scope>test</scope>
             </dependency>
 

@@ -20,8 +20,13 @@ import java.util.Optional;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class EventDetailController {
 
+
+    private EventDAO eventDAO;
+
     @Autowired
-    EventDAO eventDAO;
+    public EventDetailController(EventDAO eventDAO) {
+        this.eventDAO = eventDAO;
+    }
 
     @RequestMapping("/event/{id}")
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
