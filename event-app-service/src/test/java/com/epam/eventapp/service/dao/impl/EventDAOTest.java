@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
      * looking for event with id = 0. Checking if it is not null and event id is equal to expected id
      */
     @Test
-    public void shouldFindEventById(){
+    public void shouldFindEventById() {
         //given
         final int id = 0;
         //when
@@ -71,7 +72,8 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
         final LocalDateTime newDateTime = LocalDateTime.now();
-        final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" + newLocation + "'";
+        final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" +
+                newLocation + "' and event_time='" + Timestamp.valueOf(newDateTime) + "'";
 
         Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
                 id(id).
@@ -93,8 +95,7 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
      * Updating event with id=-1.
      * Checking if zero entries in DB are updated.
      */
-    public void shouldNotUpdateEventById()
-    {
+    public void shouldReturnZeroInCaseWrongIdSpecified() {
         //given
         final int id = -1;
         final String newName = "Ballet";
