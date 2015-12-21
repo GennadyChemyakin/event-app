@@ -19,8 +19,6 @@
 		<version.slf4j>1.7.13</version.slf4j>
         <version.jetty>9.3.6.v20151106</version.jetty>
         <version.war-plugin>2.6</version.war-plugin>
-        <version.jstl>1.2</version.jstl>
-        <version.jsp-api>2.3.1</version.jsp-api>
         <version.liquibase-core>3.4.2</version.liquibase-core>
         <version.jdbcDriver>11.2.0.4</version.jdbcDriver>
         <version.derby>10.12.1.1</version.derby>

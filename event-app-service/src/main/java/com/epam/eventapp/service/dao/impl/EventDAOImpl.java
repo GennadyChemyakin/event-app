@@ -5,7 +5,6 @@ import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 
@@ -60,7 +59,6 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
 
     @Override
     public int updateEventById(Event updatedEvent) {
-        NamedParameterJdbcTemplate eventDB = getNamedParameterJdbcTemplate();
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("id", updatedEvent.getId());
         namedParameters.addValue("name", updatedEvent.getName());
@@ -71,6 +69,6 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         namedParameters.addValue("gps_latitude", updatedEvent.getGpsLatitude());
         namedParameters.addValue("gps_longitude", updatedEvent.getGpsLongitude());
         namedParameters.addValue("event_time", Timestamp.valueOf(updatedEvent.getTimeStamp()));
-        return eventDB.update(UPDATE_EVENT_BY_ID, namedParameters);
+        return getNamedParameterJdbcTemplate().update(UPDATE_EVENT_BY_ID, namedParameters);
     }
 }

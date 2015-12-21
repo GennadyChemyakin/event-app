@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DataAccessConfig.class})
 @ActiveProfiles("test")
-public class EventDAOTest {
+public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
     private EventDAO eventDAO;
@@ -66,25 +67,48 @@ public class EventDAOTest {
     public void shouldUpdateEventById() {
         //given
         final int id = 0;
+        final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-        Optional<Event> event = eventDAO.findById(id);
-        Event updatedEvent = Event.builder(event.get().getUser(), event.get().getName()).
-                id(event.get().getId()).
-                description(event.get().getDescription()).
-                country(event.get().getCountry()).
+        final LocalDateTime newDateTime = LocalDateTime.now();
+        final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" + newLocation + "'";
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
                 city(newCity).
                 location(newLocation).
-                gpsLatitude(event.get().getGpsLatitude()).
-                gpsLongitude(event.get().getGpsLongitude()).
-                timeStamp(event.get().getTimeStamp()).build();
-        //when
-        int updatedEnries = eventDAO.updateEventById(updatedEvent);
-        event = eventDAO.findById(id);
-        //then
-        Assert.assertEquals(newCity, event.get().getCity());
-        Assert.assertEquals(newLocation, event.get().getLocation());
-        Assert.assertEquals(1, updatedEnries);
+                timeStamp(newDateTime).build();
 
+        //when
+        int updatedEntries = eventDAO.updateEventById(updatedEvent);
+
+        //then
+        Assert.assertEquals(1, updatedEntries);
+        Assert.assertEquals(updatedEntries, countRowsInTableWhere("event", whereClause));
     }
+
+    @Test
+    /**
+     * Testing updateEventById from EventDAOImpl.
+     * Updating event with id=-1.
+     * Checking if zero entries in DB are updated.
+     */
+    public void shouldNotUpdateEventById()
+    {
+        //given
+        final int id = -1;
+        final String newName = "Ballet";
+        final LocalDateTime newDateTime = LocalDateTime.now();
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                timeStamp(newDateTime).build();
+
+        //when
+        int updatedEntries = eventDAO.updateEventById(updatedEvent);
+
+        //then
+        Assert.assertEquals(0, updatedEntries);
+    }
+
 }
