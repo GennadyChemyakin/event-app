@@ -2,16 +2,16 @@ package com.epam.eventapp.service.dao;
 
 import com.epam.eventapp.service.domain.User;
 
-import java.util.Optional;
-
 /**
- * Created by Denys_Iakibchuk on 12/16/2015.
+ * DAO for user
  */
 public interface UserDAO {
 
-
-
-
-    boolean createUser(User user);
+    /**
+     * Method for creating user in the database.
+     *
+     * @param user - user object
+     */
+    void createUser(User user);
 
 }

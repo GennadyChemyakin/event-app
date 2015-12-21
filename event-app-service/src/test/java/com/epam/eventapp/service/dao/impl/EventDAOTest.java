@@ -38,7 +38,6 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         Assert.assertEquals(event.get().getId(), id);
     }
 
-
     /**
      * testing findById method from EventDAOImpl.
      * expect that event would not be found by id

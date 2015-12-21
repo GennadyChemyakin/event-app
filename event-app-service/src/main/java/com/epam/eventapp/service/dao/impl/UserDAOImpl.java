@@ -6,20 +6,22 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 /**
  * Insert user into table
  * Get user id generated in the database
  */
+@Repository
 public class UserDAOImpl extends GenericDAO implements UserDAO {
 
-    private final String CREATE_USER = "INSERT INTO SEC_USER (username, password, email, name, surname, gender, photo," +
+    private final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (username, password, email, name, surname, gender, photo," +
             "country, city, bio) VALUES(:username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
 
     @Override
-    public boolean createUser(User user) {
-        try {
+    public void createUser(User user) {
+
             KeyHolder keyHolder = new GeneratedKeyHolder();
             SqlParameterSource ps = new MapSqlParameterSource()
                                     .addValue("username", user.getUsername())
@@ -33,12 +35,10 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                                     .addValue("city"    , user.getCountry())
                                     .addValue("bio"     , user.getBio());
 
-            getNamedParameterJdbcTemplate().update(CREATE_USER, ps, keyHolder);
-            user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue()).build();
-            return true;
-        } catch (Exception e) {
-            return  false;
-        }
+            getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder);
+            user.builder("", user.getEmail()).id(keyHolder.getKey().intValue())
+                    .password("")
+                    .build();
 
     }
 }
