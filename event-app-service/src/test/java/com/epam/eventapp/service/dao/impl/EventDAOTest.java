@@ -44,7 +44,7 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
      * expect that event would not be found by id
      */
     @Test
-    public void shouldNotFindEventById() {
+    public void shouldReturnAbsentInCaseWrongIdSpecified() {
         //given
         final int id = 1;
         //when
