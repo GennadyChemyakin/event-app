@@ -28,18 +28,6 @@
             <version>${version.servlet-api}</version>
         </dependency>
 
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>javax.servlet.jsp-api</artifactId>
-            <version>${version.jsp-api}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>${version.jstl}</version>
-        </dependency>
-
         <!-- Spring -->
 
         <dependency>
