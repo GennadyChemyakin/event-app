@@ -19,6 +19,14 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final String USERS_BY_USER_NAME = "select username, password, enabled from sec_user where username = ?";
+
+    private final String AUTHORITIES_BY_USERNAME = "select username, authority from sec_user " +
+            "join sec_user_authority on sec_user.id = sec_user_authority.sec_user_id " +
+            "join authority on sec_user_authority.authority_id = authority.id " +
+            "where sec_user.username = ?";
+
+
     //dataSource bean has to be described in spring db config class
     @Autowired
     private DataSource dataSource;
@@ -34,15 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-        String usersByUserNameQuery = "select username, password, enabled from sec_user where username = ?";
-
-        String authoritiesByUsernameQuery = "select username, authority from sec_user " +
-                "join sec_user_authority on sec_user.id = sec_user_authority.sec_user_id " +
-                "join authority on sec_user_authority.authority_id = authority.id " +
-                "where sec_user.username = ?";
-
-        auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery(usersByUserNameQuery)
-                .authoritiesByUsernameQuery(authoritiesByUsernameQuery)
+        auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery(USERS_BY_USER_NAME)
+                .authoritiesByUsernameQuery(AUTHORITIES_BY_USERNAME)
                 .passwordEncoder(new Md5PasswordEncoder());
     }
 

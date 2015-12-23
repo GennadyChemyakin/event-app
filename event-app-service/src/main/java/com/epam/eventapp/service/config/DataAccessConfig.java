@@ -3,10 +3,7 @@ package com.epam.eventapp.service.config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
 
@@ -17,14 +14,17 @@ import javax.sql.DataSource;
  */
 @Configuration
 @PropertySource("classpath:eventappservice.properties")
-@ComponentScan("com.epam.eventappservices.dao.impl")
+@ComponentScan("com.epam.eventapp.service.dao.impl")
 public class DataAccessConfig {
 
     @Autowired
     private Environment environment;
 
+    /**
+     * data source bean that represents our OracleDB
+     */
     @Bean
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(environment.getRequiredProperty("db.driver"));
         dataSource.setUrl(environment.getRequiredProperty("db.url"));
@@ -32,5 +32,4 @@ public class DataAccessConfig {
         dataSource.setPassword(environment.getRequiredProperty("db.password"));
         return dataSource;
     }
-
 }
