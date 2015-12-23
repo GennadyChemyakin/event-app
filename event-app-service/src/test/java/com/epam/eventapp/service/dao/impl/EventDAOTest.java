@@ -13,8 +13,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ import java.util.Optional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DataAccessConfig.class})
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
@@ -71,15 +72,18 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-        final LocalDateTime newDateTime = LocalDateTime.now();
+        final String newDateTime = "23-DEC-15 11.51.19.152000000 AM";
+        DateTimeFormatterBuilder fmb = new DateTimeFormatterBuilder();
+        fmb.parseCaseInsensitive();
+        fmb.append(DateTimeFormatter.ofPattern("dd-MMM-yy HH.mm.ss[.SSSSSSSSS] a"));
         final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" +
-                newLocation + "' and event_time='" + Timestamp.valueOf(newDateTime) + "'";
+                newLocation + "' and event_time='" + newDateTime + "'";
 
         Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
                 id(id).
                 city(newCity).
                 location(newLocation).
-                timeStamp(newDateTime).build();
+                timeStamp(LocalDateTime.parse(newDateTime, fmb.toFormatter())).build();
 
         //when
         int updatedEntries = eventDAO.updateEventById(updatedEvent);
