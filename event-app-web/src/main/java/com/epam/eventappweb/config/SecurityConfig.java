@@ -42,8 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.jdbcAuthentication().dataSource(dataSource).usersByUsernameQuery(USERS_BY_USER_NAME)
-                .authoritiesByUsernameQuery(AUTHORITIES_BY_USERNAME);
-                //.passwordEncoder(new Md5PasswordEncoder());
+                .authoritiesByUsernameQuery(AUTHORITIES_BY_USERNAME)
+                .passwordEncoder(new Md5PasswordEncoder());
     }
 
     /**
@@ -62,7 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().loginPage("/login.html")
                 .and()
                 .authorizeRequests()
-                .anyRequest().permitAll();
+                .antMatchers("/login.html").permitAll()
+                .and().authorizeRequests().anyRequest().hasRole("USER");
 
     }
 }

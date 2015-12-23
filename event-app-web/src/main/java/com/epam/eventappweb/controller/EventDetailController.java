@@ -21,12 +21,13 @@ import java.util.Optional;
 public class EventDetailController {
 
 
+    @Autowired
     private EventDAO eventDAO;
 
-    @Autowired
-    public EventDetailController(EventDAO eventDAO) {
-        this.eventDAO = eventDAO;
-    }
+//    @Autowired
+//    public EventDetailController(EventDAO eventDAO) {
+//        this.eventDAO = eventDAO;
+//    }
 
     @RequestMapping("/event/{id}")
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
