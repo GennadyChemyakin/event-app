@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataAccessConfig.class})
-public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
     private EventDAO eventDAO;
