@@ -1,8 +1,8 @@
 package com.epam.eventappweb.controller;
 
-import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.service.EventService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class EventDetailControllerTest {
 
 
     @Mock
-    private EventDAO eventDAOMock;
+    private EventService eventServiceMock;
 
     @InjectMocks
     private EventDetailController controller;
@@ -52,7 +52,7 @@ public class EventDetailControllerTest {
         //given
         final int id = 0;
         Optional<Event> expectedEvent = Optional.of(Event.builder(User.builder("Ivan", "ivan@gmail.com").build(), "Party").build());
-        when(eventDAOMock.findById(id)).thenReturn(expectedEvent);
+        when(eventServiceMock.findById(id)).thenReturn(expectedEvent);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/" + id));
@@ -78,7 +78,7 @@ public class EventDetailControllerTest {
         //given
         final int id = 1;
         Optional<Event> emptyEvent = Optional.empty();
-        when(eventDAOMock.findById(id)).thenReturn(emptyEvent);
+        when(eventServiceMock.findById(id)).thenReturn(emptyEvent);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/" + id));
