@@ -37,20 +37,6 @@ public class DataAccessConfig {
         return dataSource;
     }
 
-    /**
-     * data source bean that represents in-memory derbyDB
-     */
-    @Bean
-    @Profile("test")
-    public DataSource embeddedDataSource() {
-        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        EmbeddedDatabase db = builder
-                .setType(EmbeddedDatabaseType.DERBY)
-                .addScript("sql/create.db.sql")
-                .addScript("sql/insert.data.sql")
-                .build();
-        return db;
-    }
 
     /**
      * Transaction manager for the configured datasource.
@@ -58,7 +44,6 @@ public class DataAccessConfig {
      * @return Transaction manager.
      */
     @Bean
-    @Profile("dev")
     public DataSourceTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
     }

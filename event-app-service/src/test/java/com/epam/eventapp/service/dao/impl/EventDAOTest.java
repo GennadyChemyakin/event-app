@@ -1,5 +1,6 @@
 package com.epam.eventapp.service.dao.impl;
 
+import com.epam.eventapp.service.config.DataAccessConfig;
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
@@ -70,9 +71,6 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         final String newLocation = "Kremlin";
         final String newDateTime = "2015-12-23 11:51:19.152";
 
-        DateTimeFormatterBuilder fmb = new DateTimeFormatterBuilder();
-        fmb.parseCaseInsensitive();
-        fmb.append(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" +
                 newLocation + "' and event_time={ts '" + newDateTime + "'}";
 
@@ -80,7 +78,7 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
                 id(id).
                 city(newCity).
                 location(newLocation).
-                timeStamp(LocalDateTime.parse(newDateTime, fmb.toFormatter())).build();
+                timeStamp(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
 
         //when
         int updatedEntries = eventDAO.updateEventById(updatedEvent);

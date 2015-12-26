@@ -1,5 +1,6 @@
 package com.epam.eventapp.service.config;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -22,6 +23,16 @@ public class TestDataAccessConfig {
                 .addScript("sql/insert.data.sql")
                 .build();
         return db;
+    }
+
+    /**
+     * Transaction manager for the configured datasource.
+     *
+     * @return Transaction manager.
+     */
+    @Bean
+    public DataSourceTransactionManager txManager() {
+        return new DataSourceTransactionManager(embeddedDataSource());
     }
 
 }
