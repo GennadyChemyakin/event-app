@@ -58,7 +58,6 @@ public class DataAccessConfig {
      * @return Transaction manager.
      */
     @Bean
-    @Profile("dev")
     public DataSourceTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
     }
