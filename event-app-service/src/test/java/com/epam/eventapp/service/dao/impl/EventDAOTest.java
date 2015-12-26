@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DataAccessConfig.class})
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
@@ -72,12 +72,13 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-        final String newDateTime = "23-DEC-15 11.51.19.152000000 AM";
+        final String newDateTime = "2015-12-23 11:51:19.152";
+
         DateTimeFormatterBuilder fmb = new DateTimeFormatterBuilder();
         fmb.parseCaseInsensitive();
-        fmb.append(DateTimeFormatter.ofPattern("dd-MMM-yy HH.mm.ss[.SSSSSSSSS] a"));
+        fmb.append(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" +
-                newLocation + "' and event_time='" + newDateTime + "'";
+                newLocation + "' and event_time={ts '" + newDateTime + "'}";
 
         Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
                 id(id).
@@ -115,5 +116,4 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         //then
         Assert.assertEquals(0, updatedEntries);
     }
-
 }
