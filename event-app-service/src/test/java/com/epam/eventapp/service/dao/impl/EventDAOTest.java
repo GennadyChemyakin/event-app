@@ -3,6 +3,7 @@ package com.epam.eventapp.service.dao.impl;
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
+import com.epam.eventapp.service.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Optional;
 
 /**
@@ -51,5 +54,62 @@ public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests 
         Optional<Event> event = eventDAO.findById(id);
         //then
         Assert.assertEquals(false, event.isPresent());
+    }
+
+    @Test
+    /**
+     * Testing updateEventById from EventDAOImpl.
+     * Updating event with id=0.
+     * Checking if changed fields are updated and we updated only one entry in DB.
+     */
+    public void shouldUpdateEventById() {
+        //given
+        final int id = 0;
+        final String newName = "Ballet";
+        final String newCity = "Moscow";
+        final String newLocation = "Kremlin";
+        final String newDateTime = "2015-12-23 11:51:19.152";
+
+        DateTimeFormatterBuilder fmb = new DateTimeFormatterBuilder();
+        fmb.parseCaseInsensitive();
+        fmb.append(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+        final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" +
+                newLocation + "' and event_time={ts '" + newDateTime + "'}";
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                city(newCity).
+                location(newLocation).
+                timeStamp(LocalDateTime.parse(newDateTime, fmb.toFormatter())).build();
+
+        //when
+        int updatedEntries = eventDAO.updateEventById(updatedEvent);
+
+        //then
+        Assert.assertEquals(1, updatedEntries);
+        Assert.assertEquals(updatedEntries, countRowsInTableWhere("event", whereClause));
+    }
+
+    @Test
+    /**
+     * Testing updateEventById from EventDAOImpl.
+     * Updating event with id=-1.
+     * Checking if zero entries in DB are updated.
+     */
+    public void shouldReturnZeroInCaseWrongIdSpecified() {
+        //given
+        final int id = -1;
+        final String newName = "Ballet";
+        final LocalDateTime newDateTime = LocalDateTime.now();
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                timeStamp(newDateTime).build();
+
+        //when
+        int updatedEntries = eventDAO.updateEventById(updatedEvent);
+
+        //then
+        Assert.assertEquals(0, updatedEntries);
     }
 }

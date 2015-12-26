@@ -5,6 +5,10 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 
 import javax.sql.DataSource;
@@ -31,5 +35,31 @@ public class DataAccessConfig {
         dataSource.setUsername(environment.getRequiredProperty("db.username"));
         dataSource.setPassword(environment.getRequiredProperty("db.password"));
         return dataSource;
+    }
+
+    /**
+     * data source bean that represents in-memory derbyDB
+     */
+    @Bean
+    @Profile("test")
+    public DataSource embeddedDataSource() {
+        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        EmbeddedDatabase db = builder
+                .setType(EmbeddedDatabaseType.DERBY)
+                .addScript("sql/create.db.sql")
+                .addScript("sql/insert.data.sql")
+                .build();
+        return db;
+    }
+
+    /**
+     * Transaction manager for the configured datasource.
+     *
+     * @return Transaction manager.
+     */
+    @Bean
+    @Profile("dev")
+    public DataSourceTransactionManager txManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 }
