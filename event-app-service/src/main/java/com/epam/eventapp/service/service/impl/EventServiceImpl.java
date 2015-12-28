@@ -21,4 +21,9 @@ public class EventServiceImpl implements EventService {
     public Optional<Event> findById(int id) {
         return eventDAO.findById(id);
     }
+
+    @Override
+    public int updateEvent(Event event) {
+        return eventDAO.updateEventById(event);
+    }
 }

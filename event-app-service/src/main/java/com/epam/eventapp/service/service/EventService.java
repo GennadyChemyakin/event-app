@@ -16,4 +16,12 @@ public interface EventService {
      * @return Optional.of(event) if we've found event by id, otherwise Optional.empty()
      */
     Optional<Event> findById(int id);
+
+
+    /**
+     * Method for updating Event by id.
+     * @param event - Event with updated data
+     * @return Number of updated rows
+     */
+    int updateEvent(Event event);
 }
