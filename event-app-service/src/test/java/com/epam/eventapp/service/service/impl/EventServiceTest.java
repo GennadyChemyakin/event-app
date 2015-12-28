@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import static org.mockito.Mockito.when;
 
@@ -68,4 +70,56 @@ public class EventServiceTest {
         Assert.assertFalse(event.isPresent());
     }
 
+    /**
+     * Testing updateEvent from EventServiceImpl.
+     * Updating event with id=0.
+     * Checking if changed fields are updated and we updated only one entry in DB.
+     */
+    @Test
+    public void shouldUpdateEvent() {
+        //given
+        final int id = 0;
+        final String newName = "Ballet";
+        final String newCity = "Moscow";
+        final String newLocation = "Kremlin";
+        final String newDateTime = "2015-12-23 11:51:19.152";
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                city(newCity).
+                location(newLocation).
+                timeStamp(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
+        when(eventDAOMock.updateEventById(updatedEvent)).thenReturn(1);
+
+        //when
+        int updatedEntries = sut.updateEvent(updatedEvent);
+
+        //then
+        Assert.assertEquals(1, updatedEntries);
+    }
+
+    /**
+     * Testing updateEvent from EventServiceImpl.
+     * Updating event with id=-1.
+     * Checking if zero entries in DB are updated.
+     */
+    @Test
+    public void shouldReturnZeroInCaseWrongIdSpecified() {
+        //given
+        final int id = -1;
+        final String newName = "Ballet";
+        final LocalDateTime newDateTime = LocalDateTime.now();
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                timeStamp(newDateTime).build();
+        when(eventDAOMock.updateEventById(updatedEvent)).thenReturn(0);
+
+        //when
+        int updatedEntries = sut.updateEvent(updatedEvent);
+
+        //then
+        Assert.assertEquals(0, updatedEntries);
+    }
 }
+

@@ -55,12 +55,12 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         Assert.assertEquals(false, event.isPresent());
     }
 
-    @Test
     /**
      * Testing updateEventById from EventDAOImpl.
      * Updating event with id=0.
      * Checking if changed fields are updated and we updated only one entry in DB.
      */
+    @Test
     public void shouldUpdateEventById() {
         //given
         final int id = 0;
@@ -86,12 +86,12 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         Assert.assertEquals(updatedEntries, countRowsInTableWhere("event", whereClause));
     }
 
-    @Test
     /**
      * Testing updateEventById from EventDAOImpl.
      * Updating event with id=-1.
      * Checking if zero entries in DB are updated.
      */
+    @Test
     public void shouldReturnZeroInCaseWrongIdSpecified() {
         //given
         final int id = -1;
