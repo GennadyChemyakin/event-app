@@ -1,6 +1,5 @@
 package com.epam.eventapp.service.dao.impl;
 
-import com.epam.eventapp.service.config.DataAccessConfig;
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
@@ -14,7 +13,6 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.Optional;
 
 /**
@@ -22,7 +20,7 @@ import java.util.Optional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataAccessConfig.class})
-public class EventDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
     private EventDAO eventDAO;
