@@ -1,7 +1,7 @@
 package com.epam.eventappweb.controller;
 
-import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
+import com.epam.eventapp.service.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +19,11 @@ import java.util.Optional;
 public class EventDetailController {
 
     @Autowired
-    private EventDAO eventDAO;
+    private EventService eventService;
 
     @RequestMapping("/event/{id}")
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
-        Optional<Event> event = eventDAO.findById(eventId);
+        Optional<Event> event = eventService.findById(eventId);
         return event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

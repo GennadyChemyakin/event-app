@@ -11,7 +11,7 @@ import javax.sql.DataSource;
  * Configuration for testing data access
  */
 @Configuration
-@ComponentScan("com.epam.eventapp.service.dao.impl")
+@ComponentScan(value = {"com.epam.eventapp.service.dao.impl"})
 public class TestDataAccessConfig {
 
     @Bean
