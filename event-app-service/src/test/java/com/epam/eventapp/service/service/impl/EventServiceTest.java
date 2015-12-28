@@ -23,10 +23,11 @@ public class EventServiceTest {
     private EventDAO eventDAOMock;
 
     @InjectMocks
-    private EventService eventService = new EventServiceImpl();
+    private EventService sut;
 
     @Before
     public void setUp(){
+        sut = new EventServiceImpl();
         MockitoAnnotations.initMocks(this);
     }
 
@@ -42,7 +43,7 @@ public class EventServiceTest {
         when(eventDAOMock.findById(id)).thenReturn(expectedEvent);
 
         //when
-        Optional<Event> event = eventService.findById(id);
+        Optional<Event> event = sut.findById(id);
 
         //then
         Assert.assertTrue(event.isPresent());
@@ -61,7 +62,7 @@ public class EventServiceTest {
         when(eventDAOMock.findById(id)).thenReturn(absentEvent);
 
         //when
-        Optional<Event> event = eventService.findById(id);
+        Optional<Event> event = sut.findById(id);
 
         //then
         Assert.assertFalse(event.isPresent());
