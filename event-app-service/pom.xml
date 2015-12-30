@@ -29,6 +29,21 @@
             <artifactId>ojdbc6</artifactId>
         </dependency>
 
+
+        <!-- slf4j API -->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.slf4j}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Spring -->
 
         <dependency>
