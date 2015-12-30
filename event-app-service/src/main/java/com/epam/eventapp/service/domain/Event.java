@@ -1,11 +1,17 @@
 package com.epam.eventapp.service.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 import java.time.LocalDateTime;
 
 /**
  * class describes EVENT domain
  * without collections for storing photo and video objects
  */
+@JsonDeserialize(builder = Event.EventBuilder.class)
 public class Event {
     private final int id;
     private final User user;
@@ -35,6 +41,7 @@ public class Event {
         return new EventBuilder(user,name);
     }
 
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventBuilder {
         private int id;
         private User user;
@@ -48,7 +55,7 @@ public class Event {
         private double gpsLongitude;
         private LocalDateTime timeStamp;
 
-        private EventBuilder(User user, String name) {
+        private EventBuilder(@JsonProperty("user") User user, @JsonProperty("name") String name) {
             this.user = user;
             this.name = name;
         }

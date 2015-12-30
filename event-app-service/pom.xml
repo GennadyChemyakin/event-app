@@ -72,6 +72,13 @@
             <artifactId>derby</artifactId>
             <version>${version.derby}</version>
         </dependency>
+
+        <!--Jackson-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.jackson.databind}</version>
+        </dependency>
     </dependencies>
 
     <build>

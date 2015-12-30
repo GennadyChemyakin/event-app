@@ -3,12 +3,14 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -86,4 +88,67 @@ public class EventDetailControllerTest {
         //then
         resultActions.andExpect(status().isNotFound());
     }
+
+    /**
+     * Testing updateEvent from EventDetailController.
+     * mock eventDAO than inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * Expect JSON with updated event
+     *
+     * @throws Exception
+     */
+    @Test
+    public void shouldUpdateEvent() throws Exception {
+        //given
+        final int id = 0;
+        final String newName = "Ballet";
+        final String newCity = "Moscow";
+        final String newLocation = "Kremlin";
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                city(newCity).
+                location(newLocation).build();
+        when(eventServiceMock.updateEvent((Event)any())).thenReturn(1);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(put("/event/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updatedEvent)));
+
+        //then
+        resultActions.andExpect(status().isOk()).
+                andExpect(jsonPath("$.id", Matchers.is(id))).
+                andExpect(jsonPath("$.name", Matchers.is(newName))).
+                andExpect(jsonPath("$.city", Matchers.is(newCity))).
+                andExpect(jsonPath("$.location", Matchers.is(newLocation)));
+    }
+
+    /**
+     * Testing updateEvent from EventDetailController.
+     * mock eventDAO than inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * Expect 400 status code
+     */
+    @Test
+    public void shouldReturnZeroInCaseWrongIdSpecified() throws Exception {
+        //given
+        final int id = -1;
+        final String newName = "Ballet";
+        final String newCity = "Moscow";
+        final String newLocation = "Kremlin";
+
+        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+                id(id).
+                city(newCity).
+                location(newLocation).build();
+        when(eventServiceMock.updateEvent((Event)any())).thenReturn(0);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(put("/event/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updatedEvent)));
+
+        //then
+        resultActions.andExpect(status().isBadRequest());
+    }
 }
+
