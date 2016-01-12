@@ -13,22 +13,19 @@ import java.util.Optional;
 /**
  * EventService implementation
  */
-@Service("EventService")
+@Service
 public class EventServiceImpl implements EventService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);
 
     @Autowired
     private EventDAO eventDAO;
 
     @Override
     public Optional<Event> findById(int id) {
-        logger.debug("findById from EventServiceImpl method has been started: id =" + id);
+        LOGGER.debug("findById has been started: Params id = {}", id);
         Optional<Event> event = eventDAO.findById(id);
-        logger.debug("findById from EventServiceImpl method has been finished. Return Optional<event>: " +
-                "event.isPresent() = " + event.isPresent() +
-                "; event id = " + event.map(Event::getId).map(String::valueOf).orElse("null") +
-                "; event name = " + event.map(Event::getName).orElse("null"));
+        LOGGER.debug("findById has finished. Result: {}", event.map(Event::toString));
         return event;
     }
 }

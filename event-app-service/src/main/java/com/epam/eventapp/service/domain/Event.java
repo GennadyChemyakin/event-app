@@ -137,4 +137,20 @@ public class Event {
     public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", user=" + user +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", location='" + location + '\'' +
+                ", gpsLatitude=" + gpsLatitude +
+                ", gpsLongitude=" + gpsLongitude +
+                ", timeStamp=" + timeStamp +
+                '}';
+    }
 }

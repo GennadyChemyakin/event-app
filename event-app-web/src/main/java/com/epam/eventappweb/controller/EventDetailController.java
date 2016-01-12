@@ -20,20 +20,18 @@ import java.util.Optional;
 @RestController
 public class EventDetailController {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventDetailController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
 
     @Autowired
     private EventService eventService;
 
     @RequestMapping("/event/{id}")
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
-        logger.info("method getEventDetail from EventDetailController has been started. Param: id = " + eventId);
+        LOGGER.info("getEventDetail has been started. Param: id = {} ", eventId);
         Optional<Event> event = eventService.findById(eventId);
         ResponseEntity<Event> resultResponseEntity = event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        logger.info("method getEventDetail from EventDetailController has finished. Result:"
-                + " Status code: " + resultResponseEntity.getStatusCode() +
-                " Body: event id = " + event.map(Event::getId).map(String::valueOf).orElse("null") +
-                "; event name = " + event.map(Event::getName).orElse("null"));
+        LOGGER.info("getEventDetail has finished. Result:"
+                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event.map(Event::toString));
         return resultResponseEntity;
     }
 }

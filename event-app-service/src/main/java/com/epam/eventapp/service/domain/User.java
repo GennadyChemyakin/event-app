@@ -1,5 +1,7 @@
 package com.epam.eventapp.service.domain;
 
+import java.util.Arrays;
+
 /**
  * class describes User domain
  */
@@ -146,5 +148,22 @@ public class User {
 
     public String getBio() {
         return bio;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", gender='" + gender + '\'' +
+                ", photo=" + Arrays.toString(photo) +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", bio='" + bio + '\'' +
+                '}';
     }
 }
