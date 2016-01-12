@@ -36,7 +36,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                                     .addValue("bio"     , user.getBio());
 
             getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder);
-            user.builder("", user.getEmail()).id(keyHolder.getKey().intValue())
+            user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue())
                     .password("")
                     .build();
 

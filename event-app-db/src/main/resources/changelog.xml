@@ -13,8 +13,12 @@
 		<sqlFile relativeToChangelogFile="true" path="sql/2.added.authority.tables.for.spring.security.sql"/>
 	</changeSet>
 
-	<changeSet id="3" author="Denys_Iakibchuk">
-		<sqlFile relativeToChangelogFile="true" path="sql/3.added.autoincrement.for.indexes.sql"/>
+	<changeSet id="4" author="Denys_Iakibchuk">
+		<sqlFile relativeToChangelogFile="true" path="sql/4.added.autoincrement.for.indexes.sql"/>
+	</changeSet>
+
+	<changeSet id="5" author="Denys_Iakibchuk">
+		<sqlFile relativeToChangelogFile="true" path="sql/5.added.synonyms.for.sequences.and.grants.sql"/>
 	</changeSet>
 
 </databaseChangeLog>
