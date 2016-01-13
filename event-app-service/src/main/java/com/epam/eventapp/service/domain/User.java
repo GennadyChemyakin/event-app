@@ -1,5 +1,6 @@
 package com.epam.eventapp.service.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -152,5 +153,21 @@ public class User {
 
     public String getBio() {
         return bio;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", gender='" + gender + '\'' +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", bio='" + bio + '\'' +
+                '}';
     }
 }
