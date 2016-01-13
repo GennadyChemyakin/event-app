@@ -2,7 +2,6 @@ package com.epam.eventappweb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +18,7 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String USERS_BY_USER_NAME = "select username, password, enabled from sec_user where username = ?";
+    private final String USERS_BY_USER_NAME = "select username, password, 1 from sec_user where username = ?";
 
     private final String AUTHORITIES_BY_USERNAME = "select username, authority from sec_user " +
             "join sec_user_authority on sec_user.id = sec_user_authority.sec_user_id " +
@@ -63,7 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().loginPage("/login.html")
                 .and()
                 .authorizeRequests()
-                .anyRequest().permitAll();
+                .antMatchers("/login.html").permitAll()
+                .and().authorizeRequests().anyRequest().hasRole("USER");
 
     }
 }

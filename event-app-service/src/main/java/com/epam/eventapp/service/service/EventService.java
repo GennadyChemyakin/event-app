@@ -1,14 +1,13 @@
-package com.epam.eventapp.service.dao;
+package com.epam.eventapp.service.service;
 
 import com.epam.eventapp.service.domain.Event;
-
 
 import java.util.Optional;
 
 /**
- * DAO for Event
+ * Event service
  */
-public interface EventDAO {
+public interface EventService {
 
     /**
      * Method for getting Event by id.
@@ -18,10 +17,11 @@ public interface EventDAO {
      */
     Optional<Event> findById(int id);
 
+
     /**
      * Method for updating Event by id.
      * @param event - Event with updated data
      * @return Number of updated rows
      */
-    int updateEventById(Event event);
+    int updateEvent(Event event);
 }
