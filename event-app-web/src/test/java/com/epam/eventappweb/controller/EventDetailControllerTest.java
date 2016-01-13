@@ -108,7 +108,8 @@ public class EventDetailControllerTest {
                 id(id).
                 city(newCity).
                 location(newLocation).build();
-        when(eventServiceMock.updateEvent((Event)any())).thenReturn(1);
+        //when(eventServiceMock.updateEvent(any(Event.class))).thenReturn(1);
+        when(eventServiceMock.updateEvent(updatedEvent)).thenReturn(1);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -140,7 +141,7 @@ public class EventDetailControllerTest {
                 id(id).
                 city(newCity).
                 location(newLocation).build();
-        when(eventServiceMock.updateEvent((Event)any())).thenReturn(0);
+        when(eventServiceMock.updateEvent(updatedEvent)).thenReturn(0);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -148,7 +149,7 @@ public class EventDetailControllerTest {
                 .content(new ObjectMapper().writeValueAsString(updatedEvent)));
 
         //then
-        resultActions.andExpect(status().isBadRequest());
+        resultActions.andExpect(status().isInternalServerError());
     }
 }
 

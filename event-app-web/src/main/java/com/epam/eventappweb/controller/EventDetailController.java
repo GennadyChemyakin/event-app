@@ -28,6 +28,6 @@ public class EventDetailController {
     @RequestMapping(value = "/event/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Event> updateUser(@PathVariable("id") long id, @RequestBody Event event) {
         int updatedEntries = eventService.updateEvent(event);
-        return updatedEntries == 1 ? new ResponseEntity<>(event, HttpStatus.OK) : new ResponseEntity<>(event, HttpStatus.BAD_REQUEST);
+        return updatedEntries == 1 ? new ResponseEntity<>(event, HttpStatus.OK) : new ResponseEntity<>(event, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
