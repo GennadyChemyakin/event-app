@@ -28,4 +28,9 @@ public class EventServiceImpl implements EventService {
         LOGGER.debug("findById finished. Result: {}", event);
         return event;
     }
+
+    @Override
+    public int updateEvent(Event event) {
+        return eventDAO.updateEventById(event);
+    }
 }

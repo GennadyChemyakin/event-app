@@ -1,5 +1,6 @@
 package com.epam.eventappweb.config;
 
+
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 
