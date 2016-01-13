@@ -1,6 +1,5 @@
-package com.epam.eventapp.service.domain;
+package com.epam.eventappweb.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -8,13 +7,13 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.LocalDateTime;
 
 /**
- * class describes EVENT domain
+ * class describes EVENT model
  * without collections for storing photo and video objects
  */
-@JsonDeserialize(builder = Event.EventBuilder.class)
-public class Event {
-    private final int id;
-    private final User user;
+@JsonDeserialize(builder = EventPageModel.EventModelBuilder.class)
+public class EventPageModel {
+    private final String username;
+    private final String userEmail;
     private final String name;
     private final String description;
     private final String country;
@@ -24,26 +23,9 @@ public class Event {
     private final double gpsLongitude;
     private final LocalDateTime timeStamp;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Event event = (Event) o;
-
-        return  (id == event.id);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
-    }
-
-    private Event(EventBuilder builder) {
-        this.id = builder.id;
-        this.user = builder.user;
+    private EventPageModel(EventModelBuilder builder) {
+        this.username = builder.username;
+        this.userEmail = builder.userEmail;
         this.name = builder.name;
         this.description = builder.description;
         this.country = builder.country;
@@ -54,14 +36,14 @@ public class Event {
         this.timeStamp = builder.timeStamp;
     }
 
-    public static EventBuilder builder(User user, String name){
-        return new EventBuilder(user,name);
+    public static EventModelBuilder builder(String username, String name){
+        return new EventModelBuilder(name);
     }
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
-    public static class EventBuilder {
-        private int id;
-        private User user;
+    public static class EventModelBuilder {
+        private String username;
+        private String userEmail;
         private String name;
         private String description;
         private String country;
@@ -71,62 +53,66 @@ public class Event {
         private double gpsLongitude;
         private LocalDateTime timeStamp;
 
-        private EventBuilder(@JsonProperty("user") User user, @JsonProperty("name") String name) {
-            this.user = user;
+        private EventModelBuilder(@JsonProperty("name") String name) {
             this.name = name;
         }
 
-        public EventBuilder id(int id) {
-            this.id = id;
+        public EventModelBuilder username(String username) {
+            this.username = username;
             return this;
         }
 
-        public EventBuilder description(String description) {
+        public EventModelBuilder userEmail(String userEmail) {
+            this.userEmail = userEmail;
+            return this;
+        }
+
+        public EventModelBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public EventBuilder country(String country) {
+        public EventModelBuilder country(String country) {
             this.country = country;
             return this;
         }
 
-        public EventBuilder city(String city) {
+        public EventModelBuilder city(String city) {
             this.city = city;
             return this;
         }
 
-        public EventBuilder location(String location) {
+        public EventModelBuilder location(String location) {
             this.location = location;
             return this;
         }
 
-        public EventBuilder gpsLatitude(double gpsLatitude) {
+        public EventModelBuilder gpsLatitude(double gpsLatitude) {
             this.gpsLatitude = gpsLatitude;
             return this;
         }
 
-        public EventBuilder gpsLongitude(double gpsLongitude) {
+        public EventModelBuilder gpsLongitude(double gpsLongitude) {
             this.gpsLongitude = gpsLongitude;
             return this;
         }
 
-        public EventBuilder timeStamp(LocalDateTime timeStamp) {
+        public EventModelBuilder timeStamp(LocalDateTime timeStamp) {
             this.timeStamp = timeStamp;
             return this;
         }
 
-        public Event build() {
-            return new Event(this);
+        public EventPageModel build() {
+            return new EventPageModel(this);
         }
     }
 
-    public int getId() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public String getName() {
@@ -163,9 +149,9 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", user=" + user +
+        return "EventPageModel{" +
+                "username=" + username +
+                ", userEmail=" + username +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +

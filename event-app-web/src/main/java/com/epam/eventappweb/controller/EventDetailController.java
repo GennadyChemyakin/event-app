@@ -1,7 +1,9 @@
 package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Event;
+import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
+import com.epam.eventappweb.model.EventPageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +30,39 @@ public class EventDetailController {
         LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
         Optional<Event> event = eventService.findById(eventId);
         ResponseEntity<Event> resultResponseEntity = event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        /*
+        EventPageModel eventModel = EventPageModel.builder(event.getName()).
+                userbame(event.getUser().getUsername().
+                description(event.getDescription()).
+                country(event.getCountry()).
+                city(event.getCity()).
+                location(event.getLocation()).
+                gpsLatitude(event.getGpsLatitude()).
+                gpsLongitude(event.getGpsLongitude()).
+                timeStamp(event.getTimeStamp()).
+                build();
+         */
         LOGGER.info("getEventDetail finished. Result:"
                 + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event);
         return resultResponseEntity;
     }
 
     @RequestMapping(value = "/event/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Event> updateUser(@PathVariable("id") long id, @RequestBody Event event) {
+    public ResponseEntity<Event> updateEvent(@PathVariable("id") int eventId, @RequestBody EventPageModel eventPageModel) {
+        LOGGER.info("updateEvent started. Param: id = {}; event = {} ", eventId, eventPageModel);
+        Event event = Event.builder(User.builder(eventPageModel.getUsername(), eventPageModel.getUserEmail()).build(), eventPageModel.getName()).
+                id(eventId).
+                description(eventPageModel.getDescription()).
+                country(eventPageModel.getCountry()).
+                city(eventPageModel.getCity()).
+                location(eventPageModel.getLocation()).
+                gpsLatitude(eventPageModel.getGpsLatitude()).
+                gpsLongitude(eventPageModel.getGpsLongitude()).
+                timeStamp(eventPageModel.getTimeStamp()).build();
+
         int updatedEntries = eventService.updateEvent(event);
-        return updatedEntries == 1 ? new ResponseEntity<>(event, HttpStatus.OK) : new ResponseEntity<>(event, HttpStatus.INTERNAL_SERVER_ERROR);
+        ResponseEntity<Event> resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
+        return resultResponseEntity;
     }
 }
