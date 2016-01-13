@@ -1,6 +1,5 @@
 package com.epam.eventapp.service.domain;
 
-import java.util.Arrays;
 
 /**
  * class describes User domain
@@ -160,7 +159,6 @@ public class User {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", gender='" + gender + '\'' +
-                ", photo=" + Arrays.toString(photo) +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", bio='" + bio + '\'' +

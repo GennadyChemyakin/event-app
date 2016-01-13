@@ -23,9 +23,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Optional<Event> findById(int id) {
-        LOGGER.debug("findById has been started: Params id = {}", id);
+        LOGGER.debug("findById started: Params id = {}", id);
         Optional<Event> event = eventDAO.findById(id);
-        LOGGER.debug("findById has finished. Result: {}", event.map(Event::toString));
+        LOGGER.debug("findById finished. Result: {}", event);
         return event;
     }
 }

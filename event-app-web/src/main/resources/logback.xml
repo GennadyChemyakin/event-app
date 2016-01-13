@@ -22,12 +22,12 @@
         </encoder>
     </appender>
 
-    <logger name="com.epam.eventapp.service.service.impl.EventServiceImpl" level="debug">
+    <logger name="com.epam.eventapp.service.service" level="debug">
         <appender-ref ref="ROLLING"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="com.epam.eventappweb.controller.EventDetailController" level="info">
+    <logger name="com.epam.eventappweb.controller" level="info">
         <appender-ref ref="ROLLING"/>
         <appender-ref ref="STDOUT"/>
     </logger>

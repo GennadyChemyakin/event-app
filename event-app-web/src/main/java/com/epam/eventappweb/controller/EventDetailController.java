@@ -27,11 +27,11 @@ public class EventDetailController {
 
     @RequestMapping("/event/{id}")
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
-        LOGGER.info("getEventDetail has been started. Param: id = {} ", eventId);
+        LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
         Optional<Event> event = eventService.findById(eventId);
         ResponseEntity<Event> resultResponseEntity = event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        LOGGER.info("getEventDetail has finished. Result:"
-                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event.map(Event::toString));
+        LOGGER.info("getEventDetail finished. Result:"
+                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event);
         return resultResponseEntity;
     }
 }
