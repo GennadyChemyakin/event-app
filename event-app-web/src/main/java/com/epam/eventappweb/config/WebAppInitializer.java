@@ -1,7 +1,6 @@
 package com.epam.eventappweb.config;
 
-import com.epam.eventapp.service.config.DataAccessConfig;
-import com.epam.eventapp.service.config.ServiceConfig;
+
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 
@@ -9,7 +8,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{SecurityConfig.class, ServiceConfig.class};
+        return new Class[]{WebRootConfig.class};
     }
 
     @Override

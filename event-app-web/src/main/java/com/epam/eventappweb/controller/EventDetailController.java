@@ -2,6 +2,8 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.EventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +20,18 @@ import java.util.Optional;
 @RestController
 public class EventDetailController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
+
     @Autowired
     private EventService eventService;
 
     @RequestMapping("/event/{id}")
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
+        LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
         Optional<Event> event = eventService.findById(eventId);
-        return event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ResponseEntity<Event> resultResponseEntity = event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        LOGGER.info("getEventDetail finished. Result:"
+                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event);
+        return resultResponseEntity;
     }
 }
