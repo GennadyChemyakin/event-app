@@ -15,8 +15,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDAOImpl extends GenericDAO implements UserDAO {
 
-    private final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (username, password, email, name, surname, gender, photo," +
-            "country, city, bio) VALUES(:username, :password, :email, :name, :surname, :gender, :photo," +
+    private final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +
+            "country, city, bio) VALUES(AUTHORITY_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
 
     @Override

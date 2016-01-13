@@ -4,6 +4,7 @@ import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestDataAccessConfig.class})
-public class UserDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
     private UserDAO userDAO;
 
+    @Ignore
     @Test
     public void shouldAddUserInTheTable() {
 

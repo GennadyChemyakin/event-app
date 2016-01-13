@@ -110,6 +110,7 @@
                 <artifactId>ojdbc6</artifactId>
                 <version>${version.jdbcDriver}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
