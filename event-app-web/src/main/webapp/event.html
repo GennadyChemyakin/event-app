@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Event detail page</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/event-app/event/" + $.urlParam("id")
+            }).then(function (data) {
+
+                $('#description').append(data.description);
+                $('#eventName').append(data.name);
+
+                $('#username').append(data.user.username);
+                $('#name').append(data.user.name + " ").append(data.user.surname);
+                $('#userEmail').append(data.user.email);
+            });
+        });
+        $.urlParam = function (name) {
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) {
+                return null;
+            }
+            else {
+                return results[1] || 0;
+            }
+        }
+    </script>
+</head>
+<body>
+<br>
+
+<div class="container">
+    <div class="col-md-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title" id="eventName"/>
+            </div>
+            <div class="panel-body">
+                <img src="http://www.bobosindoorplayground.com/images/birthday1.jpg"
+                     class="img-rounded img-responsive center-block" alt="Cinque Terre">
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title" id="username"/>
+            </div>
+            <div class="panel-body">
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object"
+                                 src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTFs9fRwPmz9ByS5aWk08IPJXATqKvR-J0dT1qFcD2HCefie6g6"
+                                 width="64" height="64">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading" id="name"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Event Description</h3>
+            </div>
+            <div class="panel-body">
+                <p id="description"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
