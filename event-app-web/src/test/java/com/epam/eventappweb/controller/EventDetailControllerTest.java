@@ -112,7 +112,6 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         EventPageModel updatedEventPageModel = EventPageModel.builder("Vasya", newName).
-                userEmail("vasya@vasya.com").
                 city(newCity).
                 location(newLocation).build();
 
@@ -133,7 +132,7 @@ public class EventDetailControllerTest {
      * Expect 500 status code
      */
     @Test
-    public void shouldReturnZeroInCaseWrongIdSpecified() throws Exception {
+    public void shouldReturn500InCaseWrongIdSpecified() throws Exception {
         //given
         final int id = -1;
         final String newName = "Ballet";
@@ -146,7 +145,6 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         EventPageModel updatedEventPageModel = EventPageModel.builder("Vasya", newName).
-                userEmail("vasya@vasya.com").
                 city(newCity).
                 location(newLocation).build();
 

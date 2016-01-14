@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
  */
 @JsonDeserialize(builder = EventPageModel.EventModelBuilder.class)
 public class EventPageModel {
-    private final String username;
-    private final String userEmail;
     private final String name;
+    private final String username;
     private final String description;
     private final String country;
     private final String city;
@@ -24,9 +23,8 @@ public class EventPageModel {
     private final LocalDateTime timeStamp;
 
     private EventPageModel(EventModelBuilder builder) {
-        this.username = builder.username;
-        this.userEmail = builder.userEmail;
         this.name = builder.name;
+        this.username = builder.username;
         this.description = builder.description;
         this.country = builder.country;
         this.city = builder.city;
@@ -36,15 +34,14 @@ public class EventPageModel {
         this.timeStamp = builder.timeStamp;
     }
 
-    public static EventModelBuilder builder(String username, String name){
+    public static EventModelBuilder builder(String name){
         return new EventModelBuilder(name);
     }
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventModelBuilder {
-        private String username;
-        private String userEmail;
         private String name;
+        private String username;
         private String description;
         private String country;
         private String city;
@@ -59,11 +56,6 @@ public class EventPageModel {
 
         public EventModelBuilder username(String username) {
             this.username = username;
-            return this;
-        }
-
-        public EventModelBuilder userEmail(String userEmail) {
-            this.userEmail = userEmail;
             return this;
         }
 
@@ -111,10 +103,6 @@ public class EventPageModel {
         return username;
     }
 
-    public String getUserEmail() {
-        return userEmail;
-    }
-
     public String getName() {
         return name;
     }
@@ -151,7 +139,6 @@ public class EventPageModel {
     public String toString() {
         return "EventPageModel{" +
                 "username=" + username +
-                ", userEmail=" + username +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +
