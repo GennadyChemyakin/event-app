@@ -55,7 +55,7 @@ public class User {
         private String city;
         private String bio;
 
-        private UserBuilder(@JsonProperty("username") String username, @JsonProperty("email") String email){
+        private UserBuilder(String username, String email){
             this.username = username;
             this.email = email;
         }

@@ -3,6 +3,7 @@ package com.epam.eventappweb.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
@@ -10,8 +11,9 @@ import java.time.LocalDateTime;
  * class describes EVENT model
  * without collections for storing photo and video objects
  */
-@JsonDeserialize(builder = EventPageModel.EventModelBuilder.class)
-public class EventPageModel {
+@JsonDeserialize(builder = EventVO.EventModelBuilder.class)
+@Immutable
+public final class EventVO {
     private final String name;
     private final String username;
     private final String description;
@@ -22,7 +24,7 @@ public class EventPageModel {
     private final double gpsLongitude;
     private final LocalDateTime timeStamp;
 
-    private EventPageModel(EventModelBuilder builder) {
+    private EventVO(EventModelBuilder builder) {
         this.name = builder.name;
         this.username = builder.username;
         this.description = builder.description;
@@ -94,8 +96,8 @@ public class EventPageModel {
             return this;
         }
 
-        public EventPageModel build() {
-            return new EventPageModel(this);
+        public EventVO build() {
+            return new EventVO(this);
         }
     }
 
@@ -137,7 +139,7 @@ public class EventPageModel {
 
     @Override
     public String toString() {
-        return "EventPageModel{" +
+        return "EventVO{" +
                 "username=" + username +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

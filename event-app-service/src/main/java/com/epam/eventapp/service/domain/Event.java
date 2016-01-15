@@ -24,23 +24,6 @@ public class Event {
     private final double gpsLongitude;
     private final LocalDateTime timeStamp;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Event event = (Event) o;
-
-        return  (id == event.id);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
-    }
-
     private Event(EventBuilder builder) {
         this.id = builder.id;
         this.user = builder.user;
@@ -58,7 +41,6 @@ public class Event {
         return new EventBuilder(user,name);
     }
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventBuilder {
         private int id;
         private User user;
@@ -71,7 +53,7 @@ public class Event {
         private double gpsLongitude;
         private LocalDateTime timeStamp;
 
-        private EventBuilder(@JsonProperty("user") User user, @JsonProperty("name") String name) {
+        private EventBuilder(User user, String name) {
             this.user = user;
             this.name = name;
         }

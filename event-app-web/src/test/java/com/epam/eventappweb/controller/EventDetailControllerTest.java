@@ -3,8 +3,10 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
-import com.epam.eventappweb.model.EventPageModel;
+import com.epam.eventapp.service.service.UserService;
+import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,6 +33,9 @@ public class EventDetailControllerTest {
 
     @Mock
     private EventService eventServiceMock;
+
+    @Mock
+    private UserService userServiceMock;
 
     @InjectMocks
     private EventDetailController controller;
@@ -62,10 +68,10 @@ public class EventDetailControllerTest {
 
         //then
         resultActions.andExpect(status().isOk()).
-                andExpect(jsonPath("$.id", Matchers.is(0))).
-                andExpect(jsonPath("$.user.username", Matchers.is("Ivan"))).
-                andExpect(jsonPath("$.user.email", Matchers.is("ivan@gmail.com"))).
-                andExpect(jsonPath("$.name", Matchers.is("Party")));
+                andExpect(jsonPath("$.id", is(0))).
+                andExpect(jsonPath("$.user.username", is("Ivan"))).
+                andExpect(jsonPath("$.user.email", is("ivan@gmail.com"))).
+                andExpect(jsonPath("$.name", is("Party")));
     }
 
 
@@ -101,26 +107,23 @@ public class EventDetailControllerTest {
     public void shouldUpdateEvent() throws Exception {
         //given
         final int id = 0;
+        final String username = "Vasya";
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-
-
-        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
-                id(id).
+        final User user = User.builder(username, "vasya@vasya.com").build();
+        final EventVO updatedEventVO = EventVO.builder(newName).
+                username(username).
                 city(newCity).
                 location(newLocation).build();
 
-        EventPageModel updatedEventPageModel = EventPageModel.builder("Vasya", newName).
-                city(newCity).
-                location(newLocation).build();
-
-        when(eventServiceMock.updateEvent(updatedEvent)).thenReturn(1);
+        when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
+        when(eventServiceMock.updateEvent(argThat(both(Matchers.isA(Event.class)).and(hasProperty("id", equalTo(0)))))).thenReturn(1);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updatedEventPageModel)));
+                .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
 
         //then
         resultActions.andExpect(status().isOk());
@@ -135,25 +138,23 @@ public class EventDetailControllerTest {
     public void shouldReturn500InCaseWrongIdSpecified() throws Exception {
         //given
         final int id = -1;
+        final String username = "Vasya";
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-
-        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
-                id(id).
+        final User user = User.builder(username, "vasya@vasya.com").build();
+        final EventVO updatedEventVO = EventVO.builder(newName).
+                username(username).
                 city(newCity).
                 location(newLocation).build();
 
-        EventPageModel updatedEventPageModel = EventPageModel.builder("Vasya", newName).
-                city(newCity).
-                location(newLocation).build();
-
-        when(eventServiceMock.updateEvent(updatedEvent)).thenReturn(0);
+        when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
+        when(eventServiceMock.updateEvent(argThat(both(Matchers.isA(Event.class)).and(hasProperty("id", equalTo(-1)))))).thenReturn(0);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updatedEventPageModel)));
+                .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
 
         //then
         resultActions.andExpect(status().isInternalServerError());

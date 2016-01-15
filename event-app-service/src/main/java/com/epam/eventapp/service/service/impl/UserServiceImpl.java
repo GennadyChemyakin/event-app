@@ -21,9 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        LOGGER.debug("findById started: Params username = {}", username);
+        LOGGER.debug("findByUsername started: Params username = {}", username);
         Optional<User> user = userDAO.findByUsername(username);
-        LOGGER.debug("findById finished. Result: {}", user);
+        LOGGER.debug("findByUsername finished. Result: {}", user);
         return user;
     }
 }
