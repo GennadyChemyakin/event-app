@@ -7,7 +7,6 @@ import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -50,7 +49,7 @@ public class EventDetailControllerTest {
 
     /**
      * testing getEventDetail from EventDetailController
-     * mock eventDAO than inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields
      *
      * @throws Exception
@@ -77,7 +76,7 @@ public class EventDetailControllerTest {
 
     /**
      * testing getEventDetail from EventDetailController
-     * mock eventDAO than inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect 404 status code
      *
      * @throws Exception
@@ -98,7 +97,7 @@ public class EventDetailControllerTest {
 
     /**
      * Testing updateEvent from EventDetailController.
-     * mock eventDAO than inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect 200 status code
      *
      * @throws Exception
@@ -118,7 +117,7 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
-        when(eventServiceMock.updateEvent(argThat(both(Matchers.isA(Event.class)).and(hasProperty("id", equalTo(0)))))).thenReturn(1);
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(Event.class, 0)))).thenReturn(1);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -131,11 +130,11 @@ public class EventDetailControllerTest {
 
     /**
      * Testing updateEvent from EventDetailController.
-     * mock eventDAO than inject it to controller. Using mockMvc to assert the behaviour of controller.
-     * Expect 500 status code
+     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * Expect 404 status code
      */
     @Test
-    public void shouldReturn500InCaseWrongIdSpecified() throws Exception {
+    public void shouldReturn404InCaseWrongEventIdSpecified() throws Exception {
         //given
         final int id = -1;
         final String username = "Vasya";
@@ -149,7 +148,7 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
-        when(eventServiceMock.updateEvent(argThat(both(Matchers.isA(Event.class)).and(hasProperty("id", equalTo(-1)))))).thenReturn(0);
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(Event.class, -1)))).thenReturn(0);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -157,7 +156,49 @@ public class EventDetailControllerTest {
                 .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
 
         //then
-        resultActions.andExpect(status().isInternalServerError());
+        resultActions.andExpect(status().isNotFound());
+    }
+
+    /**
+     * Testing updateEvent from EventDetailController.
+     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * Expect 404 status code
+     */
+    @Test
+    public void shouldReturn404InCaseWrongUsernameSpecified() throws Exception {
+        //given
+        final int id = 0;
+        final String username = "NotInDB";
+        final String newName = "Ballet";
+        final String newCity = "Moscow";
+        final String newLocation = "Kremlin";
+        final EventVO updatedEventVO = EventVO.builder(newName).
+                username(username).
+                city(newCity).
+                location(newLocation).build();
+
+        when(userServiceMock.findByUsername(username)).thenReturn(Optional.empty());
+
+        //when
+        ResultActions resultActions = mockMvc.perform(put("/event/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
+
+        //then
+        resultActions.andExpect(status().isNotFound());
+    }
+
+    /**
+     * Matcher for Events, checks if both events are instances of same class and have same id field
+     * @param eventClass Class
+     * @param id value to compare with
+     * @return Matcher
+     */
+    private static Matcher<Event> equalToEvent(Class<?> eventClass, int id) {
+        return org.hamcrest.Matchers.allOf(
+                is(instanceOf(eventClass)),
+                hasProperty("id", is(equalTo(id)))
+        );
     }
 }
 
