@@ -3,54 +3,30 @@
 <head>
     <title>Event detail page</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "http://localhost:8080/event-app/event/" + $.urlParam("id")
-            }).then(function (data) {
-
-                $('#description').append(data.description);
-                $('#eventName').append(data.name);
-
-                $('#username').append(data.user.username);
-                $('#name').append(data.user.name + " ").append(data.user.surname);
-                $('#userEmail').append(data.user.email);
-            });
-        });
-        $.urlParam = function (name) {
-            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-            if (results == null) {
-                return null;
-            }
-            else {
-                return results[1] || 0;
-            }
-        }
-    </script>
+    <script src="resources/js/eventDetail.js" type="text/javascript"></script>
 </head>
 <body>
 <br>
 
 <div class="container">
-    <div class="col-md-8">
+    <div class="col-md-8" id="eventPhoto">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title" id="eventName"/>
             </div>
             <div class="panel-body">
+                <!-- img for example. if future wi we will insert here real event photo-->
                 <img src="http://www.bobosindoorplayground.com/images/birthday1.jpg"
                      class="img-rounded img-responsive center-block" alt="Cinque Terre">
             </div>
         </div>
-
     </div>
     <div class="col-md-4">
-        <div class="panel panel-primary">
+        <!-- panel for user info description-->
+        <div class="panel panel-primary" id="userInfoPanel">
             <div class="panel-heading">
                 <h3 class="panel-title" id="username"/>
             </div>
@@ -58,8 +34,9 @@
                 <div class="media">
                     <div class="media-left">
                         <a href="#">
-                            <img class="media-object"
-                                 src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTFs9fRwPmz9ByS5aWk08IPJXATqKvR-J0dT1qFcD2HCefie6g6"
+                            <!-- img for example. if future wi we will insert here real user photo-->
+                            <img class="media-object thumbnail"
+                                 src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"
                                  width="64" height="64">
                         </a>
                     </div>
@@ -70,7 +47,28 @@
             </div>
         </div>
         <br>
-        <div class="panel panel-success">
+        <!-- panel for event address description-->
+        <div class="panel panel-success" id="eventAddressInfo">
+            <div class="panel-heading">
+                <h3 class="panel-title">Event Address</h3>
+            </div>
+            <div class="panel-body">
+                <p id="address"><span class="glyphicon glyphicon-map-marker"></span></p>
+            </div>
+        </div>
+        <br>
+        <!-- panel for event time description-->
+        <div class="panel panel-success" id="eventTimeInfo">
+            <div class="panel-heading">
+                <h3 class="panel-title">Event Time</h3>
+            </div>
+            <div class="panel-body">
+                <p id="time"><span class="glyphicon glyphicon-time"></span></p>
+            </div>
+        </div>
+        <br>
+        <!-- panel for event description-->
+        <div class="panel panel-success" id="eventDescription">
             <div class="panel-heading">
                 <h3 class="panel-title">Event Description</h3>
             </div>
