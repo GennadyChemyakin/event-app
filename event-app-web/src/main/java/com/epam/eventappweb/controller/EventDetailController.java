@@ -44,6 +44,7 @@ public class EventDetailController {
         LOGGER.info("updateEvent started. Param: id = {}; event = {} ", eventId, eventVO);
         ResponseEntity<Event> resultResponseEntity;
         Optional<User> user = userService.findByUsername(eventVO.getUsername());
+        System.out.println(eventId);
         if(user.isPresent()) {
             Event event = Event.builder(user.get(), eventVO.getName()).
                     id(eventId).
@@ -56,10 +57,10 @@ public class EventDetailController {
                     timeStamp(eventVO.getTimeStamp()).build();
 
             int updatedEntries = eventService.updateEvent(event);
-            resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
-            resultResponseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            resultResponseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;
