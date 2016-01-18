@@ -14,4 +14,8 @@ public interface UserDAO {
      */
     void createUser(User user);
 
+    boolean isUserNameRegistered(String username);
+
+    boolean isEmailRegistered(String email);
+
 }
