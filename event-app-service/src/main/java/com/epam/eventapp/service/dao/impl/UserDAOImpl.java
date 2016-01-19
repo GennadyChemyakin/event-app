@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 
@@ -30,6 +31,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
     private final String SELECT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
 
     @Override
+    @Transactional
     public void createUser(User user) {
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
