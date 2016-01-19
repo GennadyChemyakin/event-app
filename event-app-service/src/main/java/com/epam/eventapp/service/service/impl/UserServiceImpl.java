@@ -15,11 +15,12 @@ public class UserServiceImpl implements UserService {
     private UserDAO userDao;
 
     @Override
-    public void createUser(User user) {
+    public int createUser(User user) {
 
         LOGGER.debug("Start saving user into database: Params user = {}", user);
-        userDao.createUser(user);
+        int rows = userDao.createUser(user);
         LOGGER.debug("Has saved user into database: Params user = {}", user);
 
+        return rows;
     }
 }

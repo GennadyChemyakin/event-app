@@ -20,7 +20,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
             ":country, :city, :bio)";
 
     @Override
-    public void createUser(User user) {
+    public int createUser(User user) {
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
             SqlParameterSource ps = new MapSqlParameterSource()
@@ -35,10 +35,11 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                                     .addValue("city"    , user.getCountry())
                                     .addValue("bio"     , user.getBio());
 
-            getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder);
+            int rows = getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder);
             user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue())
                     .password("")
                     .build();
+            return rows;
 
     }
 }

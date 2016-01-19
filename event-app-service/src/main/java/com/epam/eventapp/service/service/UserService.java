@@ -9,5 +9,5 @@ public interface UserService {
      * Method for saving new user into database
      * @param user - user to save into db
      */
-    void createUser(User user);
+    int createUser(User user);
 }
