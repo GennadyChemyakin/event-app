@@ -32,7 +32,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
 
     @Override
     @Transactional
-    public void createUser(User user) {
+    public int createUser(User user) {
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
             SqlParameterSource ps = new MapSqlParameterSource()
@@ -47,13 +47,19 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                                     .addValue("city"    , user.getCountry())
                                     .addValue("bio"     , user.getBio());
 
-            getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder, new String[]{"id"});
+            int rows = getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder, new String[]{"id"});
+
             user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue())
                     .password("")
                     .build();
-
-            getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
+            int roleRow = getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
                 .addValue("id", user.getId()));
+
+            if (roleRow == 0 || rows == 0) {
+                return 0;
+            }
+
+        return rows;
 
     }
 

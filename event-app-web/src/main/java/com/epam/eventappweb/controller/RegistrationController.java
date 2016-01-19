@@ -35,8 +35,12 @@ public class RegistrationController {
                 .country(userView.getCountry())
                 .build();
 
-        userService.createUser(user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        int success = userService.createUser(user);
+        if (success > 0) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

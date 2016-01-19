@@ -17,21 +17,22 @@ public class UserServiceImpl implements UserService {
     private UserDAO userDao;
 
     @Override
-    public void createUser(User user) {
+    public int createUser(User user) {
 
         if (userDao.isEmailRegistered(user.getEmail())) {
             LOGGER.info("User with email: " + user.getEmail() + " is already in database", user);
-            return;
+            return 0;
         }
 
         if (userDao.isUserNameRegistered(user.getUsername())) {
             LOGGER.info("User with username: " + user.getUsername() + " is already in database", user);
-            return;
+            return 0;
         }
 
         LOGGER.debug("Start saving user into database: Params user = {}", user);
-        userDao.createUser(user);
+        int rows = userDao.createUser(user);
         LOGGER.debug("Has saved user into database: Params user = {}", user);
 
+        return rows;
     }
 }
