@@ -24,7 +24,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
             ":country, :city, :bio)";
 
     private final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
-            + "(SELECT ID FROM AUTHORITY WHERE AUTHORITY = 'ROLE_USER')";
+            + "(SELECT ID FROM AUTHORITY WHERE AUTHORITY = 'ROLE_USER'))";
 
     private final String SELECT_USER_BY_USERNAME = "SELECT count(*) FROM SEC_USER WHERE username = :username";
 
@@ -53,7 +53,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .password("")
                     .build();
             int roleRow = getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
-                .addValue("id", user.getId()));
+                .addValue("id", keyHolder.getKey().intValue()));
 
             if (roleRow == 0 || rows == 0) {
                 return 0;

@@ -33,6 +33,7 @@ public class RegistrationController {
                 .photo(userView.getPhoto())
                 .city(userView.getCity())
                 .country(userView.getCountry())
+                .bio(userView.getBio())
                 .build();
 
         int success = userService.createUser(user);
