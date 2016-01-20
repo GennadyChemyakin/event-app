@@ -119,7 +119,7 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
-        when(eventServiceMock.updateEvent(argThat(equalToEvent(0)))).thenReturn(1);
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(1);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -150,7 +150,7 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
-        when(eventServiceMock.updateEvent(argThat(equalToEvent(-1)))).thenReturn(0);
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(0);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -195,8 +195,14 @@ public class EventDetailControllerTest {
      * @param id value to compare with
      * @return Matcher
      */
-    private static Matcher<Event> equalToEvent(int id) {
-        return hasProperty("id", is(equalTo(id)));
+    private static Matcher<Event> equalToEvent(int id, String name, String city, String location) {
+        return org.hamcrest.Matchers.allOf(
+                is(instanceOf(Event.class)),
+                hasProperty("id", is(equalTo(id))),
+                hasProperty("name", is(equalTo(name))),
+                hasProperty("city", is(equalTo(city))),
+                hasProperty("location", is(equalTo(location)))
+        );
     }
 }
 
