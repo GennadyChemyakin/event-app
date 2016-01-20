@@ -8,12 +8,13 @@ $(document).ready(function () {
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
-        if (data.timeStamp != null)
+        if (data.timeStamp != null) {
             event.date = new Date(data.timeStamp.year, data.timeStamp.monthValue - 1, data.timeStamp.dayOfMonth,
                 data.timeStamp.hour, data.timeStamp.minute);
+        }
         event.user = {};
         event.user.username = data.user.username;
-        event.user.name = data.user.name != null ? data.user.name + " " : "";
+        event.user.name = data.user.name != null ? data.user.name : "";
         event.user.surname = data.user.surname != null ? data.user.surname : "";
         event.country = data.country != null ? data.country : "";
         event.city = data.city != null ? data.city : "";
@@ -24,20 +25,21 @@ $(document).ready(function () {
         $('#eventName').text(event.name);
         $('#description').text(event.description);
         $('#address').append(" " + (event.country + " " + event.city + " " + event.location).trim());
-        if (event.date != null)
+        if (event.date != null) {
             $('#time').append(" " + event.date.toLocaleDateString() + " " + event.date.toLocaleTimeString());
-        else
+        }
+        else {
             $('#time').append(" - -");
-
+        }
         //user
         $('#username').text(event.user.username.trim());
-        $('#name').text((event.user.name + event.user.surname).trim());
+        $('#name').text((event.user.name + " " + event.user.surname).trim());
 
     });
 });
 
 //getting params from request
- function urlParam (name) {
+function urlParam(name) {
     var params = window.location.href.slice(window.location.href.indexOf('?') + 1);
     var results = new RegExp(name + '=([^&#]*)').exec(params);
     if (results == null) {
