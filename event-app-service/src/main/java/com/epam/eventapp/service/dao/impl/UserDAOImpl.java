@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository("UserDAO")
 public class UserDAOImpl extends GenericDAO implements UserDAO {
 
-    private final String GET_USER_BY_USERNAME = "select id, username, email, name, surname, gender, photo, country, city, bio from sec_user where username=:username";
+    private static final String GET_USER_BY_USERNAME = "select id, username, email, name, surname, gender, photo, country, city, bio from sec_user where username=:username";
 
     @Override
     public Optional<User> findByUsername(String username) {

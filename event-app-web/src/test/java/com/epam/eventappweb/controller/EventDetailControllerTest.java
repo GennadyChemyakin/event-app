@@ -24,6 +24,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
+import static org.hamcrest.Matchers.isA;
+
 /**
  * test Class for EventDetailController
  */
@@ -117,7 +119,7 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
-        when(eventServiceMock.updateEvent(argThat(equalToEvent(Event.class, 0)))).thenReturn(1);
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(0)))).thenReturn(1);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -148,7 +150,7 @@ public class EventDetailControllerTest {
                 location(newLocation).build();
 
         when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
-        when(eventServiceMock.updateEvent(argThat(equalToEvent(Event.class, -1)))).thenReturn(0);
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(-1)))).thenReturn(0);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
@@ -190,15 +192,11 @@ public class EventDetailControllerTest {
 
     /**
      * Matcher for Events, checks if both events are instances of same class and have same id field
-     * @param eventClass Class
      * @param id value to compare with
      * @return Matcher
      */
-    private static Matcher<Event> equalToEvent(Class<?> eventClass, int id) {
-        return org.hamcrest.Matchers.allOf(
-                is(instanceOf(eventClass)),
-                hasProperty("id", is(equalTo(id)))
-        );
+    private static Matcher<Event> equalToEvent(int id) {
+        return hasProperty("id", is(equalTo(id)));
     }
 }
 
