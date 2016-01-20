@@ -12,7 +12,9 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.when;
 
-
+/**
+ * Test fot UserService class
+ */
 public class UserServiceTest {
 
     @Mock
@@ -27,8 +29,11 @@ public class UserServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    /**
+     * Testing  method createUser()
+     */
     @Test
-    public void shouldReturnUserCreated() {
+    public void shoudCreateUserAndReturnNewRowsCount() {
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
         when(userDAOMock.createUser(user)).thenReturn(1);
@@ -40,21 +45,5 @@ public class UserServiceTest {
         Assert.assertNotEquals(0, rows);
 
     }
-
-    @Test
-    public void shouldNotCreateUser(){
-
-        //given
-        User user = User.builder("Danil", "").build();
-        when(userDAOMock.createUser(user)).thenReturn(0);
-
-        //when
-        int rows = userService.createUser(user);
-
-        //then
-        Assert.assertEquals(0,rows);
-
-    }
-
 
 }
