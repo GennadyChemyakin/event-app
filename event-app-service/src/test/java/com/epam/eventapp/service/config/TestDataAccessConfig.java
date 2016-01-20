@@ -18,7 +18,7 @@ public class TestDataAccessConfig {
     public DataSource embeddedDataSource() {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         EmbeddedDatabase db = builder
-                .setType(EmbeddedDatabaseType.DERBY)
+                .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/create.db.sql")
                 .addScript("sql/insert.data.sql")
                 .build();
