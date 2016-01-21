@@ -37,8 +37,8 @@ public class Event {
         this.timeStamp = builder.timeStamp;
     }
 
-    public static EventBuilder builder(User user, String name){
-        return new EventBuilder(user,name);
+    public static EventBuilder builder(String name){
+        return new EventBuilder(name);
     }
 
     public static class EventBuilder {
@@ -53,9 +53,13 @@ public class Event {
         private double gpsLongitude;
         private LocalDateTime timeStamp;
 
-        private EventBuilder(User user, String name) {
-            this.user = user;
+        private EventBuilder(String name) {
             this.name = name;
+        }
+
+        public EventBuilder user(User user) {
+            this.user = user;
+            return this;
         }
 
         public EventBuilder id(int id) {

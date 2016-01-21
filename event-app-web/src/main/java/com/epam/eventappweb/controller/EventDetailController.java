@@ -26,9 +26,6 @@ public class EventDetailController {
     @Autowired
     private EventService eventService;
 
-    @Autowired
-    private UserService userService;
-
     @RequestMapping(value = "/event/{id}", method = RequestMethod.GET)
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
         LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
@@ -43,24 +40,20 @@ public class EventDetailController {
     public ResponseEntity<Event> updateEvent(@PathVariable("id") int eventId, @RequestBody EventVO eventVO) {
         LOGGER.info("updateEvent started. Param: id = {}; event = {} ", eventId, eventVO);
         ResponseEntity<Event> resultResponseEntity;
-        Optional<User> user = userService.findByUsername(eventVO.getUsername());
-        if(user.isPresent()) {
-            Event event = Event.builder(user.get(), eventVO.getName()).
-                    id(eventId).
-                    description(eventVO.getDescription()).
-                    country(eventVO.getCountry()).
-                    city(eventVO.getCity()).
-                    location(eventVO.getLocation()).
-                    gpsLatitude(eventVO.getGpsLatitude()).
-                    gpsLongitude(eventVO.getGpsLongitude()).
-                    timeStamp(eventVO.getTimeStamp()).build();
 
-            int updatedEntries = eventService.updateEvent(event);
-            resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else {
-            resultResponseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Event event = Event.builder(eventVO.getName()).
+                id(eventId).
+                description(eventVO.getDescription()).
+                country(eventVO.getCountry()).
+                city(eventVO.getCity()).
+                location(eventVO.getLocation()).
+                gpsLatitude(eventVO.getGpsLatitude()).
+                gpsLongitude(eventVO.getGpsLongitude()).
+                timeStamp(eventVO.getTimeStamp()).build();
+
+        int updatedEntries = eventService.updateEvent(event);
+        resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;
     }

@@ -35,9 +35,6 @@ public class EventDetailControllerTest {
     @Mock
     private EventService eventServiceMock;
 
-    @Mock
-    private UserService userServiceMock;
-
     @InjectMocks
     private EventDetailController controller;
 
@@ -61,7 +58,8 @@ public class EventDetailControllerTest {
 
         //given
         final int id = 0;
-        Optional<Event> expectedEvent = Optional.of(Event.builder(User.builder("Ivan", "ivan@gmail.com").build(), "Party").build());
+        Optional<Event> expectedEvent = Optional.of(Event.builder("Party").
+                user(User.builder("Ivan", "ivan@gmail.com").build()).build());
         when(eventServiceMock.findById(id)).thenReturn(expectedEvent);
 
         //when
@@ -108,17 +106,13 @@ public class EventDetailControllerTest {
     public void shouldUpdateEvent() throws Exception {
         //given
         final int id = 0;
-        final String username = "Vasya";
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-        final User user = User.builder(username, "vasya@vasya.com").build();
         final EventVO updatedEventVO = EventVO.builder(newName).
-                username(username).
                 city(newCity).
                 location(newLocation).build();
 
-        when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
         when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(1);
 
         //when
@@ -139,47 +133,14 @@ public class EventDetailControllerTest {
     public void shouldReturn404InCaseWrongEventIdSpecified() throws Exception {
         //given
         final int id = -1;
-        final String username = "Vasya";
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
-        final User user = User.builder(username, "vasya@vasya.com").build();
         final EventVO updatedEventVO = EventVO.builder(newName).
-                username(username).
                 city(newCity).
                 location(newLocation).build();
 
-        when(userServiceMock.findByUsername(username)).thenReturn(Optional.of(user));
         when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(0);
-
-        //when
-        ResultActions resultActions = mockMvc.perform(put("/event/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
-
-        //then
-        resultActions.andExpect(status().isNotFound());
-    }
-
-    /**
-     * Testing updateEvent from EventDetailController.
-     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
-     * Expect 404 status code
-     */
-    @Test
-    public void shouldReturn404InCaseWrongUsernameSpecified() throws Exception {
-        //given
-        final int id = 0;
-        final String username = "NotInDB";
-        final String newName = "Ballet";
-        final String newCity = "Moscow";
-        final String newLocation = "Kremlin";
-        final EventVO updatedEventVO = EventVO.builder(newName).
-                username(username).
-                city(newCity).
-                location(newLocation).build();
-
-        when(userServiceMock.findByUsername(username)).thenReturn(Optional.empty());
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
