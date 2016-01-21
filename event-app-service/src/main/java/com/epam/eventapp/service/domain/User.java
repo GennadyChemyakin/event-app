@@ -1,14 +1,9 @@
 package com.epam.eventapp.service.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-
 /**
  * class describes User domain
  */
-@JsonDeserialize(builder = User.UserBuilder.class)
 public class User {
     private final int id;
     private final String username;
@@ -40,7 +35,6 @@ public class User {
         return new UserBuilder(username,email);
     }
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class UserBuilder {
         private int id;
         private String username;

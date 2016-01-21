@@ -1,17 +1,11 @@
 package com.epam.eventapp.service.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-
 import java.time.LocalDateTime;
 
 /**
  * class describes EVENT domain
  * without collections for storing photo and video objects
  */
-@JsonDeserialize(builder = Event.EventBuilder.class)
 public class Event {
     private final int id;
     private final User user;

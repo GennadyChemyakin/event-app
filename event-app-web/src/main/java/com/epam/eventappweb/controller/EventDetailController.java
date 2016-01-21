@@ -1,9 +1,7 @@
 package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Event;
-import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
-import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.EventVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
