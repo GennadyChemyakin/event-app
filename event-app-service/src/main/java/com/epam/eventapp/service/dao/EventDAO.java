@@ -3,6 +3,7 @@ package com.epam.eventapp.service.dao;
 import com.epam.eventapp.service.domain.Event;
 
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,4 +25,10 @@ public interface EventDAO {
      * @return Number of updated rows
      */
     int updateEventById(Event event);
+
+    /**
+     * Method for getting List of all Events sorted by their timestamp in descending order
+     * @return Optional.of(List of Events) if we've found any events, otherwise Optional.empty()
+     */
+    public Optional<List<Event>> getEventListOrderedByTimestampDesc();
 }

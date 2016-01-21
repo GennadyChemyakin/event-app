@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -107,5 +108,18 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
         //then
         Assert.assertEquals(0, updatedEntries);
+    }
+
+    /**
+     * testing shouldGetEventListSortedByTimestampDesc method from EventDAOImpl.
+     * looking for list of all events sorted in descending order by event_time.
+     * NOT IMPLEMENTED YET: Checking if events sorted in descending order by event_time
+     */
+    @Test
+    public void shouldGetEventListSortedByTimestampDesc() {
+        //when
+        Optional<List<Event>> eventList = eventDAO.getEventListOrderedByTimestampDesc();
+        //then
+        Assert.assertNotNull(eventList.get());
     }
 }
