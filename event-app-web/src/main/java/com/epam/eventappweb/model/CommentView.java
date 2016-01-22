@@ -93,4 +93,15 @@ public class CommentView {
     public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
+
+    @Override
+    public String toString() {
+        return "CommentView{" +
+                "id=" + id +
+                ", eventId=" + eventId +
+                ", username='" + username + '\'' +
+                ", message='" + message + '\'' +
+                ", timeStamp=" + timeStamp +
+                '}';
+    }
 }

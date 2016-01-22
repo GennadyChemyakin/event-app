@@ -35,8 +35,52 @@ $(document).ready(function () {
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
 
+    }).then(function () {
+        $.ajax({
+            type: "GET",
+            url: "/event-app/commentList/" + urlParam("id") + "/1"
+        }).then(showComments)
     });
+    $('#loadComments').click(function(){
+        $.ajax({
+            type: "GET",
+            url: "/event-app/commentList/" + urlParam("id") + "/" + ($(".commentRow").length + 1)
+        }).then(showComments)
+    })
 });
+
+
+
+
+function showComments(data) {
+    for (var i = data.length - 1; i >= 0; i--) {
+        arg = data[i];
+        var comment = {};
+        comment.id = arg.id;
+        comment.message = arg.message;
+        comment.username = arg.username;
+        comment.date = null;
+        if (arg.timeStamp != null) {
+            comment.date = new Date(arg.timeStamp.year, arg.timeStamp.monthValue - 1, arg.timeStamp.dayOfMonth,
+                arg.timeStamp.hour, arg.timeStamp.minute);
+        }
+
+        $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
+            '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
+            '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
+            ' <strong class= "commentUsername"></strong> <span class="text-muted commentTime"></span> </div> ' +
+            '<div class="panel-body" ><span class="commentMessage"></span></div> </div> </div> </div> ').
+            attr('id', comment.id).css("display","none").prependTo('#addCommentPanel');
+
+        $("#" + comment.id).find("strong.commentUsername").attr("id", 'commentUsername' + comment.id);
+        $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
+        $("#" + comment.id).find("span.commentMessage").attr("id", 'commentMessage' + comment.id);
+        $("#" + 'commentUsername' + comment.id).text(comment.username);
+        $("#" + 'commentTime' + comment.id).text(comment.date.toLocaleDateString() + " " + comment.date.toLocaleTimeString());
+        $("#" + 'commentMessage' + comment.id).text(comment.message);
+        $("#" + comment.id).slideDown();
+    }
+}
 
 //getting params from request
 function urlParam(name) {

@@ -18,7 +18,7 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
             "c.event_id as c_event_id, u.id as u_id, u.username as u_username, u.email as u_email, u.name as u_name, " +
             "u.surname as u_surname, u.country as u_country, u.city as u_city,u.bio as u_bio from commentary c join " +
             "sec_user u on c.sec_user_id = u.id where c.event_id=:eventId ORDER BY c.COMMENT_TIME DESC) event_comments where " +
-            "rownum <= :finishPos ) WHERE rnum >= :startPos";
+            "rownum < :finishPos ) WHERE rnum >= :startPos";
 
     @Override
     public Optional<List<Comment>> getCommentsListByEventId(int eventId, int offset, int amount) {
