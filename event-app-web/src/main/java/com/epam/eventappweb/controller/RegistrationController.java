@@ -36,12 +36,10 @@ public class RegistrationController {
                 .bio(userView.getBio())
                 .build();
 
-        int success = userService.createUser(user);
-        if (success > 0) {
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
+        userService.createUser(user);
 
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
     }
 
 }

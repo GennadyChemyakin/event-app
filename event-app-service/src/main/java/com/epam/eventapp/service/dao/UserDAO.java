@@ -12,7 +12,7 @@ public interface UserDAO {
      *
      * @param user - user object
      */
-    int createUser(User user);
+    void createUser(User user);
 
     boolean isUserNameRegistered(String username);
 

@@ -152,7 +152,7 @@ public class UserView {
                 ", gender='" + gender + '\'' +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
-                ", photo='" + (photo.length != 0) + '\'' +
+                ", photo='" + (photo == null ? false : photo.length != 0) + '\'' +
                 '}';
     }
 

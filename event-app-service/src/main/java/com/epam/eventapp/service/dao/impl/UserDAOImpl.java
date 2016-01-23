@@ -9,7 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import java.sql.ResultSet;
 
 /**
@@ -19,20 +19,20 @@ import java.sql.ResultSet;
 @Repository
 public class UserDAOImpl extends GenericDAO implements UserDAO {
 
-    private final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +
+    private static final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +
             "country, city, bio) VALUES(AUTHORITY_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
 
-    private final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
+    private static final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
             + "(SELECT ID FROM AUTHORITY WHERE AUTHORITY = 'ROLE_USER'))";
 
-    private final String SELECT_USER_BY_USERNAME = "SELECT count(*) FROM SEC_USER WHERE username = :username";
+    private static final String СOUNT_USER_BY_USERNAME = "SELECT count(*) FROM SEC_USER WHERE username = :username";
 
-    private final String SELECT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
+    private static final String СOUNT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
 
     @Override
     @Transactional
-    public int createUser(User user) {
+    public void createUser(User user) {
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
             SqlParameterSource ps = new MapSqlParameterSource()
@@ -56,23 +56,21 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                 .addValue("id", keyHolder.getKey().intValue()));
 
             if (roleRow == 0 || rows == 0) {
-                return 0;
+                throw new UserNotCreatedException();
             }
-
-        return rows;
 
     }
 
     @Override
     public boolean isUserNameRegistered(String username) {
-        Integer cnt = getNamedParameterJdbcTemplate().queryForObject(SELECT_USER_BY_USERNAME, new MapSqlParameterSource()
+        Integer cnt = getNamedParameterJdbcTemplate().queryForObject(СOUNT_USER_BY_USERNAME, new MapSqlParameterSource()
                 .addValue("username", username),Integer.class);
         return cnt != null && cnt > 0;
     }
 
     @Override
     public boolean isEmailRegistered(String email) {
-        Integer cnt = getNamedParameterJdbcTemplate().queryForObject(SELECT_USER_BY_EMAIL, new MapSqlParameterSource()
+        Integer cnt = getNamedParameterJdbcTemplate().queryForObject(СOUNT_USER_BY_EMAIL, new MapSqlParameterSource()
                 .addValue("email", email),Integer.class);
         return cnt != null && cnt > 0;
     }
