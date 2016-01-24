@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * class for representiog Commentary domain on presentation layer
  */
-public class CommentView {
+public class CommentVO {
 
     private final int id;
     private final int eventId;
@@ -14,7 +14,7 @@ public class CommentView {
     private final String message;
     private final LocalDateTime timeStamp;
 
-    private CommentView(CommentViewBuilder builder){
+    private CommentVO(CommentViewBuilder builder){
         this.id = builder.id;
         this.eventId = builder.eventId;
         this.username = builder.username;
@@ -65,8 +65,8 @@ public class CommentView {
             return this;
         }
 
-        public CommentView build(){
-            return new CommentView(this);
+        public CommentVO build(){
+            return new CommentVO(this);
         }
     }
 

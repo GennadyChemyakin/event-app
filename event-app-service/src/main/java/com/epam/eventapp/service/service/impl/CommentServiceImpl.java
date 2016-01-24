@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +25,11 @@ public class CommentServiceImpl implements CommentService {
     private CommentDAO commentDAO;
 
     @Override
-    public Optional<List<Comment>> getCommentsListByEventId(int eventId, int offset, int amount) {
-        LOGGER.debug("getCommentsListByEventId started: Params eventId = {}, offset = {}, amount = {}", eventId,
-                offset, amount);
-        Optional<List<Comment>> commentList = commentDAO.getCommentsListByEventId(eventId, offset, amount);
-        LOGGER.debug("getCommentsListByEventId finished. Result: {}", commentList);
+    public Optional<List<Comment>> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, Timestamp commentTime, int amount) {
+        LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate started: Params eventId = {}, commentTime = {}, amount = {}", eventId,
+                commentTime, amount);
+        Optional<List<Comment>> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, commentTime, amount);
+        LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate finished. Result: {}", commentList);
         return commentList;
     }
 }
