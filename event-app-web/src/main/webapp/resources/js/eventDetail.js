@@ -34,22 +34,19 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
-
     }).then(function () {
         $.ajax({
             type: "GET",
             url: "/event-app/commentList/" + urlParam("id") + "/1"
         }).then(showComments)
     });
-    $('#loadComments').click(function(){
+    $('#loadComments').click(function () {
         $.ajax({
             type: "GET",
             url: "/event-app/commentList/" + urlParam("id") + "/" + ($(".commentRow").length + 1)
         }).then(showComments)
     })
 });
-
-
 
 
 function showComments(data) {
@@ -70,7 +67,7 @@ function showComments(data) {
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
             ' <strong class= "commentUsername"></strong> <span class="text-muted commentTime"></span> </div> ' +
             '<div class="panel-body" ><span class="commentMessage"></span></div> </div> </div> </div> ').
-            attr('id', comment.id).css("display","none").prependTo('#addCommentPanel');
+            attr('id', comment.id).css("display", "none").prependTo('#addCommentPanel');
 
         $("#" + comment.id).find("strong.commentUsername").attr("id", 'commentUsername' + comment.id);
         $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
