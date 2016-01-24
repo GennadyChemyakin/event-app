@@ -1,7 +1,9 @@
 package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Comment;
+import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
+import com.epam.eventappweb.model.CommentPackVO;
 import com.epam.eventappweb.model.CommentVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,26 +31,29 @@ public class CommentController {
     private CommentService commentService;
 
     @RequestMapping(value = "/commentList/{eventId}/{timestamp}", method = RequestMethod.GET)
-    public ResponseEntity<List<CommentVO>> getCommentList(@PathVariable("eventId") int eventId, @PathVariable("timestamp") long commentTime) {
+    public ResponseEntity<CommentPackVO> getCommentList(@PathVariable("eventId") int eventId, @PathVariable("timestamp") long commentTime) {
         LOGGER.info("getCommentList started. Param: eventId = {}, offset = {} ", eventId, commentTime);
 
-        Optional<List<Comment>> commentList = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, new Timestamp(commentTime), COMMENTS_AMOUNT);
-        ResponseEntity<List<CommentVO>> resultResponseEntity;
+        Optional<CommentPack> commentPack = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, new Timestamp(commentTime), COMMENTS_AMOUNT);
+        ResponseEntity<CommentPackVO> resultResponseEntity;
+        Optional<CommentPackVO> commentPackVO;
         List<CommentVO> commentViews = new ArrayList<>();
-        if (commentList.isPresent()) {
-            for (Comment comment : commentList.get()) {
+        if (commentPack.isPresent()) {
+            for (Comment comment : commentPack.get().getComments()) {
                 CommentVO commentView = CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
                         eventId(comment.getEventId()).username(comment.getUser().getUsername()).
                         userPhoto(comment.getUser().getPhoto()).timeStamp(comment.getTimeStamp()).build();
                 commentViews.add(commentView);
             }
-            resultResponseEntity = new ResponseEntity<>(commentViews, HttpStatus.OK);
+            commentPackVO = Optional.of(new CommentPackVO(commentViews, commentPack.get().getRemainingComments()));
+            resultResponseEntity = new ResponseEntity<>(commentPackVO.get(), HttpStatus.OK);
         } else {
+            commentPackVO = Optional.empty();
             resultResponseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         LOGGER.info("getCommentList finished. Result:"
-                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), commentViews);
+                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), commentPackVO);
         return resultResponseEntity;
     }
 }

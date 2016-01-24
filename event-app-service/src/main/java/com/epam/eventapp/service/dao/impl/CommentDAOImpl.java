@@ -22,6 +22,9 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
             "where c.event_id=:eventId and c.comment_time < :commentTime ORDER BY c.COMMENT_TIME DESC) comment_alias " +
             "where rownum <= :amount";
 
+    private final static String GET_COUNT_OF_REMAINING_COMMENTS = "select count(*) from commentary c where c.comment_time" +
+            " < :commentTime and c.event_id=:eventId";
+
     @Override
     public Optional<List<Comment>> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, Timestamp commentTime, int amount) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -45,5 +48,13 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
                         build());
         return commentList.size() > 0 ? Optional.of(commentList) : Optional.empty();
 
+    }
+
+    @Override
+    public Integer countOfCommentsAddedBeforeDate(int eventId, Timestamp commentTime) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("eventId", eventId);
+        params.addValue("commentTime", commentTime);
+        return getNamedParameterJdbcTemplate().queryForObject(GET_COUNT_OF_REMAINING_COMMENTS, params, Integer.class);
     }
 }

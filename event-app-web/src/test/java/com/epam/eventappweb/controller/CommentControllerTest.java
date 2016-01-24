@@ -2,6 +2,7 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -57,6 +58,7 @@ public class CommentControllerTest {
         final int id = 0;
         final int firstCommentId = 0;
         final int secondCommentId = 1;
+        final int remainingComments = 3;
         final String firstCommentUsername = "Ivan";
         final String firstCommentMessage = "Great!";
         final String secondCommentUsername = "Peter";
@@ -75,20 +77,23 @@ public class CommentControllerTest {
         List<Comment> expectedCommentList = new ArrayList<>();
         expectedCommentList.add(commentFromIvan);
         expectedCommentList.add(commentFromPete);
-        Optional<List<Comment>> commentList = Optional.of(expectedCommentList);
-        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, CommentController.COMMENTS_AMOUNT)).thenReturn(commentList);
+        CommentPack expectedCommentPack = new CommentPack(expectedCommentList, remainingComments);
+        Optional<CommentPack> expectedCommentPackOptional = Optional.of(expectedCommentPack);
+        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, CommentController.COMMENTS_AMOUNT)).
+                thenReturn(expectedCommentPackOptional);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/commentList/" + id + "/" + commentTimestamp.getTime()));
 
         //then
         resultActions.andExpect(status().isOk()).
-                andExpect(jsonPath("$.[0].id", Matchers.is(firstCommentId))).
-                andExpect(jsonPath("$.[1].id", Matchers.is(secondCommentId))).
-                andExpect(jsonPath("$.[0].message", Matchers.is(firstCommentMessage))).
-                andExpect(jsonPath("$.[1].message", Matchers.is(secondCommentMessage))).
-                andExpect(jsonPath("$.[0].username", Matchers.is(firstCommentUsername))).
-                andExpect(jsonPath("$.[1].username", Matchers.is(secondCommentUsername)));
+                andExpect(jsonPath("$.commentVOList.[0].id", Matchers.is(firstCommentId))).
+                andExpect(jsonPath("$.commentVOList.[1].id", Matchers.is(secondCommentId))).
+                andExpect(jsonPath("$.commentVOList.[0].message", Matchers.is(firstCommentMessage))).
+                andExpect(jsonPath("$.commentVOList.[1].message", Matchers.is(secondCommentMessage))).
+                andExpect(jsonPath("$.commentVOList.[0].username", Matchers.is(firstCommentUsername))).
+                andExpect(jsonPath("$.commentVOList.[1].username", Matchers.is(secondCommentUsername))).
+                andExpect(jsonPath("$.remainingComments", Matchers.is(remainingComments)));
     }
 
     /**
@@ -105,9 +110,9 @@ public class CommentControllerTest {
         final String commentTime = "2016-01-23 15:00:00";
         final Timestamp commentTimestamp = Timestamp.valueOf(LocalDateTime.parse(commentTime,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        Optional<List<Comment>> emptyCommentList = Optional.empty();
+        Optional<CommentPack> emptyCommentPack = Optional.empty();
         when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, CommentController.COMMENTS_AMOUNT)).
-                thenReturn(emptyCommentList);
+                thenReturn(emptyCommentPack);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/commentList/" + id + "/" + commentTimestamp.getTime()));

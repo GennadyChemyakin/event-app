@@ -3,6 +3,7 @@ package com.epam.eventapp.service.service.impl;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +52,7 @@ public class CommentServiceTest {
         final String secondCommentTime = "2016-01-22 15:00:00";
         final String commentTime = "2016-01-23 15:00:00";
         final int commentsAmount = 2;
+        final int remainingComments = 3;
         final Timestamp commentTimestamp = Timestamp.valueOf(LocalDateTime.parse(commentTime,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         Comment commentFromIvan = Comment.builder().user(User.builder("Ivan", "ivan@gmail.com").build()).message("Great!").
@@ -63,14 +65,17 @@ public class CommentServiceTest {
         Optional<List<Comment>> commentList = Optional.of(expectedCommentList);
         when(commentDAOMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp,
                 commentsAmount)).thenReturn(commentList);
+        when(commentDAOMock.countOfCommentsAddedBeforeDate(id, Timestamp.valueOf(commentList.get().get(commentList.get().size() - 1).
+                getTimeStamp()))).thenReturn(remainingComments);
 
         //when
-        Optional<List<Comment>> comments = sut.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, commentsAmount);
+        Optional<CommentPack> commentPack = sut.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, commentsAmount);
 
         //then
-        Assert.assertTrue(comments.isPresent());
-        Assert.assertEquals(id, comments.get().get(0).getEventId());
-        Assert.assertEquals(commentsAmount, comments.get().size());
+        Assert.assertTrue(commentPack.isPresent());
+        Assert.assertEquals(id, commentPack.get().getComments().get(0).getEventId());
+        Assert.assertEquals(commentsAmount, commentPack.get().getComments().size());
+        Assert.assertEquals(remainingComments, commentPack.get().getRemainingComments().intValue());
     }
 
     /**
@@ -83,14 +88,16 @@ public class CommentServiceTest {
         final int id = 1;
         final String commentTime = "2016-01-21 15:00:00";
         final int commentsAmount = 2;
+        final int remainingComments = 3;
         final Timestamp commentTimestamp = Timestamp.valueOf(LocalDateTime.parse(commentTime,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         Optional<List<Comment>> absentCommentList = Optional.empty();
         when(commentDAOMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp,
                 commentsAmount)).thenReturn(absentCommentList);
+        when(commentDAOMock.countOfCommentsAddedBeforeDate(id, commentTimestamp)).thenReturn(remainingComments);
 
         //when
-        Optional<List<Comment>> comments = sut.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, commentsAmount);
+        Optional<CommentPack> comments = sut.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, commentsAmount);
 
         //then
         Assert.assertFalse(comments.isPresent());

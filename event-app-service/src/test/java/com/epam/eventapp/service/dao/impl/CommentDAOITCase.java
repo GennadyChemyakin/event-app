@@ -1,6 +1,7 @@
 package com.epam.eventapp.service.dao.impl;
 
 
+
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
@@ -75,4 +76,26 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
         //then
         Assert.assertEquals(false, commentList.isPresent());
     }
+
+    /**
+     * testing countOfCommentsAddedBeforeDate method from CommentDAOImpl.
+     * counting comments that were added before specified time
+     * checking that amount is equals to know amount of comments
+     */
+    @Ignore
+    @Test
+    public void shouldReturnAmountOfRemainingComments() {
+        //given
+        final int id = 0;
+        final String commentTime = "2016-01-20 15:00:00";
+        final int amount = 3;
+
+        //when
+        Integer remainingComments = commentDAO.countOfCommentsAddedBeforeDate(id,Timestamp.valueOf(
+                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+
+        //then
+        Assert.assertEquals(amount, remainingComments.intValue());
+    }
+
 }

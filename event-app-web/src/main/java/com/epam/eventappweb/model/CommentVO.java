@@ -3,7 +3,7 @@ package com.epam.eventappweb.model;
 import java.time.LocalDateTime;
 
 /**
- * class for representiog Commentary domain on presentation layer
+ * class for representing Commentary domain on presentation layer
  */
 public class CommentVO {
 
@@ -92,5 +92,16 @@ public class CommentVO {
 
     public LocalDateTime getTimeStamp() {
         return timeStamp;
+    }
+
+    @Override
+    public String toString() {
+        return "CommentVO{" +
+                "id=" + id +
+                ", eventId=" + eventId +
+                ", username='" + username + '\'' +
+                ", message='" + message + '\'' +
+                ", timeStamp=" + timeStamp +
+                '}';
     }
 }

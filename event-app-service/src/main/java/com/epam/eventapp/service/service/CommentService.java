@@ -1,9 +1,8 @@
 package com.epam.eventapp.service.service;
 
-import com.epam.eventapp.service.domain.Comment;
 
+import com.epam.eventapp.service.model.CommentPack;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,5 +18,5 @@ public interface CommentService {
      * @param amount amount of comments to receive
      * @return Optional with list in case comments were found and otherwise Optional.empty()
      */
-    Optional<List<Comment>> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, Timestamp commentTime, int amount);
+    Optional<CommentPack> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, Timestamp commentTime, int amount);
 }
