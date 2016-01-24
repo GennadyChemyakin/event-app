@@ -14,11 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.OngoingStubbing;
-
-import static org.mockito.Mockito.when;
 
 
+/**
+ * test Class for UserService
+ */
 public class UserServiceTest {
 
     @Mock

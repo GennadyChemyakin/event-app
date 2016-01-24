@@ -14,8 +14,14 @@ public interface UserDAO {
      */
     void createUser(User user);
 
+    /**
+     * @return returns true if Username is already in the database
+     */
     boolean isUserNameRegistered(String username);
 
+    /**
+     * @return returns true if email is already in the database
+     */
     boolean isEmailRegistered(String email);
 
 }

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 @Immutable
-@JsonDeserialize(builder = UserView.Builder.class)
-public class UserView {
+@JsonDeserialize(builder = UserVO.Builder.class)
+public class UserVO {
 
     private final String username;
     private final String password;
@@ -20,7 +20,7 @@ public class UserView {
     private final String city;
     private final String bio;
 
-    private UserView(Builder builder) {
+    private UserVO(Builder builder) {
         this.username = builder.username;
         this.password = builder.password;
         this.email = builder.email;
@@ -106,8 +106,8 @@ public class UserView {
         }
 
 
-        public UserView build(){
-            return new UserView(this);
+        public UserVO build(){
+            return new UserVO(this);
         }
 
     }
