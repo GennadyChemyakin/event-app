@@ -137,7 +137,6 @@
                 </webApp>
                 </configuration>
             </plugin>
-
         </plugins>
         <finalName>event-app-web</finalName>
     </build>

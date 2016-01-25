@@ -73,7 +73,8 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         final String whereClause = "id=" + id + " and name='" + newName + "' and city='" + newCity + "' and address='" +
                 newLocation + "' and event_time={ts '" + newDateTime + "'}";
 
-        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+        Event updatedEvent = Event.builder(newName).
+                user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
                 city(newCity).
                 location(newLocation).
@@ -99,7 +100,8 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         final String newName = "Ballet";
         final LocalDateTime newDateTime = LocalDateTime.now();
 
-        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+        Event updatedEvent = Event.builder(newName).
+                user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
                 timeStamp(newDateTime).build();
 
