@@ -13,10 +13,6 @@
 
     <packaging>jar</packaging>
 
-    <properties>
-        <version.h2>1.4.190</version.h2>
-    </properties>
-
     <dependencies>
 
         <!-- dependency for BasicDataSource-->
@@ -95,6 +91,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${version.h2}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
