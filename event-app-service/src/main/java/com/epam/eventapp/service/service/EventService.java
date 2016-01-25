@@ -1,7 +1,9 @@
 package com.epam.eventapp.service.service;
 
 import com.epam.eventapp.service.domain.Event;
+import com.epam.eventapp.service.model.EventPack;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 /**
@@ -24,4 +26,13 @@ public interface EventService {
      * @return Number of updated rows
      */
     int updateEvent(Event event);
+
+    /**
+     * Method for getting list of Events of specified size amount before eventTime ordered by the time of events
+     * @param eventTime time of eve
+     * @param amount
+     * @return
+     */
+    Optional<EventPack> getEventListFixedSizeBeforeTimeOrderedByTimeDesc(Timestamp eventTime, int amount);
+
 }

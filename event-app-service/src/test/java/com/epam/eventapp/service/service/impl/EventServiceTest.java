@@ -59,7 +59,7 @@ public class EventServiceTest {
     @Test
    public void shouldReturnAbsentInCaseWrongIdSpecified(){
         //given
-        final int id = 1;
+        final int id = 100;
         Optional<Event> absentEvent = Optional.empty();
         when(eventDAOMock.findById(id)).thenReturn(absentEvent);
 
@@ -107,7 +107,7 @@ public class EventServiceTest {
     @Test
     public void shouldReturnZeroInCaseWrongIdSpecified() {
         //given
-        final int id = -1;
+        final int id = 100;
         final String newName = "Ballet";
         final LocalDateTime newDateTime = LocalDateTime.now();
 

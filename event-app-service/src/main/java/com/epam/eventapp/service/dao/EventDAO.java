@@ -3,6 +3,7 @@ package com.epam.eventapp.service.dao;
 import com.epam.eventapp.service.domain.Event;
 
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,5 +31,11 @@ public interface EventDAO {
      * Method for getting List of all Events sorted by their timestamp in descending order
      * @return Optional.of(List of Events) if we've found any events, otherwise Optional.empty()
      */
-    public Optional<List<Event>> getEventListOrderedByTimestampDesc();
+    Optional<List<Event>> getEventListFixedSizeBeforeTimeOrderedByTimeDesc(Timestamp eventTime, int amount);
+
+    /**
+     * Method for getting number of all events in database
+     * @return Number of all events in database
+     */
+    int getNumberOfEvents();
 }

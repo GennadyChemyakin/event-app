@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -49,7 +51,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldReturnAbsentInCaseWrongIdSpecified() {
         //given
-        final int id = 1;
+        final int id = 100;
         //when
         Optional<Event> event = eventDAO.findById(id);
         //then
@@ -90,13 +92,13 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     /**
      * Testing updateEventById from EventDAOImpl.
-     * Updating event with id=-1.
+     * Updating event with id=100.
      * Checking if zero entries in DB are updated.
      */
     @Test
     public void shouldReturnZeroInCaseWrongIdSpecified() {
         //given
-        final int id = -1;
+        final int id = 100;
         final String newName = "Ballet";
         final LocalDateTime newDateTime = LocalDateTime.now();
 
@@ -120,7 +122,8 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldGetEventListSortedByTimestampDesc() {
         //when
-        Optional<List<Event>> eventList = eventDAO.getEventListOrderedByTimestampDesc();
+        Optional<List<Event>> eventList = eventDAO.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(Timestamp.valueOf(LocalDateTime.now()), 2);
+
         //then
         Assert.assertNotNull(eventList.get());
     }
