@@ -28,6 +28,7 @@
         <version.hamcrest.library>1.3</version.hamcrest.library>
         <version.mockito>1.9.5</version.mockito>
         <version.jayway.jsonpath>0.8.1</version.jayway.jsonpath>
+        <version.h2>1.4.190</version.h2>
     </properties>
 
     <modules>

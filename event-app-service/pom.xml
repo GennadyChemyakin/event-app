@@ -86,11 +86,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Derby DB -->
+        <!-- H2 DB -->
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${version.derby}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${version.h2}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
