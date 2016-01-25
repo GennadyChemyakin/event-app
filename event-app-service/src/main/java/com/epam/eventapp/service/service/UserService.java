@@ -12,4 +12,5 @@ public interface UserService {
      * @param user - user to save into db
      */
     int createUser(User user);
+
 }

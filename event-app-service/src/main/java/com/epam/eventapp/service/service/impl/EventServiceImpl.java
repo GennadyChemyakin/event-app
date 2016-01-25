@@ -31,6 +31,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public int updateEvent(Event event) {
-        return eventDAO.updateEventById(event);
+        LOGGER.debug("updateEvent started: Params event = {}", event);
+        int updatedEntries = eventDAO.updateEventById(event);
+        LOGGER.debug("findById finished. Result: {}", updatedEntries);
+        return updatedEntries;
     }
 }
