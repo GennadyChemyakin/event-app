@@ -37,23 +37,31 @@ $(document).ready(function () {
     }).then(function () {
         $.ajax({
             type: "GET",
-            url: "/event-app/commentList/" + urlParam("id") + "/1"
-        }).then(showComments)
+            url: "/event-app/commentList/" + urlParam("id") + "/" + Date.now()
+        }).then(showComments);
     });
     $('#loadComments').click(function () {
+        var lastCommentDate = $("#commentTime" + $(".commentRow:first").attr("id")).text();
+        if(lastCommentDate != '' && lastCommentDate != null){
+            lastCommentDate = Date.parse(lastCommentDate);
+        } else {
+            lastCommentDate = Date.now();
+        }
         $.ajax({
             type: "GET",
-            url: "/event-app/commentList/" + urlParam("id") + "/" + ($(".commentRow").length + 1)
+            url: "/event-app/commentList/" + urlParam("id") + "/" + lastCommentDate
         }).then(showComments)
-    })
+    });
+
 });
 
 
 function showComments(data) {
-    for (var i = data.length - 1; i >= 0; i--) {
-        arg = data[i];
+    for (var i = data.commentVOList.length - 1; i >= 0; i--) {
+        arg = data.commentVOList[i];
         var comment = {};
         comment.id = arg.id;
+        comment.remainingCommentCount = data.remainingComments;
         comment.message = arg.message;
         comment.username = arg.username;
         comment.date = null;
@@ -73,9 +81,17 @@ function showComments(data) {
         $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
         $("#" + comment.id).find("span.commentMessage").attr("id", 'commentMessage' + comment.id);
         $("#" + 'commentUsername' + comment.id).text(comment.username);
-        $("#" + 'commentTime' + comment.id).text(comment.date.toLocaleDateString() + " " + comment.date.toLocaleTimeString());
+        $("#" + 'commentTime' + comment.id).text(comment.date.toString());
         $("#" + 'commentMessage' + comment.id).text(comment.message);
         $("#" + comment.id).slideDown();
+
+        if (comment.remainingCommentCount == 0) {
+            $('#loadComments').hide();
+        } else if (comment.remainingCommentCount < 10) {
+            $('#loadComments').text("Load previous " + comment.remainingCommentCount + " comment(s)");
+        } else {
+            $('#loadComments').text("Load previous 10 comments of " + comment.remainingCommentCount);
+        }
     }
 }
 
