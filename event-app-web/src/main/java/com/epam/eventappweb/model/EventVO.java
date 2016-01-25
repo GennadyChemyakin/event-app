@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Immutable
 public final class EventVO {
     private final String name;
-    private final String username;
+    private final String creator;
     private final String description;
     private final String country;
     private final String city;
@@ -26,7 +26,7 @@ public final class EventVO {
 
     private EventVO(EventModelBuilder builder) {
         this.name = builder.name;
-        this.username = builder.username;
+        this.creator = builder.creator;
         this.description = builder.description;
         this.country = builder.country;
         this.city = builder.city;
@@ -43,7 +43,7 @@ public final class EventVO {
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventModelBuilder {
         private String name;
-        private String username;
+        private String creator;
         private String description;
         private String country;
         private String city;
@@ -57,7 +57,7 @@ public final class EventVO {
         }
 
         public EventModelBuilder username(String username) {
-            this.username = username;
+            this.creator = username;
             return this;
         }
 
@@ -101,8 +101,8 @@ public final class EventVO {
         }
     }
 
-    public String getUsername() {
-        return username;
+    public String getCreator() {
+        return creator;
     }
 
     public String getName() {
@@ -140,7 +140,7 @@ public final class EventVO {
     @Override
     public String toString() {
         return "EventVO{" +
-                "username=" + username +
+                "creator=" + creator +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +
