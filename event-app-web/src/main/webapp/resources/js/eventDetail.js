@@ -27,7 +27,6 @@ $(document).ready(function () {
         $('#address').append(" " + (event.country + " " + event.city + " " + event.location).trim());
         if (event.date != null) {
             $('#time').append(" " + event.date.toLocaleDateString() + " " + event.date.toLocaleTimeString());
-            alert(event.date.toISOString());
         }
         else {
             $('#time').append(" - -");
@@ -38,19 +37,22 @@ $(document).ready(function () {
     }).then(function () {
         $.ajax({
             type: "GET",
-            url: "/event-app/commentList/" + urlParam("id") + "/" + Date.now()
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + new Date().toISOString()
         }).then(showComments);
     });
     $('#loadComments').click(function () {
         var lastCommentDate = $("#commentTime" + $(".commentRow:first").attr("id")).text();
-        if(lastCommentDate != '' && lastCommentDate != null){
-            lastCommentDate = Date.parse(lastCommentDate);
+        if (lastCommentDate) {
+            lastCommentDate = new Date(lastCommentDate);
+            //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
+            lastCommentDate = new Date(lastCommentDate.getTime() - lastCommentDate.getTimezoneOffset() * 60000).toISOString();
         } else {
-            lastCommentDate = Date.now();
+            lastCommentDate = new Date();
+            lastCommentDate = new Date(lastCommentDate.getTime() - lastCommentDate.getTimezoneOffset() * 60000).toISOString();
         }
         $.ajax({
             type: "GET",
-            url: "/event-app/commentList/" + urlParam("id") + "/" + lastCommentDate
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + lastCommentDate
         }).then(showComments)
     });
 
@@ -58,11 +60,11 @@ $(document).ready(function () {
 
 
 function showComments(data) {
-    for (var i = data.commentVOList.length - 1; i >= 0; i--) {
+    for (var i = 0; i < data.commentVOList.length; i++) {
         arg = data.commentVOList[i];
         var comment = {};
         comment.id = arg.id;
-        comment.remainingCommentCount = data.remainingComments;
+        comment.remainingCommentsCount = data.remainingCommentsCount;
         comment.message = arg.message;
         comment.username = arg.username;
         comment.date = null;
@@ -70,7 +72,6 @@ function showComments(data) {
             comment.date = new Date(arg.timeStamp.year, arg.timeStamp.monthValue - 1, arg.timeStamp.dayOfMonth,
                 arg.timeStamp.hour, arg.timeStamp.minute);
         }
-
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
@@ -86,12 +87,12 @@ function showComments(data) {
         $("#" + 'commentMessage' + comment.id).text(comment.message);
         $("#" + comment.id).slideDown();
 
-        if (comment.remainingCommentCount == 0) {
+        if (comment.remainingCommentsCount == 0) {
             $('#loadComments').hide();
-        } else if (comment.remainingCommentCount < 10) {
-            $('#loadComments').text("Load previous " + comment.remainingCommentCount + " comment(s)");
+        } else if (comment.remainingCommentsCount < 10) {
+            $('#loadComments').text("Load previous " + comment.remainingCommentsCount + " comment(s)");
         } else {
-            $('#loadComments').text("Load previous 10 comments of " + comment.remainingCommentCount);
+            $('#loadComments').text("Load previous 10 comments of " + comment.remainingCommentsCount);
         }
     }
 }

@@ -82,7 +82,7 @@ public class CommentControllerTest {
                 thenReturn(expectedCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/commentList?eventId=" + id + "&commentTime=" + commentDateTime));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isOk()).
@@ -116,7 +116,7 @@ public class CommentControllerTest {
                 thenReturn(emptyCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/commentList?eventId=" + id + "&commentTime=" + commentDateTime));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isNotFound());

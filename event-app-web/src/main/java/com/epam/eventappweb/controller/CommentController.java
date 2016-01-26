@@ -31,7 +31,7 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @RequestMapping(value = "/commentList", method = RequestMethod.GET)
+    @RequestMapping(value = "/comment", method = RequestMethod.GET)
     public ResponseEntity<CommentPackVO> getCommentList(@RequestParam("eventId") int eventId,
                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                         @RequestParam("commentTime") LocalDateTime commentTime) throws SQLException {
