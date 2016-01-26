@@ -6,36 +6,28 @@ import java.util.List;
 /**
  * class for representing Comments pack
  */
-public class CommentPackVO {
-    private List<CommentVO> commentVOList;
-    private Integer remainingComments;
+public final class CommentPackVO {
+    private final List<CommentVO> commentVOList;
+    private final int remainingCommentsCount;
 
-    public CommentPackVO(List<CommentVO> commentVOList, Integer remainingComments) {
+    public CommentPackVO(List<CommentVO> commentVOList, int remainingCommentsCount) {
         this.commentVOList = commentVOList;
-        this.remainingComments = remainingComments;
+        this.remainingCommentsCount = remainingCommentsCount;
     }
 
     public List<CommentVO> getCommentVOList() {
         return commentVOList;
     }
 
-    public void setCommentVOList(List<CommentVO> commentVOList) {
-        this.commentVOList = commentVOList;
-    }
-
-    public Integer getRemainingComments() {
-        return remainingComments;
-    }
-
-    public void setRemainingComments(Integer remainingComments) {
-        this.remainingComments = remainingComments;
+    public int getRemainingCommentsCount() {
+        return remainingCommentsCount;
     }
 
     @Override
     public String toString() {
         return "CommentPackVO{" +
                 "commentVOList=" + commentVOList +
-                ", remainingComments=" + remainingComments +
+                ", remainingCommentsCount=" + remainingCommentsCount +
                 '}';
     }
 }

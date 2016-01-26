@@ -6,6 +6,7 @@ import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,12 +14,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,8 +65,8 @@ public class CommentControllerTest {
         final String firstCommentTime = "2016-01-21 15:00:00";
         final String secondCommentTime = "2016-01-22 15:00:00";
         final String commentTime = "2016-01-23 15:00:00";
-        final Timestamp commentTimestamp = Timestamp.valueOf(LocalDateTime.parse(commentTime,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        final LocalDateTime commentDateTime = LocalDateTime.parse(commentTime,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Comment commentFromIvan = Comment.builder().user(User.builder(firstCommentUsername, "ivan@gmail.com").build()).
                 message(firstCommentMessage).id(firstCommentId).
                 timeStamp(LocalDateTime.parse(firstCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).build();
@@ -77,13 +76,13 @@ public class CommentControllerTest {
         List<Comment> expectedCommentList = new ArrayList<>();
         expectedCommentList.add(commentFromIvan);
         expectedCommentList.add(commentFromPete);
+
         CommentPack expectedCommentPack = new CommentPack(expectedCommentList, remainingComments);
-        Optional<CommentPack> expectedCommentPackOptional = Optional.of(expectedCommentPack);
-        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, CommentController.COMMENTS_AMOUNT)).
-                thenReturn(expectedCommentPackOptional);
+        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentDateTime, CommentController.COMMENTS_AMOUNT)).
+                thenReturn(expectedCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/commentList/" + id + "/" + commentTimestamp.getTime()));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isOk()).
@@ -93,8 +92,9 @@ public class CommentControllerTest {
                 andExpect(jsonPath("$.commentVOList.[1].message", Matchers.is(secondCommentMessage))).
                 andExpect(jsonPath("$.commentVOList.[0].username", Matchers.is(firstCommentUsername))).
                 andExpect(jsonPath("$.commentVOList.[1].username", Matchers.is(secondCommentUsername))).
-                andExpect(jsonPath("$.remainingComments", Matchers.is(remainingComments)));
+                andExpect(jsonPath("$.remainingCommentsCount", Matchers.is(remainingComments)));
     }
+
 
     /**
      * testing getCommentList from CommentController
@@ -102,20 +102,21 @@ public class CommentControllerTest {
      *
      * @throws Exception
      */
+    @Ignore
     @Test
     public void shouldReturn404IfCommentsNotFound() throws Exception {
 
         //given
         final int id = 1;
         final String commentTime = "2016-01-23 15:00:00";
-        final Timestamp commentTimestamp = Timestamp.valueOf(LocalDateTime.parse(commentTime,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        Optional<CommentPack> emptyCommentPack = Optional.empty();
-        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentTimestamp, CommentController.COMMENTS_AMOUNT)).
+        final LocalDateTime commentDateTime = LocalDateTime.parse(commentTime,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        CommentPack emptyCommentPack = new CommentPack(new ArrayList<>(), 0);
+        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentDateTime, CommentController.COMMENTS_AMOUNT)).
                 thenReturn(emptyCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/commentList/" + id + "/" + commentTimestamp.getTime()));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isNotFound());

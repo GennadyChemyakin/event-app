@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,18 +29,18 @@ public class CommentServiceImpl implements CommentService {
     private CommentDAO commentDAO;
 
     @Override
-    public Optional<CommentPack> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, Timestamp commentTime, int amount) {
+    public CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime commentTime, int amount) throws SQLException {
         LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate started: Params eventId = {}, commentTime = {}, amount = {}", eventId,
                 commentTime, amount);
-        Optional<CommentPack> commentPack;
-        Optional<List<Comment>> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, commentTime, amount);
-        if (commentList.isPresent()) {
-            int commentListSize = commentList.get().size();
-            Integer remainingComments = commentDAO.countOfCommentsAddedBeforeDate(eventId,
-                    Timestamp.valueOf(commentList.get().get(commentListSize - 1).getTimeStamp()));
-            commentPack = Optional.of(new CommentPack(commentList.get(), remainingComments));
+        CommentPack commentPack;
+        List<Comment> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, commentTime, amount);
+        int commentListSize = commentList.size();
+        if (commentListSize > 0) {
+            int remainingCommentsCount = commentDAO.countOfCommentsAddedBeforeDate(eventId,
+                    commentList.get(commentListSize - 1).getTimeStamp());
+            commentPack = new CommentPack(commentList, remainingCommentsCount);
         } else {
-            commentPack = Optional.empty();
+            commentPack = new CommentPack(commentList, 0);
         }
         LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate finished. Result: {}", commentPack);
         return commentPack;

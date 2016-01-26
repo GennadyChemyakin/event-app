@@ -1,7 +1,6 @@
 package com.epam.eventapp.service.dao.impl;
 
 
-
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
@@ -14,11 +13,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.Timestamp;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
+
 
 /**
  * Class provides methods for testing CommentDAOImpl. Use DataAccessConfig.class for creating context.
@@ -33,8 +32,8 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
 
     /**
      * testing getCommentsListOfFixedSizeByEventIdBeforeDate method from CommentDAOImpl.
-     * looking for list of comments with eventId = 0 with fixed size of amount and that were added before known timestamp.
-     * Checking if it is present, event id from comment is equal
+     * looking for list of comments with eventId = 0 with fixed size of amount and that were added before known time.
+     * Checking if  event id from comment is equal
      * to expected id and size of comment list is equal to expected size
      */
     @Ignore
@@ -47,12 +46,12 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
         final int amount = 3;
 
         //when
-        Optional<List<Comment>> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(id,
-                Timestamp.valueOf(LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))), amount);
+        List<Comment> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(id,
+                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), amount);
 
         //then
-        Assert.assertTrue(commentList.isPresent());
-        Assert.assertEquals(commentList.get().size(), 3);
+        Assert.assertEquals(commentList.size(), 3);
+        Assert.assertEquals(commentList.get(commentList.size() - 1).getEventId(), id);
     }
 
 
@@ -70,32 +69,32 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
         final int amount = 3;
 
         //when
-        Optional<List<Comment>> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(id,
-                Timestamp.valueOf(LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))), amount);
+        List<Comment> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(id,
+                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), amount);
 
         //then
-        Assert.assertEquals(false, commentList.isPresent());
+        Assert.assertEquals(0, commentList.size());
     }
 
     /**
      * testing countOfCommentsAddedBeforeDate method from CommentDAOImpl.
      * counting comments that were added before specified time
-     * checking that amount is equals to know amount of comments
+     * checking that amount is equals to known amount of comments
      */
     @Ignore
     @Test
-    public void shouldReturnAmountOfRemainingComments() {
+    public void shouldReturnAmountOfRemainingComments() throws SQLException {
         //given
         final int id = 0;
         final String commentTime = "2016-01-20 15:00:00";
         final int amount = 3;
 
         //when
-        Integer remainingComments = commentDAO.countOfCommentsAddedBeforeDate(id,Timestamp.valueOf(
-                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+        int remainingCommentsCount = commentDAO.countOfCommentsAddedBeforeDate(id,
+                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         //then
-        Assert.assertEquals(amount, remainingComments.intValue());
+        Assert.assertEquals(amount, remainingCommentsCount);
     }
 
 }
