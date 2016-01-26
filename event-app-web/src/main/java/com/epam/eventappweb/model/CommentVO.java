@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * class for representing Commentary domain on presentation layer
  */
-public class CommentVO {
+public final class CommentVO {
 
     private final int id;
     private final int eventId;
