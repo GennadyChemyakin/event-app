@@ -8,14 +8,15 @@ import com.epam.eventappweb.model.CommentVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Comment controller
@@ -30,27 +31,27 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @RequestMapping(value = "/commentList/{eventId}/{timestamp}", method = RequestMethod.GET)
-    public ResponseEntity<CommentPackVO> getCommentList(@PathVariable("eventId") int eventId, @PathVariable("timestamp") long commentTime) {
-        LOGGER.info("getCommentList started. Param: eventId = {}, offset = {} ", eventId, commentTime);
+    @RequestMapping(value = "/commentList", method = RequestMethod.GET)
+    public ResponseEntity<CommentPackVO> getCommentList(@RequestParam("eventId") int eventId,
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                        @RequestParam("commentTime") LocalDateTime commentTime) throws SQLException {
 
-        Optional<CommentPack> commentPack = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, new Timestamp(commentTime), COMMENTS_AMOUNT);
+        LOGGER.info("getCommentList started. Param: eventId = {}, commentTime = {} ", eventId, commentTime);
+
+        CommentPack commentPack = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, commentTime, COMMENTS_AMOUNT);
         ResponseEntity<CommentPackVO> resultResponseEntity;
-        Optional<CommentPackVO> commentPackVO;
+        CommentPackVO commentPackVO;
         List<CommentVO> commentViews = new ArrayList<>();
-        if (commentPack.isPresent()) {
-            for (Comment comment : commentPack.get().getComments()) {
+        if (commentPack.getComments().size() > 0) {
+            for (Comment comment : commentPack.getComments()) {
                 CommentVO commentView = CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
                         eventId(comment.getEventId()).username(comment.getUser().getUsername()).
                         userPhoto(comment.getUser().getPhoto()).timeStamp(comment.getTimeStamp()).build();
                 commentViews.add(commentView);
             }
-            commentPackVO = Optional.of(new CommentPackVO(commentViews, commentPack.get().getRemainingComments()));
-            resultResponseEntity = new ResponseEntity<>(commentPackVO.get(), HttpStatus.OK);
-        } else {
-            commentPackVO = Optional.empty();
-            resultResponseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        commentPackVO = new CommentPackVO(commentViews, commentPack.getRemainingCommentsCount());
+        resultResponseEntity = new ResponseEntity<>(commentPackVO, HttpStatus.OK);
 
         LOGGER.info("getCommentList finished. Result:"
                 + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), commentPackVO);

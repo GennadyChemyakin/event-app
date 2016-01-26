@@ -2,8 +2,9 @@ package com.epam.eventapp.service.service;
 
 
 import com.epam.eventapp.service.model.CommentPack;
-import java.sql.Timestamp;
-import java.util.Optional;
+
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 /**
  * Comment Service
@@ -16,7 +17,7 @@ public interface CommentService {
      * @param eventId event id
      * @param commentTime time when comment was added
      * @param amount amount of comments to receive
-     * @return Optional with list in case comments were found and otherwise Optional.empty()
+     * @return CommentPack with list of founded comments and amount of remaining comments
      */
-    Optional<CommentPack> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, Timestamp commentTime, int amount);
+    CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime commentTime, int amount) throws SQLException;
 }

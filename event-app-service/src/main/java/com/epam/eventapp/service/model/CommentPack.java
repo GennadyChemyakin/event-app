@@ -7,36 +7,29 @@ import java.util.List;
 /**
  * class for representing package of comments
  */
-public class CommentPack {
-    private List<Comment> comments;
-    private Integer remainingComments;
+public final class CommentPack {
+    private final List<Comment> comments;
+    private final int remainingCommentsCount;
 
-    public CommentPack(List<Comment> comments, Integer remainingComments) {
+    public CommentPack(List<Comment> comments, int remainingCommentsCount) {
         this.comments = comments;
-        this.remainingComments = remainingComments;
+        this.remainingCommentsCount = remainingCommentsCount;
     }
 
     public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 
-    public Integer getRemainingComments() {
-        return remainingComments;
-    }
-
-    public void setRemainingComments(Integer remainingComments) {
-        this.remainingComments = remainingComments;
+    public int getRemainingCommentsCount() {
+        return remainingCommentsCount;
     }
 
     @Override
     public String toString() {
         return "CommentPack{" +
                 "comments=" + comments +
-                ", remainingComments=" + remainingComments +
+                ", remainingCommentsCount=" + remainingCommentsCount +
                 '}';
     }
 }

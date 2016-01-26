@@ -27,6 +27,7 @@ $(document).ready(function () {
         $('#address').append(" " + (event.country + " " + event.city + " " + event.location).trim());
         if (event.date != null) {
             $('#time').append(" " + event.date.toLocaleDateString() + " " + event.date.toLocaleTimeString());
+            alert(event.date.toISOString());
         }
         else {
             $('#time').append(" - -");
