@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * controller whick handles creating user process
  * @return retuns ResponseEntity object with status 201 (created)
@@ -27,7 +30,7 @@ public class RegistrationController {
     private UserService userService;
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST, consumes="application/json")
-    public ResponseEntity<?>  createUser(@RequestBody UserVO userVO) {
+    public ResponseEntity<?>  createUser(@RequestBody UserVO userVO, HttpServletRequest request) throws ServletException {
 
         User user = User.builder(userVO.getUsername(), userVO.getEmail())
                 .password(new Md5PasswordEncoder().encodePassword(userVO.getPassword(),""))
@@ -41,6 +44,8 @@ public class RegistrationController {
                 .build();
 
         userService.createUser(user);
+
+        request.login(userVO.getUsername(), userVO.getPassword());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
 
