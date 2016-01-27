@@ -136,7 +136,7 @@
                 success: function (data) {
 										addMainMessage(true);
                     setTimeout(function() {
-                      window.location.href = "http://localhost:8080/event-app/home.html"}, 2000);
+                       window.location.href = "/event-app/home.html"}, 2000);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     addMainMessage(false, "Oops.. Something went wrong");
