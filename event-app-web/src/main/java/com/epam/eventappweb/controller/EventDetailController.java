@@ -59,7 +59,7 @@ public class EventDetailController {
         if (updatedEntries == 1) {
             resultResponseEntity = new ResponseEntity<>(HttpStatus.OK);
         } else
-            throw new EventNotUpdatedException("Event with id = " + eventId + " not updated");
+            throw new EventNotUpdatedException("Event with id = " + eventId + " not updated with new fields value:" + eventVO);
 
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;
