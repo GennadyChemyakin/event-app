@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception which throwed in case user is not created
  */
-@ResponseStatus(value= HttpStatus.BAD_REQUEST,
-        reason="Email is already in the database")
-public class EmailExistsInTheDatabase extends RuntimeException{
-
+public class UserNameExistsInTheDatabaseException extends RuntimeException{
+    public UserNameExistsInTheDatabaseException(String message) {
+        super(message);
+    }
 }

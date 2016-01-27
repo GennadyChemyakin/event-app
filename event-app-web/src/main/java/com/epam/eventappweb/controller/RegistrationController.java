@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * controller whick handles creating user process
+ * controller whick handles user creation process
  * @return retuns ResponseEntity object with status 201 (created)
  */
 @RestController

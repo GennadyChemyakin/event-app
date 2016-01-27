@@ -7,7 +7,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 
 @Immutable
 @JsonDeserialize(builder = UserVO.Builder.class)
-public class UserVO {
+public final class UserVO {
 
     private final String username;
     private final String password;

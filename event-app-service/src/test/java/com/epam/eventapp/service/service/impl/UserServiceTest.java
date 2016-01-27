@@ -2,8 +2,8 @@ package com.epam.eventapp.service.service.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.EmailExistsInTheDatabase;
-import com.epam.eventapp.service.exceptions.UserNameExistsInTheDatabase;
+import com.epam.eventapp.service.exceptions.EmailExistsInTheDatabaseException;
+import com.epam.eventapp.service.exceptions.UserNameExistsInTheDatabaseException;
 import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import com.epam.eventapp.service.service.UserService;
 import org.junit.Assert;
@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 
 
 /**
- * test Class for UserService
+ * Unit tests for {@link UserService}
  */
 public class UserServiceTest {
 
@@ -34,17 +34,15 @@ public class UserServiceTest {
     }
 
     @Test
-    @Ignore
-    public void shouldExpectUserIdChanged() {
+    public void userSuccessfullyCreatedTest() {
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
-        Mockito.doReturn(user.builder("Danil","Danya@mail.com").id(1).build()).doNothing().when(userDAOMock).createUser(user);
+        Mockito.doNothing().when(userDAOMock).createUser(user);
 
         //when
         userService.createUser(user);
 
         //then
-        Assert.assertNotEquals(0, user.getId());
 
     }
 
@@ -53,43 +51,48 @@ public class UserServiceTest {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
-
-        //when
         Mockito.doThrow(UserNotCreatedException.class).doNothing().when(userDAOMock).createUser(user);
 
-        //then
+        //when
         userService.createUser(user);
+
+        //then
+        // exception should be thrown if data does not get to the table
+        Assert.fail("UserNotCreatedException is expected to be thrown");
+
 
     }
 
-    @Test(expected = UserNameExistsInTheDatabase.class)
+    @Test(expected = UserNameExistsInTheDatabaseException.class)
     public void shouldThrowUserNameExistsInTheDatabase() {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
+        Mockito.doThrow(UserNameExistsInTheDatabaseException.class).doNothing().when(userDAOMock).createUser(user);
 
         //when
-        Mockito.doThrow(UserNameExistsInTheDatabase.class).doNothing().when(userDAOMock).createUser(user);
+        userService.createUser(user);
 
         //then
-        userService.createUser(user);
+        // exception should be thrown if UserName is in db
+        Assert.fail("UserNameExistsInTheDatabaseException is expected to be thrown");
 
     }
 
-    @Test(expected = EmailExistsInTheDatabase.class)
+    @Test(expected = EmailExistsInTheDatabaseException.class)
     public void shouldThrowEmailExistsInTheDatabase() {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
+        Mockito.doThrow(EmailExistsInTheDatabaseException.class).doNothing().when(userDAOMock).createUser(user);
 
         //when
-        Mockito.doThrow(EmailExistsInTheDatabase.class).doNothing().when(userDAOMock).createUser(user);
-
-        //then
         userService.createUser(user);
 
+        //then
+        // exception should be thrown if Email is in db
+        Assert.fail("EmailExistsInTheDatabaseException is expected to be thrown");
+
     }
-
-
 
 }
