@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -80,7 +81,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
                 id(id).
                 city(newCity).
                 location(newLocation).
-                timeStamp(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
+                eventTime(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
 
         //when
         int updatedEntries = eventDAO.updateEventById(updatedEvent);
@@ -105,7 +106,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         Event updatedEvent = Event.builder(newName).
                 user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
-                timeStamp(newDateTime).build();
+                eventTime(newDateTime).build();
 
         //when
         int updatedEntries = eventDAO.updateEventById(updatedEvent);
@@ -115,16 +116,20 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     }
 
     /**
-     * testing shouldGetEventListSortedByTimestampDesc method from EventDAOImpl.
-     * looking for list of all events sorted in descending order by event_time.
-     * NOT IMPLEMENTED YET: Checking if events sorted in descending order by event_time
+     * testing shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc method from EventDAOImpl.
+     * looking for list of numberOfEvents events from specified time sorted in descending order by event_time.
+     * NOT IMPLEMENTED YET: Checking if events sorted in descending order by creation_time
      */
     @Test
-    public void shouldGetEventListSortedByTimestampDesc() {
+    public void shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc() {
+        //given
+        final int numberOfEvents = 10;
+        final LocalDateTime eventTime = LocalDateTime.now();
+
         //when
-        Optional<List<Event>> eventList = eventDAO.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(Timestamp.valueOf(LocalDateTime.now()), 2);
+        List<Event> eventList = eventDAO.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(eventTime, numberOfEvents);
 
         //then
-        Assert.assertNotNull(eventList.get());
+        Assert.assertNotNull(eventList);
     }
 }

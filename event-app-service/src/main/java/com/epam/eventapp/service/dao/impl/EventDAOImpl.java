@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,20 +23,20 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
 
 
     private static final String GET_EVENT_BY_ID = "select e.id as e_id, e.name as e_name, e.description as e_description, e.country as e_country, e.city as e_city, e.address as e_address, " +
-            "e.gps_latitude as e_gps_latitude, e.gps_longitude as e_gps_longitude, e.event_time as e_event_time, u.id as u_id, u.username as u_username, u.email as u_email, " +
+            "e.gps_latitude as e_gps_latitude, e.gps_longitude as e_gps_longitude, e.event_time as e_event_time, e.creation_time as e_creation_time, u.id as u_id, u.username as u_username, u.email as u_email, " +
             "u.name as u_name, u.surname as u_surname, u.country as u_country, u.city as u_city, " +
             "u.bio as u_bio from event e JOIN sec_user u on e.sec_user_id = u.id where e.id=:id";
 	private static final String UPDATE_EVENT_BY_ID = "UPDATE event SET name=:name, description=:description, country=:country," +
             " city=:city, address=:address, gps_latitude=:gps_latitude, gps_longitude=:gps_longitude, " +
             "event_time=:event_time WHERE id=:id";
 
-    private static final String GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_TIME_DESCENDING =
-            "SELECT event_alias.*, rownum rnum from (select e.id as e_id, e.name as e_name, e.description as e_description, " +
+    private static final String GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING =
+            "SELECT event_alias.*, rownum rnum FROM (SELECT e.id as e_id, e.name as e_name, e.description as e_description, " +
                     "e.country as e_country, e.city as e_city, e.address as e_address, e.gps_latitude as e_gps_latitude, " +
-                    "e.gps_longitude as e_gps_longitude, e.event_time as e_event_time, u.id as u_id, u.username as u_username, " +
-                    "u.email as u_email, u.name as u_name, u.surname as u_surname, u.country as u_country, u.city as u_city, " +
-                    "u.bio as u_bio from event e JOIN sec_user u on e.sec_user_id = u.id WHERE e.event_time < :event_time " +
-                    "ORDER BY e.event_time DESC) event_alias where rownum <= :amount";
+                    "e.gps_longitude as e_gps_longitude, e.event_time as e_event_time, e.creation_time as e_creation_time, " +
+                    "u.id as u_id, u.username as u_username, u.email as u_email, u.name as u_name, u.surname as u_surname, " +
+                    "u.country as u_country, u.city as u_city, u.bio as u_bio FROM event e JOIN sec_user u " +
+                    "on e.sec_user_id = u.id WHERE e.creation_time < :creation_time ORDER BY e.creation_time DESC) event_alias WHERE rownum <= :amount";
     private static final String GET_NUMBER_OF_EVENTS = "SELECT COUNT(*) FROM event";
 
 
@@ -59,7 +60,8 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                                 location(resultSet.getString("e_address")).
                                 gpsLatitude(resultSet.getDouble("e_gps_latitude")).
                                 gpsLongitude(resultSet.getDouble("e_gps_longitude")).
-                                timeStamp(resultSet.getTimestamp("e_event_time").toLocalDateTime()).build();
+                                eventTime(resultSet.getTimestamp("e_event_time").toLocalDateTime()).
+                                creationTime(resultSet.getTimestamp("e_creation_time").toLocalDateTime()).build();
                     })
             );
             return Optional.of(event);
@@ -79,17 +81,17 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         namedParameters.addValue("address", updatedEvent.getLocation());
         namedParameters.addValue("gps_latitude", updatedEvent.getGpsLatitude());
         namedParameters.addValue("gps_longitude", updatedEvent.getGpsLongitude());
-        namedParameters.addValue("event_time", Timestamp.valueOf(updatedEvent.getTimeStamp()));
+        namedParameters.addValue("event_time", Timestamp.valueOf(updatedEvent.getEventTime()));
         return getNamedParameterJdbcTemplate().update(UPDATE_EVENT_BY_ID, namedParameters);
     }
 
     @Override
-    public Optional<List<Event>> getEventListFixedSizeBeforeTimeOrderedByTimeDesc(Timestamp eventTime, int amount) {
+    public List<Event> getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(LocalDateTime creationTime, int amount) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("event_time", eventTime);
+        params.addValue("creation_time", Timestamp.valueOf(creationTime));
         params.addValue("amount", amount);
 
-            List<Event> eventList = getNamedParameterJdbcTemplate().query(GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_TIME_DESCENDING, params,
+        List<Event> eventList = getNamedParameterJdbcTemplate().query(GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING, params,
                     ((resultSet, i) -> {
                         return Event.builder(resultSet.getString("e_name")).
                                 user(User.builder(resultSet.getString("u_username"), resultSet.getString("u_email")).
@@ -106,10 +108,11 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                                 location(resultSet.getString("e_address")).
                                 gpsLatitude(resultSet.getDouble("e_gps_latitude")).
                                 gpsLongitude(resultSet.getDouble("e_gps_longitude")).
-                                timeStamp(resultSet.getTimestamp("e_event_time").toLocalDateTime()).build();
+                                eventTime(resultSet.getTimestamp("e_event_time").toLocalDateTime()).
+                                creationTime(resultSet.getTimestamp("e_creation_time").toLocalDateTime()).build();
                     })
             );
-            return eventList.size() >0 ? Optional.of(eventList) : Optional.empty();
+        return eventList;
     }
 
     @Override

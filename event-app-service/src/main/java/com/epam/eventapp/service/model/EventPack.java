@@ -20,16 +20,8 @@ public class EventPack {
         return events;
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
-
     public int getNumberOfAllEvents() {
         return numberOfAllEvents;
-    }
-
-    public void setNumberOfAllEvents(int numberOfAllEvents) {
-        this.numberOfAllEvents = numberOfAllEvents;
     }
 
     @Override

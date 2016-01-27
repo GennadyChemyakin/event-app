@@ -4,6 +4,7 @@ import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.model.EventPack;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -33,6 +34,8 @@ public interface EventService {
      * @param amount
      * @return
      */
-    Optional<EventPack> getEventListFixedSizeBeforeTimeOrderedByTimeDesc(Timestamp eventTime, int amount);
+    EventPack getEventListFixedSizeBeforeTimeOrderedByTimeDesc(LocalDateTime eventTime, int amount);
+
+
 
 }
