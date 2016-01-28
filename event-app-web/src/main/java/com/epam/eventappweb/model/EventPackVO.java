@@ -1,5 +1,6 @@
 package com.epam.eventappweb.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,8 +10,8 @@ public class EventPackVO {
     private final List<EventPreviewVO> eventPreviewVOList;
     private final int numberOfEvents;
 
-    public EventPackVO(List<EventPreviewVO> eventPreviewVOList, int numberOfEvents) {
-        this.eventPreviewVOList = eventPreviewVOList;
+    public EventPackVO(int numberOfEvents) {
+        this.eventPreviewVOList = new ArrayList<>();
         this.numberOfEvents = numberOfEvents;
     }
 

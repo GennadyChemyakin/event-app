@@ -2,10 +2,12 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.model.EventPack;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
@@ -67,7 +72,7 @@ public class EventDetailControllerTest {
         //then
         resultActions.andExpect(status().isOk()).
                 andExpect(jsonPath("$.id", is(0))).
-                andExpect(jsonPath("$.user.creator", is("Ivan"))).
+                andExpect(jsonPath("$.user.username", is("Ivan"))).
                 andExpect(jsonPath("$.user.email", is("ivan@gmail.com"))).
                 andExpect(jsonPath("$.name", is("Party")));
     }
@@ -131,7 +136,7 @@ public class EventDetailControllerTest {
     @Test
     public void shouldReturn404InCaseWrongEventIdSpecified() throws Exception {
         //given
-        final int id = -1;
+        final int id = 100;
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
@@ -148,6 +153,45 @@ public class EventDetailControllerTest {
 
         //then
         resultActions.andExpect(status().isNotFound());
+    }
+
+    /**
+     * Testing getEventList from EventDetailController.
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * expect JSON with right fields
+     *
+     * @throws Exception
+     */
+    @Test
+    public void shouldReturnEventPackAsJSON() throws Exception {
+        //given
+        final int events_amount = 2;
+        final int numberOfEvents = 10;
+        final String firstEventName = "EPAM funfest 1";
+        final String secondEventName = "EPAM funfest 2";
+        final String username = "Vasya";
+        final String email = "vasya@vasya.com";
+        final User user = User.builder(username, email).build();
+        final LocalDateTime creationTime = LocalDateTime.now();
+        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).build();
+        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).build();
+        final List<Event> expectedEventList = new ArrayList<>();
+        expectedEventList.add(firstEvent);
+        expectedEventList.add(secondEvent);
+        final EventPack eventPack = new EventPack(expectedEventList, numberOfEvents);
+
+        when(eventServiceMock.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(creationTime, events_amount)).thenReturn(eventPack);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/events?creationTime=" + creationTime));
+
+        //then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
+                .andExpect(jsonPath("$.numberOfEvents", Matchers.is(numberOfEvents)))
+        ;
+
     }
 
     /**
