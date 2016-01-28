@@ -35,20 +35,22 @@ $(document).ready(function () {
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
     }).then(function () {
+        var timezoneOffset = new Date().getTimezoneOffset();
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + new Date().toISOString()
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + new Date(new Date().getTime() - timezoneOffset * 60000).toISOString()
         }).then(showComments);
     });
     $('#loadComments').click(function () {
         var lastCommentDate = $("#commentTime" + $(".commentRow:first").attr("id")).text();
+        var timezoneOffset = new Date().getTimezoneOffset();
         if (lastCommentDate) {
             lastCommentDate = new Date(lastCommentDate);
             //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-            lastCommentDate = new Date(lastCommentDate.getTime() - lastCommentDate.getTimezoneOffset() * 60000).toISOString();
+            lastCommentDate = new Date(lastCommentDate.getTime() - timezoneOffset * 60000).toISOString();
         } else {
             lastCommentDate = new Date();
-            lastCommentDate = new Date(lastCommentDate.getTime() - lastCommentDate.getTimezoneOffset() * 60000).toISOString();
+            lastCommentDate = new Date(lastCommentDate.getTime() - timezoneOffset * 60000).toISOString();
         }
         $.ajax({
             type: "GET",
@@ -70,7 +72,7 @@ function showComments(data) {
         comment.date = null;
         if (arg.timeStamp != null) {
             comment.date = new Date(arg.timeStamp.year, arg.timeStamp.monthValue - 1, arg.timeStamp.dayOfMonth,
-                arg.timeStamp.hour, arg.timeStamp.minute);
+                arg.timeStamp.hour, arg.timeStamp.minute, arg.timeStamp.second, arg.timeStamp.nano);
         }
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
