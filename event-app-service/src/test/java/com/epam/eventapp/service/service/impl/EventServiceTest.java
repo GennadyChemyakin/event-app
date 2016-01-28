@@ -41,8 +41,7 @@ public class EventServiceTest {
     public void shouldReturnEventById(){
         //given
         final int id = 0;
-        Optional<Event> expectedEvent = Optional.of(Event.builder(User.builder("Ivan", "ivan@gmail.com").
-                build(), "Party").id(id).build());
+        Optional<Event> expectedEvent = Optional.of(Event.builder("Party").build());
         when(eventDAOMock.findById(id)).thenReturn(expectedEvent);
 
         //when
@@ -85,7 +84,8 @@ public class EventServiceTest {
         final String newLocation = "Kremlin";
         final String newDateTime = "2015-12-23 11:51:19.152";
 
-        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+        Event updatedEvent = Event.builder(newName).
+                user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
                 city(newCity).
                 location(newLocation).
@@ -111,7 +111,8 @@ public class EventServiceTest {
         final String newName = "Ballet";
         final LocalDateTime newDateTime = LocalDateTime.now();
 
-        Event updatedEvent = Event.builder(User.builder("Vasya", "vasya@vasya.com").build(), newName).
+        Event updatedEvent = Event.builder(newName).
+                user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
                 timeStamp(newDateTime).build();
         when(eventDAOMock.updateEventById(updatedEvent)).thenReturn(0);

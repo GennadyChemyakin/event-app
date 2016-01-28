@@ -1,15 +1,21 @@
-package com.epam.eventapp.service.domain;
+package com.epam.eventappweb.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
 /**
- * class describes EVENT domain
+ * class describes EVENT model
  * without collections for storing photo and video objects
  */
-public class Event {
-    private final int id;
-    private final User user;
+@JsonDeserialize(builder = EventVO.EventModelBuilder.class)
+@Immutable
+public final class EventVO {
     private final String name;
+    private final String creator;
     private final String description;
     private final String country;
     private final String city;
@@ -18,10 +24,9 @@ public class Event {
     private final double gpsLongitude;
     private final LocalDateTime timeStamp;
 
-    private Event(EventBuilder builder) {
-        this.id = builder.id;
-        this.user = builder.user;
+    private EventVO(EventModelBuilder builder) {
         this.name = builder.name;
+        this.creator = builder.creator;
         this.description = builder.description;
         this.country = builder.country;
         this.city = builder.city;
@@ -31,14 +36,14 @@ public class Event {
         this.timeStamp = builder.timeStamp;
     }
 
-    public static EventBuilder builder(String name){
-        return new EventBuilder(name);
+    public static EventModelBuilder builder(String name){
+        return new EventModelBuilder(name);
     }
 
-    public static class EventBuilder {
-        private int id;
-        private User user;
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
+    public static class EventModelBuilder {
         private String name;
+        private String creator;
         private String description;
         private String country;
         private String city;
@@ -47,66 +52,57 @@ public class Event {
         private double gpsLongitude;
         private LocalDateTime timeStamp;
 
-        private EventBuilder(String name) {
+        private EventModelBuilder(@JsonProperty("name") String name) {
             this.name = name;
         }
 
-        public EventBuilder user(User user) {
-            this.user = user;
+        public EventModelBuilder username(String username) {
+            this.creator = username;
             return this;
         }
 
-        public EventBuilder id(int id) {
-            this.id = id;
-            return this;
-        }
-
-        public EventBuilder description(String description) {
+        public EventModelBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public EventBuilder country(String country) {
+        public EventModelBuilder country(String country) {
             this.country = country;
             return this;
         }
 
-        public EventBuilder city(String city) {
+        public EventModelBuilder city(String city) {
             this.city = city;
             return this;
         }
 
-        public EventBuilder location(String location) {
+        public EventModelBuilder location(String location) {
             this.location = location;
             return this;
         }
 
-        public EventBuilder gpsLatitude(double gpsLatitude) {
+        public EventModelBuilder gpsLatitude(double gpsLatitude) {
             this.gpsLatitude = gpsLatitude;
             return this;
         }
 
-        public EventBuilder gpsLongitude(double gpsLongitude) {
+        public EventModelBuilder gpsLongitude(double gpsLongitude) {
             this.gpsLongitude = gpsLongitude;
             return this;
         }
 
-        public EventBuilder timeStamp(LocalDateTime timeStamp) {
+        public EventModelBuilder timeStamp(LocalDateTime timeStamp) {
             this.timeStamp = timeStamp;
             return this;
         }
 
-        public Event build() {
-            return new Event(this);
+        public EventVO build() {
+            return new EventVO(this);
         }
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
+    public String getCreator() {
+        return creator;
     }
 
     public String getName() {
@@ -143,9 +139,8 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", user=" + user +
+        return "EventVO{" +
+                "creator=" + creator +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +
