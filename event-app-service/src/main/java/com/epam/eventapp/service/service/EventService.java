@@ -30,9 +30,10 @@ public interface EventService {
 
     /**
      * Method for getting list of Events of specified size amount before eventTime ordered by the time of events
+     * with number of Events in DB
      * @param eventTime time of eve
      * @param amount
-     * @return
+     * @return EventPack
      */
     EventPack getEventListFixedSizeBeforeTimeOrderedByTimeDesc(LocalDateTime eventTime, int amount);
 
