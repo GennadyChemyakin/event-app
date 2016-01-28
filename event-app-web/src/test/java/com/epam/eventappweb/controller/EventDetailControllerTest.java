@@ -52,7 +52,7 @@ public class EventDetailControllerTest {
 
     /**
      * testing getEventDetail from EventDetailController
-     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields
      *
      * @throws Exception
@@ -80,7 +80,7 @@ public class EventDetailControllerTest {
 
     /**
      * testing getEventDetail from EventDetailController
-     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect 404 status code
      *
      * @throws Exception
@@ -101,7 +101,7 @@ public class EventDetailControllerTest {
 
     /**
      * Testing updateEvent from EventDetailController.
-     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect 200 status code
      *
      * @throws Exception
@@ -130,7 +130,7 @@ public class EventDetailControllerTest {
 
     /**
      * Testing updateEvent from EventDetailController.
-     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect 404 status code
      */
     @Test
