@@ -33,7 +33,7 @@ public class UserServiceTest {
      * Testing  method createUser()
      */
     @Test
-    public void shoudCreateUserAndReturnNewRowsCount() {
+    public void shouldCreateUserAndReturnNewRowsCount() {
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
         when(userDAOMock.createUser(user)).thenReturn(1);
@@ -45,5 +45,4 @@ public class UserServiceTest {
         Assert.assertNotEquals(0, rows);
 
     }
-
 }

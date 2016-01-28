@@ -117,19 +117,38 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     /**
      * testing shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc method from EventDAOImpl.
-     * looking for list of numberOfEvents events from specified time sorted in descending order by event_time.
-     * NOT IMPLEMENTED YET: Checking if events sorted in descending order by creation_time
+     * looking for list of amount events that were created before specified time and were sorted in descending order by event_time.
+     * Checking if we've got events from DB and that we got less than amount events
      */
     @Test
     public void shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc() {
         //given
-        final int numberOfEvents = 10;
+        final int amount = 10;
         final LocalDateTime eventTime = LocalDateTime.now();
 
         //when
-        List<Event> eventList = eventDAO.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(eventTime, numberOfEvents);
+        List<Event> eventList = eventDAO.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(eventTime, amount);
 
         //then
         Assert.assertNotNull(eventList);
+        Assert.assertTrue(eventList.size() <= amount);
+    }
+
+    /**
+     * testing getNumberOfEvents method from EventDAOImpl
+     * looking for number of events in DB
+     * Checking if number of events in DB equals expectedNumberOfEvents
+     *
+     */
+    @Test
+    public void shouldGetNumberOfEventsInDatabase() {
+        //given
+        int expectedNumberOfEvents = 5;
+
+        //when
+        int numberOfEvents = eventDAO.getNumberOfEvents();
+
+        //then
+        Assert.assertEquals(expectedNumberOfEvents, numberOfEvents);
     }
 }

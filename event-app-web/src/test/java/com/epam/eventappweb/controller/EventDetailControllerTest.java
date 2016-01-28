@@ -156,6 +156,26 @@ public class EventDetailControllerTest {
     }
 
     /**
+     * Method for getting prepared EventPack
+     * @param firstEventName name of first Event
+     * @param secondEventName name of second Event
+     * @param numberOfEvents number of all events in DB
+     * @return EventPack of expected Events
+     */
+    private static EventPack getExpectedEventsList(String firstEventName, String secondEventName, int numberOfEvents) {
+        final String username = "Vasya";
+        final String email = "vasya@vasya.com";
+        final User user = User.builder(username, email).build();
+        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).build();
+        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).build();
+        final List<Event> expectedEventsList = new ArrayList<>();
+        expectedEventsList.add(firstEvent);
+        expectedEventsList.add(secondEvent);
+        final EventPack eventPack = new EventPack(expectedEventsList, numberOfEvents);
+        return eventPack;
+    }
+
+    /**
      * Testing getEventList from EventDetailController.
      * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields
@@ -165,20 +185,12 @@ public class EventDetailControllerTest {
     @Test
     public void shouldReturnEventPackAsJSON() throws Exception {
         //given
+        final String firstEventName = "EPAM fanfest 1";
+        final String secondEventName = "EPAM fanfest 2";
         final int events_amount = 2;
         final int numberOfEvents = 10;
-        final String firstEventName = "EPAM funfest 1";
-        final String secondEventName = "EPAM funfest 2";
-        final String username = "Vasya";
-        final String email = "vasya@vasya.com";
-        final User user = User.builder(username, email).build();
         final LocalDateTime creationTime = LocalDateTime.now();
-        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).build();
-        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).build();
-        final List<Event> expectedEventList = new ArrayList<>();
-        expectedEventList.add(firstEvent);
-        expectedEventList.add(secondEvent);
-        final EventPack eventPack = new EventPack(expectedEventList, numberOfEvents);
+        final EventPack eventPack = getExpectedEventsList(firstEventName, secondEventName, numberOfEvents);
 
         when(eventServiceMock.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(creationTime, events_amount)).thenReturn(eventPack);
 

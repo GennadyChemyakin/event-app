@@ -127,25 +127,40 @@ public class EventServiceTest {
         Assert.assertEquals(0, updatedEntries);
     }
 
+    /**
+     * Method for getting prepared event list
+     * @return List of expected Events
+     */
+    private static List<Event> getExpectedEventsList() {
+        final String firstEventName = "EPAM fanfest 1";
+        final String secondEventName = "EPAM fanfest 2";
+        final String username = "Vasya";
+        final String email = "vasya@vasya.com";
+        final User user = User.builder(username, email).build();
+        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).build();
+        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).build();
+        final List<Event> expectedEventsList = new ArrayList<>();
+        expectedEventsList.add(firstEvent);
+        expectedEventsList.add(secondEvent);
+        return expectedEventsList;
+    }
+
     @Test
     public void shouldReturnEventPackWithSortedEventsAndNumberOfAllEvents() {
         //given
-        final LocalDateTime creationTime = LocalDateTime.now();
         final int amount = 2;
         final int numberOfEvents = 3;
-        List<Event> expectedEventList = new ArrayList<>();
-        expectedEventList.add(Event.builder("E2").id(1).creationTime(LocalDateTime.MAX).build());
-        expectedEventList.add(Event.builder("E1").id(0).creationTime(LocalDateTime.now()).build());
-        expectedEventList.add(Event.builder("E3").id(2).creationTime(LocalDateTime.MIN).build());
-        when(eventDAOMock.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(creationTime, amount)).thenReturn(expectedEventList);
+        final LocalDateTime creationTime = LocalDateTime.now();
+        final List<Event> expectedEventsList = getExpectedEventsList();
+
+        when(eventDAOMock.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(creationTime, amount)).thenReturn(expectedEventsList);
         when(eventDAOMock.getNumberOfEvents()).thenReturn(numberOfEvents);
 
         //when
         EventPack eventPack = sut.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(creationTime, amount);
 
         //then
+        Assert.assertTrue(eventPack.getEvents().size() <= amount);
         Assert.assertEquals(eventPack.getNumberOfAllEvents(), numberOfEvents);
-        Assert.assertEquals(1, eventPack.getEvents().get(0).getId());
-        Assert.assertEquals(0, eventPack.getEvents().get(1).getId());
     }
 }
