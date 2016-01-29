@@ -14,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
@@ -23,13 +22,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
-import static org.hamcrest.Matchers.isA;
-
 /**
  * test Class for EventDetailController
  */
 public class EventDetailControllerTest {
-
 
     @Mock
     private EventService eventServiceMock;

@@ -14,4 +14,10 @@ public interface UserDAO {
      */
     int createUser(User user);
 
+    /**
+     * method for getting user by username
+     * @param username
+     * @return
+     */
+    User getUserByUsername(String username);
 }

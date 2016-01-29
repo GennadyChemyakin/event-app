@@ -1,8 +1,10 @@
 package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Comment;
+import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
+import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.CommentPackVO;
 import com.epam.eventappweb.model.CommentVO;
 import org.slf4j.Logger;
@@ -31,6 +33,9 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
     public ResponseEntity<CommentPackVO> getCommentList(@RequestParam("eventId") int eventId,
                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -46,7 +51,7 @@ public class CommentController {
             for (Comment comment : commentPack.getComments()) {
                 CommentVO commentView = CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
                         eventId(comment.getEventId()).username(comment.getUser().getUsername()).
-                        userPhoto(comment.getUser().getPhoto()).timeStamp(comment.getTimeStamp()).build();
+                        userPhoto(comment.getUser().getPhoto()).commentTime(comment.getCommentTime()).build();
                 commentViews.add(commentView);
             }
         }
@@ -54,6 +59,32 @@ public class CommentController {
         resultResponseEntity = new ResponseEntity<>(commentPackVO, HttpStatus.OK);
 
         LOGGER.info("getCommentList finished. Result:"
+                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), commentPackVO);
+        return resultResponseEntity;
+    }
+
+    @RequestMapping(value = "/comment", method = RequestMethod.POST)
+    public ResponseEntity<CommentPackVO> addComment(@RequestBody CommentVO commentVO,
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                    @RequestParam("after") LocalDateTime after) {
+        LOGGER.info("addComment started. Param: commentVO = {}, after = {}", commentVO, after);
+        ResponseEntity<CommentPackVO> resultResponseEntity;
+        User user = userService.getUserByUsername(commentVO.getUsername());
+        Comment addedComment = Comment.builder().eventId(commentVO.getEventId()).message(commentVO.getMessage()).
+                commentTime(commentVO.getCommentTime()).user(user).build();
+        commentService.addComment(addedComment);
+        CommentPack commentPack = commentService.getListOfNewComments(commentVO.getEventId(), after);
+        CommentPackVO commentPackVO;
+        List<CommentVO> commentViews = new ArrayList<>();
+        for (Comment comment : commentPack.getComments()) {
+            CommentVO commentView = CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
+                    eventId(comment.getEventId()).username(comment.getUser().getUsername()).
+                    userPhoto(comment.getUser().getPhoto()).commentTime(comment.getCommentTime()).build();
+            commentViews.add(commentView);
+        }
+        commentPackVO = new CommentPackVO(commentViews, 0);
+        resultResponseEntity = new ResponseEntity<>(commentPackVO, HttpStatus.OK);
+        LOGGER.info("addComment finished. Result:"
                 + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), commentPackVO);
         return resultResponseEntity;
     }

@@ -1,6 +1,7 @@
 package com.epam.eventapp.service.service.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
+import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.UserService;
 import org.slf4j.Logger;
@@ -26,4 +27,13 @@ public class UserServiceImpl implements UserService {
 
         return rows;
     }
+
+    @Override
+    public User getUserByUsername(String username) {
+        LOGGER.debug("getUserByUsername started: Params username = {}", username);
+        User user = userDao.getUserByUsername(username);
+        LOGGER.debug("getUserByUsername finished: Result user = {}", user);
+        return user;
+    }
+
 }

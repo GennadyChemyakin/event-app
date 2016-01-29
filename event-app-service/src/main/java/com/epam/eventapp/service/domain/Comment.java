@@ -9,14 +9,14 @@ public class Comment {
     private final int id;
     private final int eventId;
     private final User user;
-    private final LocalDateTime timeStamp;
+    private final LocalDateTime commentTime;
     private final String message;
 
     private Comment(CommentBuilder commentBuilder) {
         this.id = commentBuilder.id;
         this.eventId = commentBuilder.eventId;
         this.user = commentBuilder.user;
-        this.timeStamp = commentBuilder.timeStamp;
+        this.commentTime = commentBuilder.commentTime;
         this.message = commentBuilder.message;
     }
 
@@ -28,7 +28,7 @@ public class Comment {
         private int id;
         private int eventId;
         private User user;
-        private LocalDateTime timeStamp;
+        private LocalDateTime commentTime;
         private String message;
 
         public CommentBuilder id(int id) {
@@ -46,8 +46,8 @@ public class Comment {
             return this;
         }
 
-        public CommentBuilder timeStamp(LocalDateTime timeStamp) {
-            this.timeStamp = timeStamp;
+        public CommentBuilder commentTime(LocalDateTime commentTime) {
+            this.commentTime = commentTime;
             return this;
         }
 
@@ -74,8 +74,8 @@ public class Comment {
         return user;
     }
 
-    public LocalDateTime getTimeStamp() {
-        return timeStamp;
+    public LocalDateTime getCommentTime() {
+        return commentTime;
     }
 
     public String getMessage() {
@@ -88,7 +88,7 @@ public class Comment {
                 "id=" + id +
                 ", eventId=" + eventId +
                 ", user=" + user +
-                ", timeStamp=" + timeStamp +
+                ", commentTime=" + commentTime +
                 ", message='" + message + '\'' +
                 '}';
     }

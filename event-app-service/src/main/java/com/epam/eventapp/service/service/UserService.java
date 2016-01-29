@@ -13,4 +13,11 @@ public interface UserService {
      */
     int createUser(User user);
 
+    /**
+     * method for getting user by username
+     * @param username
+     * @return user object if we found user by username
+     */
+    User getUserByUsername(String username);
+
 }

@@ -41,7 +41,7 @@ public class EventServiceTest {
     public void shouldReturnEventById(){
         //given
         final int id = 0;
-        Optional<Event> expectedEvent = Optional.of(Event.builder("Party").build());
+        Optional<Event> expectedEvent = Optional.of(Event.builder("Party").id(id).build());
         when(eventDAOMock.findById(id)).thenReturn(expectedEvent);
 
         //when

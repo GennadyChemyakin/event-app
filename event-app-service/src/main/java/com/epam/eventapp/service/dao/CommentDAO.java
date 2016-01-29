@@ -28,4 +28,18 @@ public interface CommentDAO {
      * @return amount of remaining comments
      */
     int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime commentTime) throws SQLException;
+
+    /**
+     * method for adding a commentary
+     * @param comment commentary to add
+     */
+    void addComment(Comment comment);
+
+    /**
+     * method for getting list of comments that were added after commentTime to event with id = eventId
+     * @param eventId id of event
+     * @param commentTime specified time. We are looking for comments that were added after it
+     * @return list of founded comments
+     */
+    List<Comment> getListOfNewComments(int eventId, LocalDateTime commentTime);
 }
