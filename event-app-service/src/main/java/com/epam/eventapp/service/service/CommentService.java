@@ -36,4 +36,5 @@ public interface CommentService {
      * @return list of founded comments
      */
     CommentPack getListOfNewComments(int eventId, LocalDateTime commentTime);
+
 }

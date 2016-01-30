@@ -19,6 +19,7 @@ import java.util.*;
 @Repository
 public class CommentDAOImpl extends GenericDAO implements CommentDAO {
 
+
     private final static String GET_COMMENTS_LIST_OF_FIXED_SIZE_BY_EVENT_ID_BEFORE_TIME = "select comment_alias.*, rownum rnum " +
             "from (select c.id as c_id, c.message, c.comment_time, c.event_id, " +
             "u.id as u_id, u.username, u.email, u.name, u.surname, " +
@@ -55,6 +56,7 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
                                 bio(resultSet.getString("bio")).build()).
                         eventId(eventId).
                         message(resultSet.getString("message")).
+<<<<<<< HEAD
                         commentTime(resultSet.getTimestamp("comment_time").toLocalDateTime()).
                         id(resultSet.getInt("c_id")).
                         build());
@@ -107,5 +109,23 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
                         id(resultSet.getInt("c_id")).
                         build());
         return commentList;
+=======
+                        timeStamp(resultSet.getTimestamp("comment_time").toLocalDateTime()).
+                        id(resultSet.getInt("c_id")).
+                        build());
+        return commentList;
+    }
+
+    @Override
+    public int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime commentTime) throws SQLException {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("eventId", eventId);
+        params.addValue("commentTime", Timestamp.valueOf(commentTime));
+        Integer count =  getNamedParameterJdbcTemplate().queryForObject(GET_COUNT_OF_REMAINING_COMMENTS, params, Integer.class);
+        if(count != null)
+            return count.intValue();
+        else
+            throw new SQLException();
+>>>>>>> ea-28
     }
 }

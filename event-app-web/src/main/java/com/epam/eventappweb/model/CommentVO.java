@@ -69,7 +69,7 @@ public final class CommentVO {
             return this;
         }
 
-        public CommentVO build(){
+        public CommentVO build() {
             return new CommentVO(this);
         }
     }

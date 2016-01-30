@@ -60,6 +60,7 @@ public class CommentServiceTest {
         when(commentDAOMock.countOfCommentsAddedBeforeDate(id, expectedCommentList.get(expectedCommentList.size() - 1).
                 getCommentTime())).thenReturn(remainingComments);
 
+
         //when
         CommentPack commentPack = sut.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentDateTime, commentsAmount);
 

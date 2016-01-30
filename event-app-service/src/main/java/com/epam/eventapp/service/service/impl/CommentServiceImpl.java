@@ -35,6 +35,7 @@ public class CommentServiceImpl implements CommentService {
         if (commentListSize > 0) {
             int remainingCommentsCount = commentDAO.countOfCommentsAddedBeforeDate(eventId,
                     commentList.get(commentListSize - 1).getCommentTime());
+
             commentPack = new CommentPack(commentList, remainingCommentsCount);
         } else {
             commentPack = new CommentPack(commentList, 0);

@@ -3,3 +3,4 @@ insert into event VALUES(0,'birthday party y Ivana',0,'Party at Detsl home','Rus
 insert into commentary VALUES(COMMENTARY_ID_SEQ.nextval,0,0,'2016-01-19 15:00:00', 'Great!');
 insert into commentary VALUES(COMMENTARY_ID_SEQ.nextval,0,0,'2016-01-19 17:00:00', 'I like it!');
 insert into commentary VALUES(COMMENTARY_ID_SEQ.nextval,0,0,'2016-01-19 19:00:00', 'Cool!');
+
