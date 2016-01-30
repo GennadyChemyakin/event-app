@@ -28,7 +28,6 @@ public interface CommentDAO {
      * @return amount of remaining comments
      */
     int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime commentTime) throws SQLException;
-<<<<<<< HEAD
 
     /**
      * method for adding a commentary
@@ -43,6 +42,4 @@ public interface CommentDAO {
      * @return list of founded comments
      */
     List<Comment> getListOfNewComments(int eventId, LocalDateTime commentTime);
-=======
->>>>>>> ea-28
 }

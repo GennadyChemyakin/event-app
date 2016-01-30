@@ -16,7 +16,7 @@ import java.util.Collections;
  * Insert user into table
  * Get user id generated in the database
  */
-@Repository
+@Repository("UserDAO")
 public class UserDAOImpl extends GenericDAO implements UserDAO {
 
     private final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +

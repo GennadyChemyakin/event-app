@@ -9,8 +9,8 @@ $(document).ready(function () {
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
         if (data.timeStamp != null) {
-            event.date = new Date(data.timeStamp.year, data.timeStamp.monthValue - 1, data.timeStamp.dayOfMonth,
-                data.timeStamp.hour, data.timeStamp.minute);
+            event.date = new Date(data.timeStamp[0], data.timeStamp[1] - 1, data.timeStamp[2],
+                data.timeStamp[3], data.timeStamp[4]);
         }
         event.user = {};
         event.user.username = data.user.username;
@@ -70,9 +70,14 @@ function showComments(data) {
         comment.message = arg.message;
         comment.username = arg.username;
         comment.date = null;
-        if (arg.timeStamp != null) {
-            comment.date = new Date(arg.timeStamp.year, arg.timeStamp.monthValue - 1, arg.timeStamp.dayOfMonth,
-                arg.timeStamp.hour, arg.timeStamp.minute, arg.timeStamp.second, arg.timeStamp.nano);
+        if (arg.commentTime != null) {
+            var year = arg.commentTime[0];
+            var month = arg.commentTime[1];
+            var day = arg.commentTime[2];
+            var hour = arg.commentTime[3] ? arg.commentTime[3] : 0;
+            var minutes = arg.commentTime[4] ? arg.commentTime[4] : 0;
+            var seconds = arg.commentTime[5] ? arg.commentTime[5] : 0;
+            comment.date = new Date(year, month - 1, day, hour, minutes, seconds);
         }
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +

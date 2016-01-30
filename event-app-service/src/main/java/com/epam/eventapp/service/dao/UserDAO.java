@@ -1,6 +1,7 @@
 package com.epam.eventapp.service.dao;
 
 import com.epam.eventapp.service.domain.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * DAO for user
