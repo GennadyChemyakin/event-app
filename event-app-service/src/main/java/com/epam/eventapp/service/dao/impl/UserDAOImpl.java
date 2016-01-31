@@ -2,13 +2,13 @@ package com.epam.eventapp.service.dao.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 
 /**
  * Insert user into table
@@ -18,7 +18,7 @@ import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 public class UserDAOImpl extends GenericDAO implements UserDAO {
 
     private static final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +
-            "country, city, bio) VALUES(AUTHORITY_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
+            "country, city, bio) VALUES(SEC_USER_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
 
     private static final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
@@ -45,32 +45,38 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                                     .addValue("city"    , user.getCountry())
                                     .addValue("bio"     , user.getBio());
 
-            int rows = getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder, new String[]{"id"});
+            getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder, new String[]{"id"});
 
             user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue())
                     .password("")
                     .build();
-            int roleRow = getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
-                .addValue("id", keyHolder.getKey().intValue()));
 
-            if (roleRow == 0 || rows == 0) {
-                throw new UserNotCreatedException("Failed to create user <username>, user row updated = "+ rows +
-                        ", role row updated = " + roleRow);
-            }
+            getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
+                .addValue("id", keyHolder.getKey().intValue()));
 
     }
 
     @Override
     public boolean isUserNameRegistered(String username) {
-        Integer cnt = getNamedParameterJdbcTemplate().queryForObject(СOUNT_USER_BY_USERNAME, new MapSqlParameterSource()
-                .addValue("username", username),Integer.class);
-        return cnt > 0;
+        try {
+            Integer cnt = getNamedParameterJdbcTemplate().queryForObject(СOUNT_USER_BY_USERNAME, new MapSqlParameterSource()
+                    .addValue("username", username), Integer.class);
+            return cnt > 0;
+        } catch (DataAccessException ex) {
+            return false;
+        }
+
     }
 
     @Override
     public boolean isEmailRegistered(String email) {
-        Integer cnt = getNamedParameterJdbcTemplate().queryForObject(СOUNT_USER_BY_EMAIL, new MapSqlParameterSource()
-                .addValue("email", email),Integer.class);
-        return cnt > 0;
+        try {
+            Integer cnt = getNamedParameterJdbcTemplate().queryForObject(СOUNT_USER_BY_EMAIL, new MapSqlParameterSource()
+                    .addValue("email", email), Integer.class);
+            return cnt > 0;
+        } catch (DataAccessException ex) {
+            return false;
+        }
+
     }
 }

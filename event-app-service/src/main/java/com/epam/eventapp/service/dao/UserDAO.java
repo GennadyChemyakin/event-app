@@ -18,12 +18,14 @@ public interface UserDAO {
 
     /**
      * Method for checking that UserName is in database.
+     * @Param username - string with username
      * @return returns true if Username is already in the database
      */
     boolean isUserNameRegistered(String username);
 
     /**
      * Method for checking that Email is in database.
+     * @Param username - string with user email
      * @return returns true if email is already in the database
      */
     boolean isEmailRegistered(String email);
