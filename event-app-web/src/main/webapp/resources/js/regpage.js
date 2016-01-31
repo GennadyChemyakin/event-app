@@ -1,25 +1,28 @@
+    //Function checks that email is valid
     function checkEmail() {
         var email = $('#email');
         matches = email.val().match(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/);
         return matches != null;
      }
-
+    //Function checks that login consists of valid letters and it's length is more than 3
      function checkLogin() {
      	var login    = $('#username').val();
         var expLogin = /^[a-zA-Z0-9_]+$/g;
         return login.length > 3 && login.search(expLogin) != -1;
      }
-
+    //Function checks that passwords are equal
      function pwdEqual() {
      	var pwd  = $('#pwd').val();
         var cpwd = $('#cpwd').val();
         return pwd.match(cpwd) && cpwd.match(pwd);
      }
-
+    //Function checks that password length is more than 3 symbols
      function pwdLen(pass) {
      	return pass.val().length > 3;
      }
-
+    //Function mark input field with appropriate classes
+    //@param fiels - input field to be marked
+    //@isGreen - bool type, condition for choosing color for the field
      function markField(field, isGreen) {
 
        var parentField = field.parent();
@@ -38,7 +41,9 @@
        }
 
      }
-
+    //function adds text message under needed field
+    //@param field - field under which message should appear
+    //@param text  - message text
      function addErrorMessage(field, text) {
         var parentField = field.parent();
         var errorField  = parentField.find('.alert:first');
@@ -46,6 +51,7 @@
         errorField.show();
      }
 
+     //function adds message in the middle of the page
      function addMainMessage(success, errormsg) {
      	var field = $('#msg_main');
         if(success) {
@@ -56,7 +62,8 @@
         }
         field.show();
      }
-
+    //listeners for input fields
+    //and submit button click
      $(document).ready(function() {
 		$('.alert').hide();
 		$('#username').keyup(function(){
@@ -122,6 +129,8 @@
 
         if(noMistakes) {
 
+            $("#register_btn").addClass('disabled').attr('disabled', 'disabled');
+
             var data = JSON.stringify({
                 username: username,
                 email: email,
@@ -139,6 +148,7 @@
                        window.location.href = "/event-app/home.html"}, 2000);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
+                    $('#register_btn').removeClass('disabled').prop("disabled", false);
                     addMainMessage(false, "Oops.. Something went wrong");
                 }
             });
