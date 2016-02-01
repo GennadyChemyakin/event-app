@@ -7,7 +7,6 @@ package com.epam.eventappweb.exceptions;
 public class EventNotUpdatedException extends RuntimeException {
 
     public EventNotUpdatedException() {
-        super();
     }
 
     public EventNotUpdatedException(String message) {
