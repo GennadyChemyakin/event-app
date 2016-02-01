@@ -26,7 +26,7 @@ import java.util.Optional;
 public class EventDetailController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
-    private static final int EVENTS_AMOUNT = 2;
+
 
     @Autowired
     private EventService eventService;
@@ -66,8 +66,8 @@ public class EventDetailController {
     @RequestMapping(value = "/events", method = RequestMethod.GET)
     public ResponseEntity<EventPackVO> getEventList(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                          @RequestParam("creationTime") LocalDateTime creationTime) throws SQLException {
-        LOGGER.info("getEventList started. Param: eventTime = {}; events_amount = {} ", creationTime, EVENTS_AMOUNT);
-        EventPack eventPack = eventService.getEventsBeforeTime(creationTime, EVENTS_AMOUNT);
+        LOGGER.info("getEventList started. Param: eventTime = {} ", creationTime);
+        EventPack eventPack = eventService.getEventsBeforeTime(creationTime);
         ResponseEntity<EventPackVO> resultResponseEntity;
         EventPackVO eventPackVO = new EventPackVO(eventPack.getNumberOfAllEvents());
         for(Event event: eventPack.getEvents()) {

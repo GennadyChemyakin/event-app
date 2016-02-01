@@ -20,6 +20,7 @@ import java.util.Optional;
 public class EventServiceImpl implements EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);
+    private static final int EVENTS_AMOUNT = 2;
 
     @Autowired
     private EventDAO eventDAO;
@@ -41,9 +42,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventPack getEventsBeforeTime(LocalDateTime creationTime, int amount) {
-        LOGGER.debug("getEventsBeforeTime started: Params creationTime = {}, amount={}", creationTime, amount);
-        List<Event> eventList = eventDAO.getEventsBeforeTime(creationTime, amount);
+    public EventPack getEventsBeforeTime(LocalDateTime creationTime) {
+        LOGGER.debug("getEventsBeforeTime started: Params creationTime = {}, amount={}", creationTime, EVENTS_AMOUNT);
+        List<Event> eventList = eventDAO.getEventsBeforeTime(creationTime, EVENTS_AMOUNT);
         EventPack eventPack = new EventPack(eventList, eventDAO.getNumberOfEvents());
         LOGGER.debug("getEventsBeforeTime started: Result: {}", eventPack);
         return eventPack;

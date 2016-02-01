@@ -20,8 +20,6 @@ import java.util.Optional;
 @Repository("EventDAO")
 public class EventDAOImpl extends GenericDAO implements EventDAO {
 
-
-
     private static final String GET_EVENT_BY_ID = "select e.id as e_id, e.name as e_name, e.description, e.country as e_country, " +
             "e.city as e_city, e.address, e.gps_latitude, e.gps_longitude, e.event_time, e.create_time, u.id as u_id, " +
             "u.username, u.email, u.name as u_name, u.surname, u.country as u_country, u.city as u_city, " +

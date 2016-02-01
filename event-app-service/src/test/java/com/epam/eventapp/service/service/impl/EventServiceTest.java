@@ -157,7 +157,7 @@ public class EventServiceTest {
         when(eventDAOMock.getNumberOfEvents()).thenReturn(numberOfEvents);
 
         //when
-        EventPack eventPack = sut.getEventsBeforeTime(creationTime, amount);
+        EventPack eventPack = sut.getEventsBeforeTime(creationTime);
 
         //then
         Assert.assertTrue(eventPack.getEvents().size() <= amount);
