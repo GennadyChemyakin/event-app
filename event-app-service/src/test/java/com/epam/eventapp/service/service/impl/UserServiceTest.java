@@ -85,7 +85,6 @@ public class UserServiceTest {
 
     @Test(expected = EmailAlreadyExistsException.class)
     public void shouldThrowEmailExistsInTheDatabase() {
-
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
         Mockito.when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);
@@ -98,5 +97,4 @@ public class UserServiceTest {
         Assert.fail("EmailAlreadyExistsException is expected to be thrown");
 
     }
-
 }

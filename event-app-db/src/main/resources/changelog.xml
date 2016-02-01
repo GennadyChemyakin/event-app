@@ -25,4 +25,12 @@
 		<sqlFile relativeToChangelogFile="true" path="sql/5.added.synonyms.for.sequences.and.grants.sql"/>
 	</changeSet>
 
+	<changeSet id="6" author="Maxim_Ivanov2">
+		<sqlFile relativeToChangelogFile="true" path="sql/6.added.creation.time.to.event.sql"/>
+	</changeSet>
+
+	<changeSet id="7" author="Maxim_Ivanov2">
+		<sqlFile relativeToChangelogFile="true" path="sql/7.renamed.creation.time.and.added.comment.and.not.null.to.it.sql"/>
+	</changeSet>
+
 </databaseChangeLog>

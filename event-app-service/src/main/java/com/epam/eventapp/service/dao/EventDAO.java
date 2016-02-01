@@ -3,6 +3,9 @@ package com.epam.eventapp.service.dao;
 import com.epam.eventapp.service.domain.Event;
 
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,4 +27,18 @@ public interface EventDAO {
      * @return Number of updated rows
      */
     int updateEventById(Event event);
+
+    /**
+     * Gets a list of events ordered by create time in desc mode. Size of the list is limited by the provided amount parameter.
+     * @param eventTime creationTime of returned events is limited by eventTime.
+     * @param amount max number of returned events
+     * @return Page of Events
+     */
+    List<Event> getEventsBeforeTime(LocalDateTime eventTime, int amount);
+
+    /**
+     * Method for getting number of all events in database
+     * @return Number of all events in database
+     */
+    int getNumberOfEvents();
 }

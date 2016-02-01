@@ -1,120 +1,112 @@
-package com.epam.eventapp.service.domain;
+package com.epam.eventappweb.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.time.LocalDateTime;
 
 /**
- * class describes EVENT domain
- * without collections for storing photo and video objects
+ * class describes Event model for list of Events
  */
-public class Event {
-    private final int id;
-    private final User user;
+public final class EventPreviewVO {
     private final String name;
+    private final String creator;
     private final String description;
     private final String country;
     private final String city;
     private final String location;
-    private final double gpsLatitude;
-    private final double gpsLongitude;
+    private final int numberOfComments;
+    private final byte[] picture;
     private final LocalDateTime eventTime;
     private final LocalDateTime creationTime;
 
-    private Event(EventBuilder builder) {
-        this.id = builder.id;
-        this.user = builder.user;
+    private EventPreviewVO(EventPreviewModelBuilder builder) {
         this.name = builder.name;
+        this.creator = builder.creator;
         this.description = builder.description;
         this.country = builder.country;
         this.city = builder.city;
         this.location = builder.location;
-        this.gpsLatitude = builder.gpsLatitude;
-        this.gpsLongitude = builder.gpsLongitude;
+        this.numberOfComments = builder.numberOfComments;
+        this.picture = builder.picture;
         this.eventTime = builder.eventTime;
         this.creationTime = builder.creationTime;
     }
 
-    public static EventBuilder builder(String name){
-        return new EventBuilder(name);
+    public static EventPreviewModelBuilder builder(String name){
+        return new EventPreviewModelBuilder(name);
     }
 
-    public static class EventBuilder {
-        private int id;
-        private User user;
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
+    public static class EventPreviewModelBuilder {
         private String name;
+        private String creator;
         private String description;
         private String country;
         private String city;
         private String location;
-        private double gpsLatitude;
-        private double gpsLongitude;
+        private int numberOfComments;
+        private byte[] picture;
         private LocalDateTime eventTime;
         private LocalDateTime creationTime;
 
-        private EventBuilder(String name) {
+        private EventPreviewModelBuilder(@JsonProperty("name") String name) {
             this.name = name;
         }
 
-        public EventBuilder user(User user) {
-            this.user = user;
+        public EventPreviewModelBuilder creator(String creator) {
+            this.creator = creator;
             return this;
         }
 
-        public EventBuilder id(int id) {
-            this.id = id;
-            return this;
-        }
-
-        public EventBuilder description(String description) {
+        public EventPreviewModelBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public EventBuilder country(String country) {
+        public EventPreviewModelBuilder country(String country) {
             this.country = country;
             return this;
         }
 
-        public EventBuilder city(String city) {
+        public EventPreviewModelBuilder city(String city) {
             this.city = city;
             return this;
         }
 
-        public EventBuilder location(String location) {
+        public EventPreviewModelBuilder location(String location) {
             this.location = location;
             return this;
         }
 
-        public EventBuilder gpsLatitude(double gpsLatitude) {
-            this.gpsLatitude = gpsLatitude;
+        public EventPreviewModelBuilder numberOfComments(int numberOfComments) {
+            this.numberOfComments = numberOfComments;
             return this;
         }
 
-        public EventBuilder gpsLongitude(double gpsLongitude) {
-            this.gpsLongitude = gpsLongitude;
+        public EventPreviewModelBuilder picture(byte[] picture) {
+            this.picture = picture;
             return this;
         }
 
-        public EventBuilder eventTime(LocalDateTime eventTime) {
+
+        public EventPreviewModelBuilder eventTime(LocalDateTime eventTime) {
             this.eventTime = eventTime;
             return this;
         }
 
-        public EventBuilder creationTime(LocalDateTime creationTime) {
+        public EventPreviewModelBuilder creationTime(LocalDateTime creationTime) {
             this.creationTime = creationTime;
             return this;
         }
 
-        public Event build() {
-            return new Event(this);
+        public EventPreviewVO build() {
+            return new EventPreviewVO(this);
         }
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
+    public String getCreator() {
+        return creator;
     }
 
     public String getName() {
@@ -137,12 +129,12 @@ public class Event {
         return location;
     }
 
-    public double getGpsLatitude() {
-        return gpsLatitude;
+    public int getNumberOfComments() {
+        return numberOfComments;
     }
 
-    public double getGpsLongitude() {
-        return gpsLongitude;
+    public byte[] getPicture() {
+        return picture;
     }
 
     public LocalDateTime getEventTime() {
@@ -155,18 +147,18 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", user=" + user +
+        return "EventPreviewVO{" +
+                "creator=" + creator +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", location='" + location + '\'' +
-                ", gpsLatitude=" + gpsLatitude +
-                ", gpsLongitude=" + gpsLongitude +
-                ", eventTime=" + eventTime +
+                ", numberOfComments='" + numberOfComments + '\'' +
+                ", location='" + location + '\'' +
+                ", eventTime='" + eventTime + '\'' +
                 ", creationTime=" + creationTime +
                 '}';
     }
+
 }

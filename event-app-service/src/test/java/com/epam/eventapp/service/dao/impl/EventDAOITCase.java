@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,7 +34,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldFindEventById() {
         //given
-        final int id = 0;
+        final int id = 1;
         //when
         Optional<Event> event = eventDAO.findById(id);
         //then
@@ -48,7 +50,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldReturnAbsentInCaseWrongIdSpecified() {
         //given
-        final int id = 1;
+        final int id = -1;
         //when
         Optional<Event> event = eventDAO.findById(id);
         //then
@@ -63,7 +65,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldUpdateEventById() {
         //given
-        final int id = 0;
+        final int id = 1;
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
@@ -77,7 +79,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
                 id(id).
                 city(newCity).
                 location(newLocation).
-                timeStamp(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
+                eventTime(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
 
         //when
         int updatedEntries = eventDAO.updateEventById(updatedEvent);
@@ -89,7 +91,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     /**
      * Testing updateEventById from EventDAOImpl.
-     * Updating event with id=-1.
+     * Updating event with id=100.
      * Checking if zero entries in DB are updated.
      */
     @Test
@@ -102,12 +104,49 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         Event updatedEvent = Event.builder(newName).
                 user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
-                timeStamp(newDateTime).build();
+                eventTime(newDateTime).build();
 
         //when
         int updatedEntries = eventDAO.updateEventById(updatedEvent);
 
         //then
         Assert.assertEquals(0, updatedEntries);
+    }
+
+    /**
+     * testing shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc method from EventDAOImpl.
+     * looking for list of amount events that were created before specified time and were sorted in descending order by event_time.
+     * Checking if we've got events from DB and that we got less than amount events
+     */
+    @Test
+    public void shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc() {
+        //given
+        final int amount = 10;
+        final LocalDateTime eventTime = LocalDateTime.now();
+
+        //when
+        List<Event> eventList = eventDAO.getEventsBeforeTime(eventTime, amount);
+
+        //then
+        Assert.assertNotNull(eventList);
+        Assert.assertTrue(eventList.size() <= amount);
+    }
+
+    /**
+     * testing getNumberOfEvents method from EventDAOImpl
+     * looking for number of events in DB
+     * Checking if number of events in DB equals expectedNumberOfEvents
+     *
+     */
+    @Test
+    public void shouldGetNumberOfEventsInDatabase() {
+        //given
+        int expectedNumberOfEvents = 5;
+
+        //when
+        int numberOfEvents = eventDAO.getNumberOfEvents();
+
+        //then
+        Assert.assertEquals(expectedNumberOfEvents, numberOfEvents);
     }
 }

@@ -1,15 +1,21 @@
 package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Event;
+import com.epam.eventapp.service.model.EventPack;
 import com.epam.eventapp.service.service.EventService;
+import com.epam.eventappweb.model.EventPackVO;
+import com.epam.eventappweb.model.EventPreviewVO;
 import com.epam.eventappweb.model.EventVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -20,6 +26,7 @@ import java.util.Optional;
 public class EventDetailController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
+
 
     @Autowired
     private EventService eventService;
@@ -47,12 +54,37 @@ public class EventDetailController {
                 location(eventVO.getLocation()).
                 gpsLatitude(eventVO.getGpsLatitude()).
                 gpsLongitude(eventVO.getGpsLongitude()).
-                timeStamp(eventVO.getTimeStamp()).build();
+                eventTime(eventVO.getEventTime()).build();
 
         int updatedEntries = eventService.updateEvent(event);
         resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
+        return resultResponseEntity;
+    }
+
+    @RequestMapping(value = "/events", method = RequestMethod.GET)
+    public ResponseEntity<EventPackVO> getEventList(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                         @RequestParam("creationTime") LocalDateTime creationTime) throws SQLException {
+        LOGGER.info("getEventList started. Param: eventTime = {} ", creationTime);
+        EventPack eventPack = eventService.getEventsBeforeTime(creationTime);
+        ResponseEntity<EventPackVO> resultResponseEntity;
+        EventPackVO eventPackVO = new EventPackVO(eventPack.getNumberOfAllEvents());
+        for(Event event: eventPack.getEvents()) {
+            EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getName()).
+                    creator(event.getUser().getUsername()).
+                    description(event.getDescription()).
+                    country(event.getCountry()).
+                    city(event.getCity()).
+                    location(event.getLocation()).
+                    numberOfComments(5).
+                    picture(new byte[0]).
+                    eventTime(event.getEventTime()).
+                    creationTime(event.getCreationTime()).build();
+            eventPackVO.addEventPreviewVO(eventPreviewVO);
+        }
+        resultResponseEntity = new ResponseEntity<EventPackVO>(eventPackVO, HttpStatus.OK);
+        LOGGER.info("getEventList finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;
     }
 }

@@ -3,7 +3,6 @@ package com.epam.eventappweb.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
  * without collections for storing photo and video objects
  */
 @JsonDeserialize(builder = EventVO.EventModelBuilder.class)
-@Immutable
 public final class EventVO {
     private final String name;
     private final String creator;
@@ -22,7 +20,7 @@ public final class EventVO {
     private final String location;
     private final double gpsLatitude;
     private final double gpsLongitude;
-    private final LocalDateTime timeStamp;
+    private final LocalDateTime eventTime;
 
     private EventVO(EventModelBuilder builder) {
         this.name = builder.name;
@@ -33,7 +31,7 @@ public final class EventVO {
         this.location = builder.location;
         this.gpsLatitude = builder.gpsLatitude;
         this.gpsLongitude = builder.gpsLongitude;
-        this.timeStamp = builder.timeStamp;
+        this.eventTime = builder.eventTime;
     }
 
     public static EventModelBuilder builder(String name){
@@ -50,14 +48,14 @@ public final class EventVO {
         private String location;
         private double gpsLatitude;
         private double gpsLongitude;
-        private LocalDateTime timeStamp;
+        private LocalDateTime eventTime;
 
         private EventModelBuilder(@JsonProperty("name") String name) {
             this.name = name;
         }
 
-        public EventModelBuilder username(String username) {
-            this.creator = username;
+        public EventModelBuilder creator(String creator) {
+            this.creator = creator;
             return this;
         }
 
@@ -91,8 +89,8 @@ public final class EventVO {
             return this;
         }
 
-        public EventModelBuilder timeStamp(LocalDateTime timeStamp) {
-            this.timeStamp = timeStamp;
+        public EventModelBuilder eventTime(LocalDateTime eventTime) {
+            this.eventTime = eventTime;
             return this;
         }
 
@@ -133,8 +131,8 @@ public final class EventVO {
         return gpsLongitude;
     }
 
-    public LocalDateTime getTimeStamp() {
-        return timeStamp;
+    public LocalDateTime getEventTime() {
+        return eventTime;
     }
 
     @Override
@@ -148,7 +146,7 @@ public final class EventVO {
                 ", location='" + location + '\'' +
                 ", gpsLatitude=" + gpsLatitude +
                 ", gpsLongitude=" + gpsLongitude +
-                ", timeStamp=" + timeStamp +
+                ", eventTime=" + eventTime +
                 '}';
     }
 }
