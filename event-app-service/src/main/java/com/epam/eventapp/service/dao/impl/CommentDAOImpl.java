@@ -17,6 +17,7 @@ import java.util.*;
 @Repository
 public class CommentDAOImpl extends GenericDAO implements CommentDAO {
 
+
     private final static String GET_COMMENTS_LIST_OF_FIXED_SIZE_BY_EVENT_ID_BEFORE_TIME = "select comment_alias.*, rownum rnum " +
             "from (select c.id as c_id, c.message, c.comment_time, c.event_id, " +
             "u.id as u_id, u.username, u.email, u.name, u.surname, " +

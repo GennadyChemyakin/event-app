@@ -6,7 +6,6 @@ import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -82,7 +81,7 @@ public class CommentControllerTest {
                 thenReturn(expectedCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&before=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isOk()).

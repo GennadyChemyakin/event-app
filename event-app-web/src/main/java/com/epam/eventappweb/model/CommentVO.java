@@ -14,7 +14,7 @@ public final class CommentVO {
     private final String message;
     private final LocalDateTime timeStamp;
 
-    private CommentVO(CommentViewBuilder builder){
+    private CommentVO(CommentViewBuilder builder) {
         this.id = builder.id;
         this.eventId = builder.eventId;
         this.username = builder.username;
@@ -23,11 +23,11 @@ public final class CommentVO {
         this.timeStamp = builder.timeStamp;
     }
 
-    public static CommentViewBuilder builder(){
+    public static CommentViewBuilder builder() {
         return new CommentViewBuilder();
     }
 
-    public static class CommentViewBuilder{
+    public static class CommentViewBuilder {
         private int id;
         private int eventId;
         private String username;
@@ -35,37 +35,37 @@ public final class CommentVO {
         private String message;
         private LocalDateTime timeStamp;
 
-        public CommentViewBuilder id(int id){
+        public CommentViewBuilder id(int id) {
             this.id = id;
             return this;
         }
 
-        public CommentViewBuilder eventId(int eventId){
+        public CommentViewBuilder eventId(int eventId) {
             this.eventId = eventId;
             return this;
         }
 
-        public CommentViewBuilder username(String username){
+        public CommentViewBuilder username(String username) {
             this.username = username;
             return this;
         }
 
-        public CommentViewBuilder userPhoto(byte[] userPhoto){
+        public CommentViewBuilder userPhoto(byte[] userPhoto) {
             this.userPhoto = userPhoto;
             return this;
         }
 
-        public CommentViewBuilder message(String message){
+        public CommentViewBuilder message(String message) {
             this.message = message;
             return this;
         }
 
-        public CommentViewBuilder timeStamp(LocalDateTime timeStamp){
+        public CommentViewBuilder timeStamp(LocalDateTime timeStamp) {
             this.timeStamp = timeStamp;
             return this;
         }
 
-        public CommentVO build(){
+        public CommentVO build() {
             return new CommentVO(this);
         }
     }

@@ -4,4 +4,3 @@ insert into commentary VALUES(0,0,0,'2016-01-20 15:00:00', 'Great!');
 insert into commentary VALUES(1,0,0,'2016-01-20 17:00:00', 'I like it!');
 insert into commentary VALUES(2,0,0,'2016-01-20 19:00:00', 'Cool!');
 insert into authority VALUES(0,'ROLE_USER');
-
