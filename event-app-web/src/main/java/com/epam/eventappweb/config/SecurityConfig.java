@@ -70,6 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/resources/js/*").permitAll()
                 .antMatchers("/event.html").permitAll()
+                .antMatchers("/event/*").permitAll()
+                .antMatchers("/events.html").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
 
     }

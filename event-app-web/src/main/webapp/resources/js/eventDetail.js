@@ -8,9 +8,9 @@ $(document).ready(function () {
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
-        if (data.timeStamp != null) {
-            event.date = new Date(data.timeStamp.year, data.timeStamp.monthValue - 1, data.timeStamp.dayOfMonth,
-                data.timeStamp.hour, data.timeStamp.minute);
+        if (data.eventTime != null) {
+            event.date = new Date(data.eventTime.year, data.eventTime.monthValue - 1, data.eventTime.dayOfMonth,
+                data.eventTime.hour, data.eventTime.minute);
         }
         event.user = {};
         event.user.username = data.user.username;
