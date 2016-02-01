@@ -52,13 +52,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentPack getListOfNewComments(int eventId, LocalDateTime commentTime) {
+    public List<Comment> getListOfNewComments(int eventId, LocalDateTime commentTime) {
         LOGGER.debug("getListOfNewComments started: Params eventId = {}, commentTime = {}", eventId,
                 commentTime);
-        CommentPack commentPack;
         List<Comment> commentList = commentDAO.getListOfNewComments(eventId, commentTime);
-        commentPack = new CommentPack(commentList, 0);
-        LOGGER.debug("getListOfNewComments finished. Result: {}", commentPack);
-        return commentPack;
+        LOGGER.debug("getListOfNewComments finished. Result: {}", commentList);
+        return commentList;
     }
 }

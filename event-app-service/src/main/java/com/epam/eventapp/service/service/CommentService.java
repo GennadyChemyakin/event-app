@@ -6,6 +6,7 @@ import com.epam.eventapp.service.model.CommentPack;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Comment Service
@@ -35,6 +36,6 @@ public interface CommentService {
      * @param commentTime specified time. We are looking for comments that were added after it
      * @return list of founded comments
      */
-    CommentPack getListOfNewComments(int eventId, LocalDateTime commentTime);
+    List<Comment> getListOfNewComments(int eventId, LocalDateTime commentTime);
 
 }

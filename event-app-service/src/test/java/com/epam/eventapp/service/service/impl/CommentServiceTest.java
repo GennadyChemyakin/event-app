@@ -155,11 +155,11 @@ public class CommentServiceTest {
 
 
         //when
-        CommentPack commentPack = sut.getListOfNewComments(id, commentDateTime);
+        List<Comment> commentList = sut.getListOfNewComments(id, commentDateTime);
 
         //then
-        Assert.assertEquals(commentPack.getComments().size(), commentsAmount);
-        Assert.assertEquals(commentPack.getComments().get(0).getEventId(), id);
+        Assert.assertEquals(commentList.size(), commentsAmount);
+        Assert.assertEquals(commentList.get(0).getEventId(), id);
     }
 
     /**
@@ -177,9 +177,9 @@ public class CommentServiceTest {
         when(commentDAOMock.getListOfNewComments(id, commentDateTime)).thenReturn(absentCommentList);
 
         //when
-        CommentPack commentPack = sut.getListOfNewComments(id, commentDateTime);
+        List<Comment> commentList = sut.getListOfNewComments(id, commentDateTime);
 
         //then
-        Assert.assertEquals(commentPack.getComments().size(), 0);
+        Assert.assertEquals(commentList.size(), 0);
     }
 }

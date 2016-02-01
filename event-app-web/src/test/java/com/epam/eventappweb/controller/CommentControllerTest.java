@@ -29,6 +29,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -170,18 +171,16 @@ public class CommentControllerTest {
                 commentTime(LocalDateTime.parse(newCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).build();
 
         CommentVO newCommentVO = CommentVO.builder().username(newComment.getUser().getUsername()).message(newComment.getMessage()).
-                id(newComment.getId()).commentTime(newComment.getCommentTime()).eventId(newComment.getEventId()).build();
+                commentTime(newComment.getCommentTime()).eventId(newComment.getEventId()).build();
 
         List<Comment> expectedCommentList = new ArrayList<>();
         expectedCommentList.add(commentFromIvan);
         expectedCommentList.add(commentFromPete);
         expectedCommentList.add(newComment);
 
-        CommentPack expectedCommentPack = new CommentPack(expectedCommentList, remainingComments);
-
         when(userServiceMock.getUserByUsername(newCommentVO.getUsername())).thenReturn(newCommentUser);
         when(commentServiceMock.getListOfNewComments(id, commentDateTime)).
-                thenReturn(expectedCommentPack);
+                thenReturn(expectedCommentList);
         Mockito.doNothing().when(commentServiceMock).addComment(argThat(Matchers.isA(Comment.class)));
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -194,13 +193,13 @@ public class CommentControllerTest {
 
         //then
         resultActions.andExpect(status().isOk()).
-                andExpect(jsonPath("$.commentVOList.[0].id", Matchers.is(firstCommentId))).
-                andExpect(jsonPath("$.commentVOList.[1].id", Matchers.is(secondCommentId))).
-                andExpect(jsonPath("$.commentVOList.[2].id", Matchers.is(newCommentId))).
-                andExpect(jsonPath("$.commentVOList.[0].message", Matchers.is(firstCommentMessage))).
-                andExpect(jsonPath("$.commentVOList.[1].message", Matchers.is(secondCommentMessage))).
-                andExpect(jsonPath("$.commentVOList.[2].message", Matchers.is(newCommentMessage))).
-                andExpect(jsonPath("$.commentVOList.[0].username", Matchers.is(firstCommentUsername))).
-                andExpect(jsonPath("$.commentVOList.[1].username", Matchers.is(secondCommentUsername)));
+                andExpect(jsonPath("$.[0].id", Matchers.is(firstCommentId))).
+                andExpect(jsonPath("$.[1].id", Matchers.is(secondCommentId))).
+                andExpect(jsonPath("$.[2].id", Matchers.is(newCommentId))).
+                andExpect(jsonPath("$.[0].message", Matchers.is(firstCommentMessage))).
+                andExpect(jsonPath("$.[1].message", Matchers.is(secondCommentMessage))).
+                andExpect(jsonPath("$.[2].message", Matchers.is(newCommentMessage))).
+                andExpect(jsonPath("$.[0].username", Matchers.is(firstCommentUsername))).
+                andExpect(jsonPath("$.[1].username", Matchers.is(secondCommentUsername)));
     }
 }
