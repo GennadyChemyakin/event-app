@@ -6,6 +6,7 @@ import com.epam.eventapp.service.exceptions.EmailAlreadyExistException;
 import com.epam.eventapp.service.exceptions.UserNameAlreadyExistsException;
 import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import com.epam.eventapp.service.service.UserService;
+import javafx.beans.binding.When;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = UserNotCreatedException.class)
-    public void shouldThrowExceptionIfWrongDataSend() {
+    public void shouldThrowUserNotCreatedExceptionIfDataAccessException() {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
@@ -60,7 +61,6 @@ public class UserServiceTest {
         // exception should be thrown if data does not get to the table
         Assert.fail("UserNotCreatedException is expected to be thrown");
 
-
     }
 
     @Test(expected = UserNameAlreadyExistsException.class)
@@ -68,7 +68,7 @@ public class UserServiceTest {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
-        Mockito.doThrow(UserNameAlreadyExistsException.class).doNothing().when(userDAOMock).createUser(user);
+        Mockito.when(userDAOMock.isUserNameRegistered(user.getUsername())).thenReturn(true);
 
         //when
         userService.createUser(user);
@@ -84,7 +84,7 @@ public class UserServiceTest {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
-        Mockito.doThrow(EmailAlreadyExistException.class).doNothing().when(userDAOMock).createUser(user);
+        Mockito.when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);
 
         //when
         userService.createUser(user);

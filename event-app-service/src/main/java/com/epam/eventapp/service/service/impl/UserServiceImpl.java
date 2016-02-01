@@ -35,12 +35,8 @@ public class UserServiceImpl implements UserService {
             LOGGER.error(msg);
             throw new UserNameAlreadyExistsException(msg);
         }
-        try {
-            userDao.createUser(user);
-        } catch (DataAccessException ex) {
-            LOGGER.error("Failed to create user: {}", user);
 
-        }
+        userDao.createUser(user);
 
         LOGGER.debug("createUser finished: Params user = {}", user);
 
