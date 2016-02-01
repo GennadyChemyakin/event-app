@@ -38,7 +38,7 @@ $(document).ready(function () {
         var timezoneOffset = new Date().getTimezoneOffset();
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + new Date(new Date().getTime() - timezoneOffset * 60000).toISOString()
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + new Date(new Date().getTime() - timezoneOffset * 60000).toISOString()
         }).then(showComments);
     });
     $('#loadComments').click(function () {
@@ -54,7 +54,7 @@ $(document).ready(function () {
         }
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + lastCommentDate
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + lastCommentDate
         }).then(showComments)
     });
 

@@ -82,7 +82,7 @@ public class CommentControllerTest {
                 thenReturn(expectedCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&before=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isOk()).
