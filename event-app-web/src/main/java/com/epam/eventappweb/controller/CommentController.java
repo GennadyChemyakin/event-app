@@ -5,6 +5,7 @@ import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
+import com.epam.eventappweb.exceptions.UserNotLoggedInException;
 import com.epam.eventappweb.model.CommentPackVO;
 import com.epam.eventappweb.model.CommentVO;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,11 +72,13 @@ public class CommentController {
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public ResponseEntity<List<CommentVO>> addComment(@RequestBody CommentVO commentVO,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    @RequestParam("after") LocalDateTime after) throws IOException {
+                                                    @RequestParam("after") LocalDateTime after, Principal principal) {
 
-        LOGGER.info("addComment started. Param: commentVO = {}, after = {}", commentVO, after);
+        LOGGER.info("addComment started. Param: commentVO = {}, after = {}, principal = {}", commentVO, after, principal);
+        if(principal == null)
+            throw new UserNotLoggedInException("user tries to add a comment without logging in");
         ResponseEntity<List<CommentVO>> resultResponseEntity;
-        User user = userService.getUserByUsername(commentVO.getUsername());
+        User user = userService.getUserByUsername(principal.getName());
         Comment addedComment = Comment.builder().eventId(commentVO.getEventId()).message(commentVO.getMessage()).
                 commentTime(commentVO.getCommentTime()).user(user).build();
         commentService.addComment(addedComment);

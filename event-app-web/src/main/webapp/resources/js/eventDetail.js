@@ -57,8 +57,8 @@ $(document).ready(function () {
             url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + lastCommentDate
         }).then(showComments)
     });
-    $('#loadCommentsPanel').mouseenter(function(){
-        $(this).css("background-color","red");
+    $('#loadCommentsPanel').mouseenter(function () {
+        $(this).css("background-color", "red");
     });
     $('#addCommentButton').click(function () {
         var message = $('#commentArea').val();
@@ -84,7 +84,7 @@ $(document).ready(function () {
                     "commentTime": commentTime,
                     "username": "username"
                 }),
-            }).then(showNewComments).then(function(){
+            }).then(showNewComments).then(function () {
                 $('#commentArea').val("");
             });
         }
@@ -118,7 +118,7 @@ function showComments(data) {
     }
 }
 
-function showNewComments(data){
+function showNewComments(data) {
     for (var i = 0; i < data.length; i++) {
         var comment = getComment(data[i]);
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
@@ -155,6 +155,8 @@ function getComment(data) {
     }
     return comment;
 }
+
+
 //getting params from request
 function urlParam(name) {
     var params = window.location.href.slice(window.location.href.indexOf('?') + 1);
