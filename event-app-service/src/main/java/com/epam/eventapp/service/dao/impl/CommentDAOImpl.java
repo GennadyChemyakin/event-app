@@ -52,14 +52,10 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
     }
 
     @Override
-    public int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime commentTime) throws SQLException {
+    public int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime commentTime) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("eventId", eventId);
         params.addValue("commentTime", Timestamp.valueOf(commentTime));
-        Integer count =  getNamedParameterJdbcTemplate().queryForObject(GET_COUNT_OF_REMAINING_COMMENTS, params, Integer.class);
-        if(count != null)
-            return count.intValue();
-        else
-            throw new SQLException();
+        return getNamedParameterJdbcTemplate().queryForObject(GET_COUNT_OF_REMAINING_COMMENTS, params, Integer.class);
     }
 }

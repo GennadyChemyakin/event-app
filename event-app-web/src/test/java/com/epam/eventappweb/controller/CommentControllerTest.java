@@ -94,31 +94,4 @@ public class CommentControllerTest {
                 andExpect(jsonPath("$.commentVOList.[1].username", Matchers.is(secondCommentUsername))).
                 andExpect(jsonPath("$.remainingCommentsCount", Matchers.is(remainingComments)));
     }
-
-
-    /**
-     * testing getCommentList from CommentController
-     * expect 404 status code
-     *
-     * @throws Exception
-     */
-    @Ignore
-    @Test
-    public void shouldReturn404IfCommentsNotFound() throws Exception {
-
-        //given
-        final int id = 1;
-        final String commentTime = "2016-01-23 15:00:00";
-        final LocalDateTime commentDateTime = LocalDateTime.parse(commentTime,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        CommentPack emptyCommentPack = new CommentPack(new ArrayList<>(), 0);
-        when(commentServiceMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentDateTime, CommentController.COMMENTS_AMOUNT)).
-                thenReturn(emptyCommentPack);
-
-        //when
-        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
-
-        //then
-        resultActions.andExpect(status().isNotFound());
-    }
 }
