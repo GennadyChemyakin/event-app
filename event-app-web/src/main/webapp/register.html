@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Register page</title>
     <meta charset="utf-8"/>
@@ -7,101 +7,59 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="assets/js/jquery.knob.js"></script>
-
-    <!-- jQuery File Upload Dependencies -->
-    <script src="assets/js/jquery.ui.widget.js"></script>
-    <script src="assets/js/jquery.iframe-transport.js"></script>
-    <script src="assets/js/jquery.fileupload.js"></script>
-
-    <script>
-        $(document).ready(function() {
-
-        $("#register_btn").click(function() {
-
-        var username    = $("#username").val();
-        var email       = $("#email").val();
-        var password    = $("#pwd").val();
-        var password2   = $("#cpwd").val();
-        var name        = $("#name").val();
-        var surname     = $("#surname").val();
-        var city        = $("#city").val();
-        var country     = $("#country").val();
-        var gender      = $("#gender").val();
-        var bio         = $("#bio").val();
-        if (username == '' || email == '' || password == '' || password2 == '') {
-            alert("Please fill all fields...!!!!!!");
-        } else if ((password.length) < 1) {
-            alert("Password should at least 8 character in length...!!!!!!");
-        } else if (!(password).match(password2)) {
-            alert("Your passwords don't match. Try again?");
-        } else {
-
-            var data = JSON.stringify({
-                username: username,
-                email: email,
-                password: password,
-                name: name,
-                surname: surname,
-                city: city,
-                country: country,
-                gender: gender,
-                bio: bio
-            });
-
-            $.ajax({
-                type: "POST",
-                url: "registration",
-                data: data,
-                contentType: "application/json",
-                success: function (data) {
-                    alert("ok");
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status);
-                    alert(thrownError);
-                }
-            });
-
-        }
-
-        });
-        });
-
-    </script>
+    <script  src="resources/js/regpage.js" type="text/javascript"></script>
 </head>
 <body>
-
-<div class="container">
-    <div class="col-md-offset-2 col-md-8">
-        <div class="panel panel-default">
+<br><br>
+<div class="container" >
+    <div class="col-md-offset-3 col-md-6">
+        <div class="panel panel-success">
+            <div class="panel-heading"><center><h2>Registration in EVENT-APP</h2></center></div>
             <div class="panel-body" style="background-color: transparent">
-                <h1>Welcome to EVENT-APP</h1>
 
+                <form role="form"  id="registration" name="form">
 
-                <form role="form">
+                    <div class="alert" id="msg_main">
+                        Вы успешно зарегестрировались!!!
+                    </div>
 
-                    <div class="form-group">
+                    <div class="form-group has-feedback">
                         <label for="username">Login:</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter login"/>
+                        <input type="text" class="form-control  error" id="username" placeholder="Enter login"/>
+                        <span class="glyphicon form-control-feedback"></span>
+                        <div class="alert alert-danger">
+
+                        </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group has-feedback" >
                         <label for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter e-mail"/>
+                        <input type="email" class="form-control" id="email" placeholder="Enter e-mail" placeholder="Email" required>
+                        <span class="glyphicon form-control-feedback"></span>
+                        <div class="alert alert-danger">
+
+                        </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group has-feedback">
                         <label for="pwd">Password:</label>
                         <input type="password" class="form-control" id="pwd" placeholder="Enter password"/>
+                        <span class="glyphicon form-control-feedback"></span>
+                        <div class="alert alert-danger">
+
+                        </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group has-feedback">
                         <label for="cpwd">Confirm password:</label>
                         <input type="password" class="form-control" id="cpwd" placeholder="Enter password"/>
+                        <span class="glyphicon form-control-feedback"></span>
+                        <div class="alert alert-danger">
+
+                        </div>
                     </div>
 
-                    <button type="button" class="btn btn-success" id="register_btn">Submit</button>
+                    <button type="button" class="btn btn-success" id="register_btn" name="register_btn">Submit</button>
 
                 </form>
             </div>
