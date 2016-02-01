@@ -43,15 +43,7 @@ $(document).ready(function () {
         }).then(showComments);
     });
     $('#loadComments').click(function () {
-        var lastCommentDate = $("#commentTime" + $(".commentRow:first").attr("id")).text();
-        if (lastCommentDate) {
-            lastCommentDate = new Date(lastCommentDate);
-            //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-            lastCommentDate = new Date(lastCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
-        } else {
-            lastCommentDate = new Date();
-            lastCommentDate = new Date(lastCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
-        }
+        var lastCommentDate = getCommentDate($("#commentTime" + $(".commentRow:first").attr("id")).text());
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + lastCommentDate
@@ -62,15 +54,7 @@ $(document).ready(function () {
     });
     $('#addCommentButton').click(function () {
         var message = $('#commentArea').val();
-        var firstCommentDate = $("#commentTime" + $(".commentRow:last").attr("id")).text();
-        if (firstCommentDate) {
-            firstCommentDate = new Date(firstCommentDate);
-            //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-            firstCommentDate = new Date(firstCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
-        } else {
-            firstCommentDate = new Date();
-            firstCommentDate = new Date(firstCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
-        }
+        var firstCommentDate = getCommentDate($("#commentTime" + $(".commentRow:last").attr("id")).text());
         if (message) {
             var commentTime = new Date(new Date().getTime() - window.timezoneOffset * 60000).toISOString();
             commentTime = commentTime.slice(0, commentTime.length - 1);
@@ -81,17 +65,35 @@ $(document).ready(function () {
                 data: JSON.stringify({
                     "eventId": urlParam("id"),
                     "message": message,
-                    "commentTime": commentTime,
-                    "username": "username"
-                }),
-            }).then(showNewComments).then(function () {
+                    "commentTime": commentTime
+                })
+            }).done(function (data) {
+                showNewComments(data);
+                $("#addCommentFailMessage").css("display", "none");
                 $('#commentArea').val("");
+            }).error(function (xhr, statusText) {
+                if (xhr.status == 401) {
+                    $("#addCommentFailMessage").slideDown();
+                }
             });
         }
     });
 
 });
 
+
+function getCommentDate(lastCommentDateString) {
+    var lastCommentDate;
+    if (lastCommentDateString) {
+        lastCommentDate = new Date(lastCommentDateString);
+        //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
+        lastCommentDate = new Date(lastCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+    } else {
+        lastCommentDate = new Date();
+        lastCommentDate = new Date(lastCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+    }
+    return lastCommentDate;
+}
 
 function showComments(data) {
     for (var i = 0; i < data.commentVOList.length; i++) {
