@@ -2,6 +2,8 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.EventService;
+import com.epam.eventappweb.exceptions.EventNotFoundException;
+import com.epam.eventappweb.exceptions.EventNotUpdatedException;
 import com.epam.eventappweb.model.EventVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,11 @@ public class EventDetailController {
     public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
         LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
         Optional<Event> event = eventService.findById(eventId);
-        ResponseEntity<Event> resultResponseEntity = event.isPresent() ? new ResponseEntity<>(event.get(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        ResponseEntity<Event> resultResponseEntity;
+        if (event.isPresent()) {
+            resultResponseEntity = new ResponseEntity<>(event.get(), HttpStatus.OK);
+        } else
+            throw new EventNotFoundException("Event Not Found by ID = " + eventId);
         LOGGER.info("getEventDetail finished. Result:"
                 + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event);
         return resultResponseEntity;
@@ -50,7 +56,10 @@ public class EventDetailController {
                 timeStamp(eventVO.getTimeStamp()).build();
 
         int updatedEntries = eventService.updateEvent(event);
-        resultResponseEntity = updatedEntries == 1 ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (updatedEntries == 1) {
+            resultResponseEntity = new ResponseEntity<>(HttpStatus.OK);
+        } else
+            throw new EventNotUpdatedException("Event with id = " + eventId + " not updated with new fields value:" + eventVO);
 
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;

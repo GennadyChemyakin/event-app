@@ -3,33 +3,40 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
+import com.epam.eventappweb.exceptions.EventNotFoundException;
+import com.epam.eventappweb.exceptions.EventNotUpdatedException;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.util.NestedServletException;
 
 import java.util.Optional;
-
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
-import static org.hamcrest.Matchers.isA;
 
 /**
  * test Class for EventDetailController
  */
 public class EventDetailControllerTest {
 
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     private EventService eventServiceMock;
@@ -75,23 +82,25 @@ public class EventDetailControllerTest {
 
     /**
      * testing getEventDetail from EventDetailController
-     * Using mockMvc to assert the behaviour of controller.
-     * expect 404 status code
+     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * expect EventNotFoundException thrown
      *
      * @throws Exception
      */
     @Test
-    public void shouldReturn404IfEventNotFound() throws Exception {
+    public void shouldTrowExceptionIfEventNotFound() throws Exception {
         //given
         final int id = 1;
         Optional<Event> emptyEvent = Optional.empty();
         when(eventServiceMock.findById(id)).thenReturn(emptyEvent);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/event/" + id));
+        thrown.expect(NestedServletException.class);
+        thrown.expectCause(org.hamcrest.Matchers.isA(EventNotFoundException.class));
+        mockMvc.perform(get("/event/" + id));
 
         //then
-        resultActions.andExpect(status().isNotFound());
+        Assert.fail("EventNotFoundException not thrown");
     }
 
     /**
@@ -126,10 +135,10 @@ public class EventDetailControllerTest {
     /**
      * Testing updateEvent from EventDetailController.
      * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
-     * Expect 404 status code
+     * expect EventNotFoundException thrown
      */
     @Test
-    public void shouldReturn404InCaseWrongEventIdSpecified() throws Exception {
+    public void shouldThrowExceptionInCaseWrongEventIdSpecified() throws Exception {
         //given
         final int id = -1;
         final String newName = "Ballet";
@@ -142,12 +151,14 @@ public class EventDetailControllerTest {
         when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(0);
 
         //when
-        ResultActions resultActions = mockMvc.perform(put("/event/" + id)
+        thrown.expect(NestedServletException.class);
+        thrown.expectCause(org.hamcrest.Matchers.isA(EventNotUpdatedException.class));
+        mockMvc.perform(put("/event/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
 
         //then
-        resultActions.andExpect(status().isNotFound());
+        Assert.fail("EventNotUpdatedException not thrown");
     }
 
     /**
