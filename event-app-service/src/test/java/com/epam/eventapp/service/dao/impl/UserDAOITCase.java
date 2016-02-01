@@ -25,8 +25,8 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
     @Test
     public void shouldAddUserInTheTable() {
 
-        final String userName = "Vasya";
-        final String userMail = "Vasya@vasya.com";
+        final String userName = "Vasya12";
+        final String userMail = "Vasya12@vasya.com";
         final String password = "123";
 
         User user = User.builder(userName, userMail)

@@ -1,12 +1,14 @@
-package com.epam.eventapp.service.domain;
+package com.epam.eventappweb.model;
 
 
-/**
- * class describes User domain
- */
-public class User {
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
-    private final int id;
+@Immutable
+@JsonDeserialize(builder = UserVO.Builder.class)
+public final class UserVO {
+
     private final String username;
     private final String password;
     private final String email;
@@ -18,29 +20,28 @@ public class User {
     private final String city;
     private final String bio;
 
-    private User(UserBuilder builder) {
-        this.id = builder.id;
+    private UserVO(Builder builder) {
         this.username = builder.username;
         this.password = builder.password;
         this.email = builder.email;
         this.name = builder.name;
         this.surname = builder.surname;
-        this.gender = builder.gender;
-        this.photo = builder.photo;
+        this.bio    = builder.bio;
+        this.city   = builder.city;
         this.country = builder.country;
-        this.city = builder.city;
-        this.bio = builder.bio;
+        this.gender  = builder.gender;
+        this.photo   = builder.photo;
     }
 
-    public static UserBuilder builder(String username, String email){
-        return new UserBuilder(username,email);
+    public static Builder builder(String username, String email){
+        return new Builder();
     }
 
-    public static class UserBuilder {
-        private int id;
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class Builder {
+
         private String username;
         private String email;
-
         private String password;
         private String name;
         private String surname;
@@ -50,64 +51,65 @@ public class User {
         private String city;
         private String bio;
 
-        private UserBuilder(String username, String email){
-            this.username = username;
-            this.email = email;
+        private Builder() {
+
         }
 
-        public UserBuilder id(int id){
-            this.id = id;
+        public Builder username(String username){
+            this.username = username;
             return this;
         }
 
-        public UserBuilder password(String password){
+        public Builder email(String email){
+            this.email = email;
+            return this;
+        }
+
+        public Builder password(String password){
             this.password = password;
             return this;
         }
 
-        public UserBuilder name(String name){
+        public Builder name(String name){
             this.name = name;
             return this;
         }
 
-        public UserBuilder surname(String surname){
+        public Builder surname(String surname){
             this.surname = surname;
             return this;
         }
 
-        public UserBuilder gender(String gender){
-            this.gender = gender;
-            return this;
-        }
-
-        public UserBuilder photo(byte[] photo){
-            this.photo = photo;
-            return this;
-        }
-
-        public UserBuilder country(String country){
-            this.country = country;
-            return this;
-        }
-
-        public UserBuilder city(String city){
-            this.city = city;
-            return this;
-        }
-
-        public UserBuilder bio(String bio){
+        public Builder bio (String bio){
             this.bio = bio;
             return this;
         }
 
-        public User build(){
-            return new User(this);
+        public Builder country(String country){
+            this.country = country;
+            return this;
         }
 
-    }
+        public Builder city(String city){
+            this.city = city;
+            return this;
+        }
 
-    public int getId() {
-        return id;
+        public Builder gender(String gender){
+            this.gender = gender;
+            return this;
+        }
+
+        public Builder photo(byte[] photo){
+            this.photo = photo;
+            return this;
+        }
+
+
+        public UserVO build(){
+            return new UserVO(this);
+        }
+
     }
 
     public String getUsername() {
@@ -130,39 +132,28 @@ public class User {
         return surname;
     }
 
-    public String getGender() {
-        return gender;
-    }
+    public String getGender() { return gender; }
 
-    public byte[] getPhoto() {
-        return photo;
-    }
+    public byte[] getPhoto() { return photo;  }
 
-    public String getCountry() {
-        return country;
-    }
+    public String getCountry() { return country; }
 
-    public String getCity() {
-        return city;
-    }
+    public String getCity() { return city; }
 
-    public String getBio() {
-        return bio;
-    }
+    public String getBio() { return bio;  }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
                 ", gender='" + gender + '\'' +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
-                ", bio='" + bio + '\'' +
+                ", photo='" + (photo == null ? false : photo.length != 0) + '\'' +
                 '}';
     }
+
 }

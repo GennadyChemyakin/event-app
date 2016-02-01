@@ -100,6 +100,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>${version.jackson.databind}</version>
         </dependency>
+
     </dependencies>
 
     <build>
