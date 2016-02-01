@@ -34,7 +34,6 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
-
     });
 });
 
