@@ -29,10 +29,12 @@ public interface EventDAO {
     int updateEventById(Event event);
 
     /**
-     * Method for getting List of all Events sorted by their timestamp in descending order
-     * @return Optional.of(List of Events) if we've found any events, otherwise Optional.empty()
+     * Gets a list of events ordered by create time in desc mode. Size of the list is limited by the provided amount parameter.
+     * @param eventTime creationTime of returned events is limited by eventTime.
+     * @param amount max number of returned events
+     * @return Page of Events
      */
-    List<Event> getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(LocalDateTime eventTime, int amount);
+    List<Event> getEventsBeforeTime(LocalDateTime eventTime, int amount);
 
     /**
      * Method for getting number of all events in database

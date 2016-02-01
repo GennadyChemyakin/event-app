@@ -8,12 +8,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,7 +34,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldFindEventById() {
         //given
-        final int id = 0;
+        final int id = 1;
         //when
         Optional<Event> event = eventDAO.findById(id);
         //then
@@ -52,7 +50,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldReturnAbsentInCaseWrongIdSpecified() {
         //given
-        final int id = 100;
+        final int id = -1;
         //when
         Optional<Event> event = eventDAO.findById(id);
         //then
@@ -67,7 +65,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldUpdateEventById() {
         //given
-        final int id = 0;
+        final int id = 1;
         final String newName = "Ballet";
         final String newCity = "Moscow";
         final String newLocation = "Kremlin";
@@ -99,7 +97,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldReturnZeroInCaseWrongIdSpecified() {
         //given
-        final int id = 100;
+        final int id = -1;
         final String newName = "Ballet";
         final LocalDateTime newDateTime = LocalDateTime.now();
 
@@ -127,7 +125,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         final LocalDateTime eventTime = LocalDateTime.now();
 
         //when
-        List<Event> eventList = eventDAO.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(eventTime, amount);
+        List<Event> eventList = eventDAO.getEventsBeforeTime(eventTime, amount);
 
         //then
         Assert.assertNotNull(eventList);

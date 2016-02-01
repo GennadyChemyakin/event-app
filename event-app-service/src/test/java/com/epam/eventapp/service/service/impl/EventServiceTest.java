@@ -153,11 +153,11 @@ public class EventServiceTest {
         final LocalDateTime creationTime = LocalDateTime.now();
         final List<Event> expectedEventsList = getExpectedEventsList();
 
-        when(eventDAOMock.getEventListFixedSizeBeforeTimeOrderedByCreationTimeDesc(creationTime, amount)).thenReturn(expectedEventsList);
+        when(eventDAOMock.getEventsBeforeTime(creationTime, amount)).thenReturn(expectedEventsList);
         when(eventDAOMock.getNumberOfEvents()).thenReturn(numberOfEvents);
 
         //when
-        EventPack eventPack = sut.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(creationTime, amount);
+        EventPack eventPack = sut.getEventsBeforeTime(creationTime, amount);
 
         //then
         Assert.assertTrue(eventPack.getEvents().size() <= amount);

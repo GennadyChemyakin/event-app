@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -68,7 +67,7 @@ public class EventDetailController {
     public ResponseEntity<EventPackVO> getEventList(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                          @RequestParam("creationTime") LocalDateTime creationTime) throws SQLException {
         LOGGER.info("getEventList started. Param: eventTime = {}; events_amount = {} ", creationTime, EVENTS_AMOUNT);
-        EventPack eventPack = eventService.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(creationTime, EVENTS_AMOUNT);
+        EventPack eventPack = eventService.getEventsBeforeTime(creationTime, EVENTS_AMOUNT);
         ResponseEntity<EventPackVO> resultResponseEntity;
         EventPackVO eventPackVO = new EventPackVO(eventPack.getNumberOfAllEvents());
         for(Event event: eventPack.getEvents()) {

@@ -5,7 +5,7 @@ import com.epam.eventapp.service.domain.Event;
 import java.util.List;
 
 /**
- * Class for representing package of Events
+ * Class for representing page of Events
  */
 public class EventPack {
     private List<Event> events;

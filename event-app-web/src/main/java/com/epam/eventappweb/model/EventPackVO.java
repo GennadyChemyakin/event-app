@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * class describes Event pack
  */
-public class EventPackVO {
+public final class EventPackVO {
     private final List<EventPreviewVO> eventPreviewVOList;
     private final int numberOfEvents;
 

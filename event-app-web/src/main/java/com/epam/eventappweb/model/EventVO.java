@@ -3,7 +3,6 @@ package com.epam.eventappweb.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
  * without collections for storing photo and video objects
  */
 @JsonDeserialize(builder = EventVO.EventModelBuilder.class)
-@Immutable
 public final class EventVO {
     private final String name;
     private final String creator;

@@ -2,15 +2,13 @@ package com.epam.eventappweb.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
 
 /**
  * class describes Event model for list of Events
  */
-@Immutable
-public class EventPreviewVO {
+public final class EventPreviewVO {
     private final String name;
     private final String creator;
     private final String description;

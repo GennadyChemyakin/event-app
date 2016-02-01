@@ -28,8 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
-import static org.hamcrest.Matchers.isA;
-
 /**
  * test Class for EventDetailController
  */
@@ -192,7 +190,7 @@ public class EventDetailControllerTest {
         final LocalDateTime creationTime = LocalDateTime.now();
         final EventPack eventPack = getExpectedEventsList(firstEventName, secondEventName, numberOfEvents);
 
-        when(eventServiceMock.getEventListFixedSizeBeforeTimeOrderedByTimeDesc(creationTime, events_amount)).thenReturn(eventPack);
+        when(eventServiceMock.getEventsBeforeTime(creationTime, events_amount)).thenReturn(eventPack);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/events?creationTime=" + creationTime));

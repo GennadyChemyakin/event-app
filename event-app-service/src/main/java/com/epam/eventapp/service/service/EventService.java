@@ -22,20 +22,17 @@ public interface EventService {
 
 
     /**
-     * Method for updating Event by id.
+     * Method for updating Event.
      * @param event - Event with updated data
      * @return Number of updated rows
      */
     int updateEvent(Event event);
 
     /**
-     * Method for getting list of Events of specified size amount before eventTime ordered by the time of events
-     * @param eventTime time of eve
-     * @param amount
-     * @return
+     * Gets a list of events ordered by create time in desc mode. Size of the list is limited by the provided amount parameter.
+     * @param eventTime creationTime of returned events is limited by eventTime.
+     * @param amount max number of returned events
+     * @return Page of Events
      */
-    EventPack getEventListFixedSizeBeforeTimeOrderedByTimeDesc(LocalDateTime eventTime, int amount);
-
-
-
+    EventPack getEventsBeforeTime(LocalDateTime eventTime, int amount);
 }
