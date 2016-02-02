@@ -24,4 +24,12 @@ public interface EventService {
      * @return Number of updated rows
      */
     int updateEvent(Event event);
+
+    /**
+     * Method for updating Event by id.
+     * @param event - Event to add.
+     * @param userName  login of user who adds event
+     */
+    void createEvent(Event event, String userName);
+
 }

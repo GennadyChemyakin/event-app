@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -55,4 +56,25 @@ public class EventDetailController {
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;
     }
+
+    @RequestMapping(value = "/add_event", method = RequestMethod.POST, consumes="application/json")
+    public ResponseEntity<?> addEvent(@RequestBody EventVO eventVO,Principal principal) {
+        LOGGER.info("addEvent started. Param: principal = {}; event = {} ", principal, eventVO);
+
+        Event event = Event.builder(eventVO.getName()).
+                description(eventVO.getDescription()).
+                country(eventVO.getCountry()).
+                city(eventVO.getCity()).
+                location(eventVO.getLocation()).
+                gpsLatitude(eventVO.getGpsLatitude()).
+                gpsLongitude(eventVO.getGpsLongitude()).
+                timeStamp(eventVO.getTimeStamp()).build();
+
+        eventService.createEvent(event,principal.getName());
+
+        LOGGER.info("addEvent finished.");
+        return new ResponseEntity<>(HttpStatus.CREATED);
+
+    }
+
 }

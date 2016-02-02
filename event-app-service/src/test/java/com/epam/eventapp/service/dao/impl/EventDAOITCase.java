@@ -2,10 +2,13 @@ package com.epam.eventapp.service.dao.impl;
 
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.EventDAO;
+import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.exceptions.EventNotCreatedException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,6 +27,9 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     @Autowired
     private EventDAO eventDAO;
+
+    @Autowired
+    private UserDAO userDAO;
 
     /**
      * testing findById method from EventDAOImpl.
@@ -110,4 +116,53 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         //then
         Assert.assertEquals(0, updatedEntries);
     }
+
+    /**
+     * Testing addEvent from EventDAOImpl.
+     * Passing the username which is not expected in database.
+     * Checking if EventNotCreatedException throws.
+     */
+    @Test(expected = EventNotCreatedException.class)
+    public void shouldThrowEventNotCreatedExceptionInCaseUsernameEmpty() {
+        //given
+        final String name = "My event";
+        final String username  = "";
+        //when
+        Event event = Event.builder(name).build();
+
+        eventDAO.addEvent(event,username);
+
+        //then
+        //throws exception
+        Assert.fail("EventNotCreatedException should be thrown");
+    }
+
+    /**
+     * Testing addEvent from EventDAOImpl.
+     * Adding user in order event to be created
+     * and then adding event.
+     * No exceptions should be thrown.
+     */
+    @Test
+    public void shouldAddEvent() {
+        //given
+        final String userName  = "Admin";
+        final String email     = "admin@email.com";
+        final String pass      = "11111";
+        final String eventName = "test event";
+
+        User user = User.builder(userName,email)
+                .password(pass).build();
+
+        Event event = Event.builder(eventName).build();
+
+        userDAO.createUser(user);
+        //when
+        eventDAO.addEvent(event, userName);
+
+        //then
+        Assert.fail("Event should be created");
+
+    }
+
 }

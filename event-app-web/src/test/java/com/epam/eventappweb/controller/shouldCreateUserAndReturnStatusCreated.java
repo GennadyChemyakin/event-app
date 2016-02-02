@@ -5,6 +5,7 @@ import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.UserVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -70,8 +71,6 @@ public class shouldCreateUserAndReturnStatusCreated {
         final String userName   = "UserTest";
         final String userEmail  = "UserTest@mail.ru";
         final String password   = "12345678";
-
-
 
         UserVO userVO = UserVO.builder(userName,userEmail)
                 .password(password)

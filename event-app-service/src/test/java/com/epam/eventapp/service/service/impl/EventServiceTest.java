@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
@@ -123,5 +124,23 @@ public class EventServiceTest {
         //then
         Assert.assertEquals(0, updatedEntries);
     }
+
+    @Test
+    public void shouldAddEvent() {
+
+        //given
+        final String name = "My event";
+        final String username = "admin";
+        Event event =  Event.builder(name).build();
+
+        Mockito.doNothing().when(eventDAOMock).addEvent(event, username);
+
+        //when
+        sut.createEvent(event,username);
+
+        //then
+        //no exception is thrown
+    }
+
 }
 
