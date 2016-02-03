@@ -84,7 +84,7 @@ public class EventDetailController {
             eventPackVO.addEventPreviewVO(eventPreviewVO);
         }
         resultResponseEntity = new ResponseEntity<EventPackVO>(eventPackVO, HttpStatus.OK);
-        LOGGER.info("getEventList finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
+        LOGGER.info("getEventList finished. Result: Status code: {}; eventPackVO = {}", resultResponseEntity.getStatusCode(), eventPackVO);
         return resultResponseEntity;
     }
 }
