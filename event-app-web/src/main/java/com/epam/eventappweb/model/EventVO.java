@@ -3,6 +3,11 @@ package com.epam.eventappweb.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
@@ -50,6 +55,9 @@ public final class EventVO {
         private String location;
         private double gpsLatitude;
         private double gpsLongitude;
+
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         private LocalDateTime timeStamp;
 
         private EventModelBuilder(@JsonProperty("name") String name) {

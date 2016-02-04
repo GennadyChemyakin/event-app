@@ -59,7 +59,7 @@ public class EventDetailController {
 
     @RequestMapping(value = "/add_event", method = RequestMethod.POST, consumes="application/json")
     public ResponseEntity<?> addEvent(@RequestBody EventVO eventVO,Principal principal) {
-        LOGGER.info("addEvent started. Param: principal = {}; event = {} ", principal, eventVO);
+        LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 
         Event event = Event.builder(eventVO.getName()).
                 description(eventVO.getDescription()).
