@@ -72,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/event.html").permitAll()
                 .antMatchers("/event/*").permitAll()
                 .antMatchers("/events.html").permitAll()
+                .antMatchers("/events/*").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
-
     }
 }

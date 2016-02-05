@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
  * class describes Event model for list of Events
  */
 public final class EventPreviewVO {
+    private final int id;
     private final String name;
     private final String creator;
     private final String description;
@@ -21,6 +22,7 @@ public final class EventPreviewVO {
     private final LocalDateTime creationTime;
 
     private EventPreviewVO(EventPreviewModelBuilder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.creator = builder.creator;
         this.description = builder.description;
@@ -33,12 +35,13 @@ public final class EventPreviewVO {
         this.creationTime = builder.creationTime;
     }
 
-    public static EventPreviewModelBuilder builder(String name){
-        return new EventPreviewModelBuilder(name);
+    public static EventPreviewModelBuilder builder(int id){
+        return new EventPreviewModelBuilder(id);
     }
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventPreviewModelBuilder {
+        private int id;
         private String name;
         private String creator;
         private String description;
@@ -50,8 +53,13 @@ public final class EventPreviewVO {
         private LocalDateTime eventTime;
         private LocalDateTime creationTime;
 
-        private EventPreviewModelBuilder(@JsonProperty("name") String name) {
+        private EventPreviewModelBuilder(@JsonProperty("id") int id) {
+            this.id = id;
+        }
+
+        public EventPreviewModelBuilder name(String name) {
             this.name = name;
+            return this;
         }
 
         public EventPreviewModelBuilder creator(String creator) {
@@ -105,6 +113,10 @@ public final class EventPreviewVO {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -148,7 +160,8 @@ public final class EventPreviewVO {
     @Override
     public String toString() {
         return "EventPreviewVO{" +
-                "creator=" + creator +
+                "id=" + id +
+                "creator'=" + creator + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +

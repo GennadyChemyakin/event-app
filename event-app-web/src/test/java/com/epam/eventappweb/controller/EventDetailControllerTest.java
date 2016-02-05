@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -192,7 +193,7 @@ public class EventDetailControllerTest {
         when(eventServiceMock.getEventsBeforeTime(creationTime)).thenReturn(eventPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/events?creationTime=" + creationTime));
+        ResultActions resultActions = mockMvc.perform(get("/events/?creationTime=" + creationTime));
 
         //then
         resultActions.andExpect(status().isOk())
