@@ -33,5 +33,5 @@ public interface EventService {
      * @param eventTime creationTime of returned events is limited by eventTime.
      * @return Page of Events
      */
-    EventPack getEventsBeforeTime(LocalDateTime eventTime);
+    EventPack getEventsBeforeTime(LocalDateTime eventTime, String creationTimeQueryMode);
 }

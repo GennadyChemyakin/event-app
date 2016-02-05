@@ -150,14 +150,15 @@ public class EventServiceTest {
         //given
         final int amount = 2;
         final int numberOfEvents = 3;
+        final String queryMode = "LESS";
         final LocalDateTime creationTime = LocalDateTime.now();
         final List<Event> expectedEventsList = getExpectedEventsList();
 
-        when(eventDAOMock.getEventsBeforeTime(creationTime, amount)).thenReturn(expectedEventsList);
+        when(eventDAOMock.getOrderedEvents(creationTime, amount, queryMode)).thenReturn(expectedEventsList);
         when(eventDAOMock.getNumberOfEvents()).thenReturn(numberOfEvents);
 
         //when
-        EventPack eventPack = sut.getEventsBeforeTime(creationTime);
+        EventPack eventPack = sut.getEventsBeforeTime(creationTime, queryMode);
 
         //then
         Assert.assertTrue(eventPack.getEvents().size() <= amount);

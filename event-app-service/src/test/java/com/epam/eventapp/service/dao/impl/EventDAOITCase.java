@@ -59,7 +59,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     /**
      * Testing updateEventById from EventDAOImpl.
-     * Updating event with id=0.
+     * Updating event with id=1.
      * Checking if changed fields are updated and we updated only one entry in DB.
      */
     @Test
@@ -91,7 +91,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     /**
      * Testing updateEventById from EventDAOImpl.
-     * Updating event with id=100.
+     * Updating event with id=-1.
      * Checking if zero entries in DB are updated.
      */
     @Test
@@ -123,13 +123,31 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         //given
         final int amount = 10;
         final LocalDateTime eventTime = LocalDateTime.now();
+        final String queryMode = "LESS";
 
         //when
-        List<Event> eventList = eventDAO.getEventsBeforeTime(eventTime, amount);
+        List<Event> eventList = eventDAO.getOrderedEvents(eventTime, amount, queryMode);
 
         //then
         Assert.assertNotNull(eventList);
         Assert.assertTrue(eventList.size() <= amount);
+    }
+
+    /**
+     * testing shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc method from EventDAOImpl.
+     * expects IllegalArgumentException
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentException() {
+        //given
+        final int amount = 10;
+        final String NotValidQueryMode = "Not a valid SQL query mode";
+        final LocalDateTime eventTime = LocalDateTime.now();
+
+        //when
+        List<Event> eventList = eventDAO.getOrderedEvents(eventTime, amount, NotValidQueryMode);
+
+        //then
     }
 
     /**

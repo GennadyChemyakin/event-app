@@ -32,9 +32,10 @@ public interface EventDAO {
      * Gets a list of events ordered by create time in desc mode. Size of the list is limited by the provided amount parameter.
      * @param eventTime creationTime of returned events is limited by eventTime.
      * @param amount max number of returned events
+     * @param creationTimeQueryMode mode for creationTime of Event for SQL query, should be either "LESS" or "NOT_LESS"
      * @return Page of Events
      */
-    List<Event> getEventsBeforeTime(LocalDateTime eventTime, int amount);
+    List<Event> getOrderedEvents(LocalDateTime eventTime, int amount, String creationTimeQueryMode);
 
     /**
      * Method for getting number of all events in database
