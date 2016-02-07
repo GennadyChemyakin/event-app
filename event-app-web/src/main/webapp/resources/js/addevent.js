@@ -2,7 +2,48 @@
     //listeners for input fields
     //and submit button click
 
+         function addErrorMessage(field, text) {
+            var parentField = field.parent();
+            var errorField  = parentField.find('.alert:first');
+            errorField.text(text);
+            errorField.show();
+         }
+
+     function checkTitle() {
+          	var title    = $('#title').val();
+            return title.replace(/\s+/g, '').length > 0;
+     }
+
+          function markField(field, isGreen) {
+
+                    var parentField = field.parent();
+                    var glyph = parentField.find('.glyphicon:first');
+                    var errorField  = parentField.find('.alert:first').hide();
+                    if(!isGreen) {
+                       parentField.removeClass('has-success');
+                       parentField.addClass('has-error');
+                       glyph.removeClass('glyphicon-ok');
+                       glyph.addClass('glyphicon-remove');
+                    } else {
+                       parentField.addClass('has-success');
+                       parentField.removeClass('has-error');
+                       glyph.removeClass('glyphicon-remove');
+                       glyph.addClass('glyphicon-ok');
+                     }
+          }
+
      $(document).ready(function() {
+
+
+
+      $('#title').keyup(function(){
+           markField($('#title'), checkTitle());
+      });
+
+      $('#picker').keyup(function(){
+            ('#picker').val(Date.parse(('#picker').val()));
+      });
+
 
       var options = {
         enableHighAccuracy: true,
@@ -55,6 +96,17 @@
                         location: address
                     });
 
+        var noMistakes = true;
+        if (!checkTitle()) {
+               markField($("#title"), false);
+               addErrorMessage($("#title"), "Title should not be empty.");
+               noMistakes = false;
+        }
+
+        if(noMistakes) {
+
+            $("#register_btn").addClass('disabled').attr('disabled', 'disabled');
+
             $.ajax({
                 type: "POST",
                 url: "add_event",
@@ -65,11 +117,15 @@
                                   window.location.href = "/event-app/home.html"}, 2000);
                            },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert("bad");
+                    $('#register_btn').removeClass('disabled').prop("disabled", false);
                 }
                 });
 
-        });
+        }
+        }
+        );
+
+
 
         $.datetimepicker.setLocale('en');
         var Dobj = new Date();

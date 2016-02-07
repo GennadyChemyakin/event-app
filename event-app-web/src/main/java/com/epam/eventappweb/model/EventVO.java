@@ -27,6 +27,8 @@ public final class EventVO {
     private final String location;
     private final double gpsLatitude;
     private final double gpsLongitude;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private final LocalDateTime timeStamp;
 
     private EventVO(EventModelBuilder builder) {
@@ -55,9 +57,6 @@ public final class EventVO {
         private String location;
         private double gpsLatitude;
         private double gpsLongitude;
-
-        @JsonSerialize(using = LocalDateTimeSerializer.class)
-        @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         private LocalDateTime timeStamp;
 
         private EventModelBuilder(@JsonProperty("name") String name) {

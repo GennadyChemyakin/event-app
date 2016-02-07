@@ -124,7 +124,6 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
      * Checking if EventNotCreatedException throws.
      */
     @Test(expected = EventNotCreatedException.class)
-    @Ignore
     public void shouldThrowEventNotCreatedExceptionInCaseUsernameEmpty() {
         //given
         final String name = "My event";
