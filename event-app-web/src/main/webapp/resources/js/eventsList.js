@@ -3,7 +3,7 @@ $(document).ready(function () {
             var lastEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
             $.ajax({
                 type: "GET",
-                url: "../../event-app/events/?creationTime=" + lastEventDate
+                url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
             }).then(showEvents);
 });
 
@@ -53,10 +53,8 @@ function showEvents(data) {
                 '</div>' +
                     '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
                     '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsforEvent"></h4>' +
-
             '</div> ' +
         '</div> '
-
         ).attr("id", event.id).prependTo("#eventPanel");
 
         $("#" + event.id).find("#name").attr("id", 'name' + event.id);
@@ -76,7 +74,25 @@ function showEvents(data) {
         $("#" + 'eventCreator' + event.id).text(event.creator);
         $("#" + 'numberOfCommentsforEvent' + event.id).text(event.numberOfComments);
         $("#" + event.id).slideDown();
+
+        if (data.numberOfNewEvents != 0) {
+            var buttonText;
+            if(data.numberOfNewEvents <= 3) {
+                buttonText = "Load " + data.numberOfNewEvents + " new events";
+            }
+            else {
+                buttonText = "Load 3 of " + data.numberOfNewEvents + " new events";
+            }
+            $('#loadNewEvents').text(buttonText);
+        } else {
+            $('#loadNewEvents').hide();
+        }
     }
+}
+
+//function for converting user local time to UTC
+function convertToUTC(date) {
+    return new Date(date.getTime() - window.timezoneOffset * 60000).toISOString();
 }
 
 function getEventDate(lastEventDateString) {
@@ -84,10 +100,10 @@ function getEventDate(lastEventDateString) {
     if (lastEventDateString) {
         lastEventDate = new Date(lastEventDateString);
         //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        lastEventDate = new Date(lastEventDate.getTime() - window.timezoneOffset * 60000).toISOString();
+        lastEventDate = convertToUTC(lastEventDate);
     } else {
         lastEventDate = new Date();
-        lastEventDate = new Date(lastEventDate.getTime() - window.timezoneOffset * 60000).toISOString();
+        lastEventDate = convertToUTC(lastEventDate);
     }
     return lastEventDate;
 }
@@ -114,30 +130,17 @@ $(window).bind('scroll.flyout', (function check() {
                 alert(lastEventDate);
                 $.ajax({
                     type: "GET",
-                    url: "../../event-app/events/?creationTime=" + lastEventDate
+                    url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
                 }).then(showEvents);
             }, 1);
 
             // unbind the event handler
             // so that it wasn't called multiple times
             $(this).unbind('scroll.flyout');
+            //bind it again
             setTimeout(function() {
                 $(window).bind('scroll.flyout', check());
             }, 1000);
         }
     };
 })());
-
-
-//$(function () {
-//             var $win = $(window);
-//
-//             $win.scroll(function () {
-//                 if ($win.scrollTop() == 0)
-//                     alert('Scrolled to Page Top');
-//                 else if ($win.height() + $win.scrollTop()
-//                                == $(document).height()) {
-//                     alert('Scrolled to Page Bottom');
-//                 }
-//             });
-//         });

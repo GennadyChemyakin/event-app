@@ -63,7 +63,7 @@ public class EventDetailController {
         return resultResponseEntity;
     }
 
-    @RequestMapping(value = "/events", method = RequestMethod.GET)
+    @RequestMapping(value = "/events/", method = RequestMethod.GET)
     public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") String queryMode,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                         @RequestParam("newestTime") LocalDateTime oldestEventCreationTime,

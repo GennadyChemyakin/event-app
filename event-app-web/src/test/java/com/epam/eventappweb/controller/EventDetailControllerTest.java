@@ -186,22 +186,22 @@ public class EventDetailControllerTest {
         //given
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
-        final int numberOfEvents = 10;
+        final int numberOfNewEvents = 10;
         final LocalDateTime creationTime = LocalDateTime.now();
         final String queryMode = "LESS_THAN";
-        final EventPack eventPack = getExpectedEventsList(firstEventName, secondEventName, numberOfEvents);
+        final EventPack eventPack = getExpectedEventsList(firstEventName, secondEventName, numberOfNewEvents);
 
         when(eventServiceMock.getEventsBeforeTime(creationTime, creationTime, queryMode)).thenReturn(eventPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/events?queryMode=" + queryMode +
+        ResultActions resultActions = mockMvc.perform(get("/events/?queryMode=" + queryMode +
                 "&newestTime=" + creationTime + "&oldestTime=" + creationTime));
 
         //then
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
                 .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
-                .andExpect(jsonPath("$.numberOfEvents", Matchers.is(numberOfEvents)))
+                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)))
         ;
 
     }
