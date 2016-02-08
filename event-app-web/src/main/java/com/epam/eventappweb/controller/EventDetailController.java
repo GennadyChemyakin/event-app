@@ -64,12 +64,15 @@ public class EventDetailController {
     }
 
     @RequestMapping(value = "/events", method = RequestMethod.GET)
-    public ResponseEntity<EventPackVO> getEventList(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                         @RequestParam("creationTime") LocalDateTime creationTime) throws SQLException {
-        LOGGER.info("getEventList started. Param: eventTime = {} ", creationTime);
-        EventPack eventPack = eventService.getEventsBeforeTime(creationTime);
+    public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") String queryMode,
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                        @RequestParam("newestTime") LocalDateTime oldestEventCreationTime,
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                        @RequestParam("oldestTime") LocalDateTime newestEventCreationTime) throws SQLException {
+        LOGGER.info("getEventList started. Param: oldestEventCreationTime = {} ", oldestEventCreationTime);
+        EventPack eventPack = eventService.getEventsBeforeTime(oldestEventCreationTime, newestEventCreationTime, queryMode);
         ResponseEntity<EventPackVO> resultResponseEntity;
-        EventPackVO eventPackVO = new EventPackVO(eventPack.getNumberOfAllEvents());
+        EventPackVO eventPackVO = new EventPackVO(eventPack.getNumberOfNewEvents());
         for(Event event: eventPack.getEvents()) {
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getName()).
                     creator(event.getUser().getUsername()).

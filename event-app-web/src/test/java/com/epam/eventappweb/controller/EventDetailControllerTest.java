@@ -187,12 +187,14 @@ public class EventDetailControllerTest {
         final String secondEventName = "EPAM fanfest 2";
         final int numberOfEvents = 10;
         final LocalDateTime creationTime = LocalDateTime.now();
+        final String queryMode = "LESS_THAN";
         final EventPack eventPack = getExpectedEventsList(firstEventName, secondEventName, numberOfEvents);
 
-        when(eventServiceMock.getEventsBeforeTime(creationTime)).thenReturn(eventPack);
+        when(eventServiceMock.getEventsBeforeTime(creationTime, creationTime, queryMode)).thenReturn(eventPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/events?creationTime=" + creationTime));
+        ResultActions resultActions = mockMvc.perform(get("/events?queryMode=" + queryMode +
+                "&newestTime=" + creationTime + "&oldestTime=" + creationTime));
 
         //then
         resultActions.andExpect(status().isOk())

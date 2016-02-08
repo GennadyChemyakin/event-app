@@ -4,6 +4,7 @@ import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
+import org.hamcrest.core.Every;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+
+import static org.hamcrest.Matchers.*;
 
 /**
  * Class provides methods for testing EventDAOImpl. Use DataAccessConfig.class for creating context.
@@ -114,27 +117,54 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     }
 
     /**
-     * testing shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc method from EventDAOImpl.
+     * testing getOrderedEvents method from EventDAOImpl.
      * looking for list of amount events that were created before specified time and were sorted in descending order by event_time.
-     * Checking if we've got events from DB and that we got less than amount events
+     * Checking if we've got events from DB sorted in desc order, that we've got less or equal than amount events and
+     * that creationTime of each of these these events are less than specifiedCreationTime
      */
     @Test
     public void shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc() {
         //given
         final int amount = 10;
-        final LocalDateTime eventTime = LocalDateTime.now();
-        final String queryMode = "LESS";
+        final LocalDateTime specifiedCreationTime = LocalDateTime.parse("2015-07-11T15:00");
+        final String queryMode = "LESS_THAN";
 
         //when
-        List<Event> eventList = eventDAO.getOrderedEvents(eventTime, amount, queryMode);
+        List<Event> eventList = eventDAO.getOrderedEvents(specifiedCreationTime, specifiedCreationTime, amount, queryMode);
 
         //then
         Assert.assertNotNull(eventList);
         Assert.assertTrue(eventList.size() <= amount);
+        Assert.assertThat(eventList, Every.everyItem(hasProperty("creationTime", lessThan(specifiedCreationTime))));
     }
 
     /**
-     * testing shouldGetEventListFixedSizeBeforeTimeSortedByCreationTimeDesc method from EventDAOImpl.
+     * testing getOrderedEvents method from EventDAOImpl.
+     * looking for list of amount events that were created before specified time and were sorted in descending order by event_time.
+     * Checking if we've got events from DB sorted in desc order, that we've got less or equal than amount events and
+     * that creationTime of each of these these events are more then specifiedCreationTime
+     */
+    @Test
+    public void shouldGetEventListFixedSizeAfterTimeSortedByCreationTimeDesc() {
+        //given
+        final int amount = 10;
+        //final LocalDateTime specifiedCreationTime = LocalDateTime.parse("2016-07-11T15:00");
+        final LocalDateTime specifiedCreationTime = LocalDateTime.now();
+        final String queryMode = "MORE_THAN";
+
+        //when
+        List<Event> eventList = eventDAO.getOrderedEvents(specifiedCreationTime, specifiedCreationTime, amount, queryMode);
+        for(Event ev: eventList) {
+            System.out.println(ev);
+        }
+        //then
+        Assert.assertNotNull(eventList);
+        Assert.assertTrue(eventList.size() <= amount);
+        Assert.assertThat(eventList, Every.everyItem(hasProperty("creationTime", greaterThan(specifiedCreationTime))));
+    }
+
+    /**
+     * testing getOrderedEvents method from EventDAOImpl.
      * expects IllegalArgumentException
      */
     @Test(expected = IllegalArgumentException.class)
@@ -142,16 +172,16 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         //given
         final int amount = 10;
         final String NotValidQueryMode = "Not a valid SQL query mode";
-        final LocalDateTime eventTime = LocalDateTime.now();
+        final LocalDateTime specifiedCreationTime = LocalDateTime.now();
 
         //when
-        List<Event> eventList = eventDAO.getOrderedEvents(eventTime, amount, NotValidQueryMode);
+        List<Event> eventList = eventDAO.getOrderedEvents(specifiedCreationTime, specifiedCreationTime, amount, NotValidQueryMode);
 
         //then
     }
 
     /**
-     * testing getNumberOfEvents method from EventDAOImpl
+     * testing getNumberOfNewEvents method from EventDAOImpl
      * looking for number of events in DB
      * Checking if number of events in DB equals expectedNumberOfEvents
      *
@@ -159,10 +189,11 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldGetNumberOfEventsInDatabase() {
         //given
-        int expectedNumberOfEvents = 5;
+        LocalDateTime newestEventCreationTime = LocalDateTime.now();
+        int expectedNumberOfEvents = 0;
 
         //when
-        int numberOfEvents = eventDAO.getNumberOfEvents();
+        int numberOfEvents = eventDAO.getNumberOfNewEvents(newestEventCreationTime);
 
         //then
         Assert.assertEquals(expectedNumberOfEvents, numberOfEvents);
