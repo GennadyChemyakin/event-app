@@ -42,11 +42,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventPack getEventsBeforeTime(LocalDateTime creationTime) {
-        LOGGER.debug("getEventsBeforeTime started: Params creationTime = {}, amount={}", creationTime, EVENTS_AMOUNT);
-        List<Event> eventList = eventDAO.getEventsBeforeTime(creationTime, EVENTS_AMOUNT);
-        EventPack eventPack = new EventPack(eventList, eventDAO.getNumberOfEvents());
-        LOGGER.debug("getEventsBeforeTime started: Result: {}", eventPack);
+    public EventPack getEventsBeforeTime(LocalDateTime newestEventCreationTime, LocalDateTime oldestEventCreationTime,
+                                         String creationTimeQueryMode) {
+        LOGGER.debug("getOrderedEvents started: Params firstEventCreationTime = {}, lastEventCreationTime = {}, amount = {}, " +
+                "creationTimeQueryMode = {}", newestEventCreationTime, oldestEventCreationTime, EVENTS_AMOUNT, creationTimeQueryMode);
+        List<Event> eventList = eventDAO.getOrderedEvents(newestEventCreationTime, oldestEventCreationTime,
+                EVENTS_AMOUNT, creationTimeQueryMode);
+        EventPack eventPack = new EventPack(eventList, eventDAO.getNumberOfNewEvents(newestEventCreationTime));
+        LOGGER.debug("getOrderedEvents started: Result: {}", eventPack);
         return eventPack;
     }
 }

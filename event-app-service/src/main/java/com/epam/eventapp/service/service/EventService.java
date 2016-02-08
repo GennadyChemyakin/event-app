@@ -29,9 +29,12 @@ public interface EventService {
     int updateEvent(Event event);
 
     /**
-     * Gets a list of events ordered by create time in desc mode. Size of the list is limited by the provided amount parameter.
-     * @param eventTime creationTime of returned events is limited by eventTime.
+     * Gets eventPack that consists of list of events ordered by create time in desc mode and number of new events.
+     * Size of the list is limited by the provided amount. Depending on creationTimeQueryMode creationTime of all these
+     * events will be less than oldestEventCreationTime or more than newestEventCreationTime.
+     * @param newestEventCreationTime creationTime of the newest event in the list of events.
+     * @param oldestEventCreationTime creationTime of the oldest event in the list of events.
      * @return Page of Events
      */
-    EventPack getEventsBeforeTime(LocalDateTime eventTime);
+    EventPack getEventsBeforeTime(LocalDateTime newestEventCreationTime, LocalDateTime oldestEventCreationTime, String creationTimeQueryMode);
 }

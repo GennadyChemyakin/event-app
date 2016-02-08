@@ -9,23 +9,23 @@ import java.util.List;
  */
 public class EventPack {
     private List<Event> events;
-    private int numberOfAllEvents;
+    private int numberOfNewEvents;
 
-    public EventPack(List<Event> events, int numberOfAllEvents) {
+    public EventPack(List<Event> events, int numberOfNewEvents) {
         this.events = events;
-        this.numberOfAllEvents = numberOfAllEvents;
+        this.numberOfNewEvents = numberOfNewEvents;
     }
 
     public List<Event> getEvents() {
         return events;
     }
 
-    public int getNumberOfAllEvents() {
-        return numberOfAllEvents;
+    public int getNumberOfNewEvents() {
+        return numberOfNewEvents;
     }
 
     @Override
     public String toString() {
-        return "EventPack{events=" + events + ", numberOfAllEvents=" + numberOfAllEvents + "}";
+        return "EventPack{events=" + events + ", numberOfNewEvents=" + numberOfNewEvents + "}";
     }
 }

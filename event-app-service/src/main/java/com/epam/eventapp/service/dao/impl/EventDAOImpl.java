@@ -28,13 +28,20 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
             " city=:city, address=:address, gps_latitude=:gps_latitude, gps_longitude=:gps_longitude, " +
             "event_time=:event_time WHERE id=:id";
 
-    private static final String GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING =
+    private static final String GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING_SELECT =
             "SELECT event_alias.*, rownum rnum FROM (SELECT e.id as e_id, e.name as e_name, e.description, " +
                     "e.country as e_country, e.city as e_city, e.address, e.gps_latitude, e.gps_longitude, e.event_time, " +
                     "e.create_time, u.id as u_id, u.username, u.email, u.name as u_name, u.surname, " +
-                    "u.country as u_country, u.city as u_city, u.bio FROM event e JOIN sec_user u on e.sec_user_id = u.id " +
+                    "u.country as u_country, u.city as u_city, u.bio FROM event e JOIN sec_user u on e.sec_user_id = u.id ";
+    private static final String GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_LESS =
                     "WHERE e.create_time < :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
-    private static final String GET_NUMBER_OF_EVENTS = "SELECT COUNT(*) FROM event";
+    private static final String GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_MORE =
+            "WHERE e.create_time > :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
+
+    private static final String GET_NUMBER_OF_EVENTS = "SELECT COUNT(*) FROM event WHERE event.create_time > :creation_time";
+
+    private static final String MODE_LESS_THAN = "LESS_THAN";
+    private static final String MODE_MORE_THAN = "MORE_THAN";
 
 
     @Override
@@ -83,13 +90,28 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     }
 
     @Override
-    public List<Event> getEventsBeforeTime(LocalDateTime creationTime, int amount) {
+    public List<Event> getOrderedEvents(LocalDateTime newestEventCreationTime, LocalDateTime oldestEventCreationTime,
+                                        int amount, String creationTimeQueryMode) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("creation_time", Timestamp.valueOf(creationTime));
         params.addValue("amount", amount);
+        String sqlQuery;
+        switch (creationTimeQueryMode) {
+            case MODE_LESS_THAN:
+                params.addValue("creation_time", Timestamp.valueOf(oldestEventCreationTime));
+                sqlQuery = GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING_SELECT +
+                        GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_LESS;
+                break;
+            case MODE_MORE_THAN:
+                params.addValue("creation_time", Timestamp.valueOf(newestEventCreationTime));
+                sqlQuery = GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING_SELECT +
+                        GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_MORE;
+                break;
+            default: {
+                throw new IllegalArgumentException("Illegal argument " + creationTimeQueryMode + " for SQL query");
+            }
+        }
 
-        List<Event> eventList = getNamedParameterJdbcTemplate().query(GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING, params,
-                    ((resultSet, i) -> {
+        List<Event> eventList = getNamedParameterJdbcTemplate().query(sqlQuery, params, ((resultSet, i) -> {
                         return Event.builder(resultSet.getString("e_name")).
                                 user(User.builder(resultSet.getString("username"), resultSet.getString("email")).
                                         name(resultSet.getString("u_name")).
@@ -113,7 +135,9 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     }
 
     @Override
-    public int getNumberOfEvents() {
-        return getNamedParameterJdbcTemplate().queryForObject(GET_NUMBER_OF_EVENTS, new MapSqlParameterSource(), Integer.class);
+    public int getNumberOfNewEvents(LocalDateTime newestEventCreationTime) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("creation_time", Timestamp.valueOf(newestEventCreationTime));
+        return getNamedParameterJdbcTemplate().queryForObject(GET_NUMBER_OF_EVENTS, params, Integer.class);
     }
 }
