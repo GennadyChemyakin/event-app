@@ -39,14 +39,14 @@ $(document).ready(function () {
     }).then(function () {
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + getCommentDateOrNow()
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + getCommentDateOrNow()
         }).then(showComments);
     });
     $('#loadComments').click(function () {
         var lastCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:first").attr("id")).text());
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + lastCommentDate
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + lastCommentDate
         }).then(showComments)
     });
     $('#loadCommentsPanel').mouseenter(function () {

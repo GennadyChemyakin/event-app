@@ -63,9 +63,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login.html").permitAll()
-                .antMatchers("/comment/new*").hasRole("USER")
-                .and().authorizeRequests().anyRequest().permitAll();
-//                .and().authorizeRequests().anyRequest().hasRole("USER");
-
+                .antMatchers("/register.html").permitAll()
+                .antMatchers("/index.html").permitAll()
+                .antMatchers("/home.html").permitAll()
+                .antMatchers("/event-app/home.html").permitAll()
+                .antMatchers("/registration").permitAll()
+                .antMatchers("/resources/js/*").permitAll()
+                .antMatchers("/event.html").permitAll()
+                .antMatchers("/event/*").permitAll()
+                .and().authorizeRequests().anyRequest().hasRole("USER");
     }
 }

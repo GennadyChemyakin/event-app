@@ -9,7 +9,8 @@ import com.epam.eventappweb.model.CommentVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matchers;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -91,7 +92,7 @@ public class CommentControllerTest {
                 thenReturn(expectedCommentPack);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&commentTime=" + commentDateTime));
+        ResultActions resultActions = mockMvc.perform(get("/comment?eventId=" + id + "&before=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isOk()).
@@ -103,7 +104,6 @@ public class CommentControllerTest {
                 andExpect(jsonPath("$.commentVOList.[1].username", Matchers.is(secondCommentUsername))).
                 andExpect(jsonPath("$.remainingCommentsCount", Matchers.is(remainingComments)));
     }
-
 
     /**
      * testing showNewComments from CommentController
@@ -187,5 +187,4 @@ public class CommentControllerTest {
         //then
         resultActions.andExpect(status().isOk());
     }
-
 }

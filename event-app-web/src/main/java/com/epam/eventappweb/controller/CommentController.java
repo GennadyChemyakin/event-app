@@ -42,18 +42,18 @@ public class CommentController {
      * method for getting list of of comments that were added
      * before commentTime for event by event id
      * @param eventId id of event
-     * @param commentTime we are looking for comments that were added before this time
+     * @param before we are looking for comments that were added before this time
      * @return pack of comments
      * @throws SQLException
      */
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
     public ResponseEntity<CommentPackVO> getCommentList(@RequestParam("eventId") int eventId,
                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("commentTime") LocalDateTime commentTime) throws SQLException {
+                                                        @RequestParam("before") LocalDateTime before) throws SQLException {
 
-        LOGGER.info("getCommentList started. Param: eventId = {}, commentTime = {} ", eventId, commentTime);
+        LOGGER.info("getCommentList started. Param: eventId = {}, before = {} ", eventId, before);
 
-        CommentPack commentPack = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, commentTime, COMMENTS_AMOUNT);
+        CommentPack commentPack = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, before, COMMENTS_AMOUNT);
         ResponseEntity<CommentPackVO> resultResponseEntity;
         CommentPackVO commentPackVO;
         List<CommentVO> commentViews = new ArrayList<>();
