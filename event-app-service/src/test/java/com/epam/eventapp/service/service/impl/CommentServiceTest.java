@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class CommentServiceTest {
      * to expected id and size of comment list is equal to expected size
      */
     @Test
-    public void shouldReturnListOfCommentByEventId() throws SQLException {
+    public void shouldReturnListOfCommentByEventId() {
 
         //given
         final int id = 0;
@@ -94,7 +93,7 @@ public class CommentServiceTest {
      * expect that comment list would be empty
      */
     @Test
-    public void shouldReturnAbsentInCaseEventWithNoCommentsIdSpecified() throws SQLException {
+    public void shouldReturnAbsentInCaseEventWithNoCommentsIdSpecified() {
         //given
         final int id = 1;
         final String commentTime = "2016-01-21 15:00:00";

@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -80,7 +79,7 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
      * checking that amount is equals to known amount of comments
      */
     @Test
-    public void shouldReturnAmountOfRemainingComments() throws SQLException {
+    public void shouldReturnAmountOfRemainingComments() {
         //given
         final int id = 0;
         final String commentTime = "2016-01-20 15:00:00";
@@ -128,7 +127,7 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
      * to expected id and size of comment list is equal to expected size
      */
     @Test
-    public void shouldReturnListOfNewComments(){
+    public void shouldReturnListOfNewComments() {
         //given
         final int id = 0;
         final String commentTime = "2016-01-18 15:00:00";

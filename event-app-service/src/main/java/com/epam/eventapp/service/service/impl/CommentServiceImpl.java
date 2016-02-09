@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class CommentServiceImpl implements CommentService {
     private CommentDAO commentDAO;
 
     @Override
-    public CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) throws SQLException {
+    public CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) {
         LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate started: Params eventId = {}, before = {}, amount = {}", eventId,
                 before, amount);
         CommentPack commentPack;

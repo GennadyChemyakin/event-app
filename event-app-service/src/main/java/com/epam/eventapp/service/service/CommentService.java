@@ -3,8 +3,6 @@ package com.epam.eventapp.service.service;
 
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.model.CommentPack;
-
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public interface CommentService {
      * @param amount amount of comments to receive
      * @return CommentPack with list of founded comments and amount of remaining comments
      */
-    CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) throws SQLException;
+    CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount);
 
 
     /**

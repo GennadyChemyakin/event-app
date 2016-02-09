@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +43,11 @@ public class CommentController {
      * @param eventId id of event
      * @param before we are looking for comments that were added before this time
      * @return pack of comments
-     * @throws SQLException
      */
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
     public ResponseEntity<CommentPackVO> getCommentList(@RequestParam("eventId") int eventId,
                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("before") LocalDateTime before) throws SQLException {
+                                                        @RequestParam("before") LocalDateTime before) {
 
         LOGGER.info("getCommentList started. Param: eventId = {}, before = {} ", eventId, before);
 

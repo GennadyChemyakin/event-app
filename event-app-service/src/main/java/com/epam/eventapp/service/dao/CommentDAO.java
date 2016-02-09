@@ -1,8 +1,6 @@
 package com.epam.eventapp.service.dao;
 
 import com.epam.eventapp.service.domain.Comment;
-
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public interface CommentDAO {
      * @param before specified time. We are looking for comments that were added before it
      * @return amount of remaining comments
      */
-    int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime before) throws SQLException;
+    int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime before);
 
     /**
      * method for adding a commentary
