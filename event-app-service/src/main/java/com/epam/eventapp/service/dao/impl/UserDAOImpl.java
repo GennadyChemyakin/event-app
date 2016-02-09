@@ -85,6 +85,5 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
         } catch (DataAccessException ex) {
             return false;
         }
-
     }
 }

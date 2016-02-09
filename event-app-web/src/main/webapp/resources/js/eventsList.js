@@ -1,11 +1,24 @@
 $(document).ready(function () {
             window.timezoneOffset = new Date().getTimezoneOffset();
-            var lastEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
+            var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
             $.ajax({
                 type: "GET",
                 url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
             }).then(showEvents);
 });
+
+function prepare(data) {
+        $('#loadNewEvents').click(function () {
+            var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
+            var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
+
+            $.ajax({
+                type: "GET",
+                url: "../../event-app/events/?queryMode=MORE_THAN&newestTime=" +firstEventDate + "&oldestTime=" + lastEventDate
+            }).then(showEvents)
+        });
+    showEvents(data);
+}
 
 function showEvents(data) {
     for(var i = 0; i < data.eventPreviewVOList.length; i++) {
@@ -23,22 +36,21 @@ function showEvents(data) {
         event.eventTime = null;
         if (arg.eventTime != null) {
             event.eventTime = new Date(arg.eventTime.year, arg.eventTime.monthValue - 1, arg.eventTime.dayOfMonth,
-                            arg.eventTime.hour, arg.eventTime.minute, arg.eventTime.second, arg.eventTime.nano);
+                            arg.eventTime.hour, arg.eventTime.minute, arg.eventTime.second, arg.eventTime.nano/1000000);
         }
         event.createTime = null;
         if (arg.createTime != null) {
-            event.createTime = new Date(arg.createTime.year, arg.createTime.monthValue - 1,
-                            arg.createTime.dayOfMonth, arg.createTime.hour, arg.createTime.minute,
-                            arg.createTime.second, arg.createTime.nano);
+            event.createTime = new Date(arg.createTime.year, arg.createTime.monthValue - 1, arg.createTime.dayOfMonth,
+                            arg.createTime.hour, arg.createTime.minute, arg.createTime.second, arg.createTime.nano/1000000);
         }
 
         $('<div class="row eventRow"> ' +
             '<div class="col-md-2">' +
             '<a href="" id="picture"><div class="thumbnail">' +
-                '<img class="img-responsive event-photo" src="http://placehold.it/150x150">' +
+                '<img class="img-responsive event-photo" src="http://lorempixel.com/400/400/animals/' + i + '">' +
             '</div></a>' +
             '</div>' +
-            '<div class="panel panel-info col-md-10">' +
+            '<div class="panel panel-success col-md-10">' +
                 '<div class="panel-heading">' +
                     '<h2>' +
                         '<a href="" id="name"></a> ' +
@@ -51,11 +63,12 @@ function showEvents(data) {
                 '<div class="panel-body">' +
                     '<h4 id="description"></h4>' +
                 '</div>' +
-                    '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
-                    '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsforEvent"></h4>' +
+                '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
+                '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsforEvent"></h4>' +
+                '<div id="createTime" style="display:none"></div>' +
             '</div> ' +
         '</div> '
-        ).attr("id", event.id).prependTo("#eventPanel");
+        ).attr("id", event.id).appendTo("#eventPanel");
 
         $("#" + event.id).find("#name").attr("id", 'name' + event.id);
         $("#" + event.id).find("#picture").attr("id", 'picture' + event.id);
@@ -68,7 +81,13 @@ function showEvents(data) {
         $("#" + 'name' + event.id).text(event.name + ' ');
         $("#" + 'name' + event.id).attr("href", '../../event-app/event.html?id=' + event.id);
         $("#" + 'picture' + event.id).attr("href", '../../event-app/event.html?id=' + event.id);
-        $("#" + 'eventTime' + event.id).text(event.eventTime.toLocaleDateString()+ " " + event.eventTime.toLocaleTimeString());
+        if(event.eventTime != null) {
+            $("#" + 'eventTime' + event.id).text(event.eventTime.toLocaleDateString()+ " " + event.eventTime.toLocaleTimeString());
+        }
+        else {
+            $("#" + 'eventTime' + event.id).text("Not specified");
+        }
+        $("#" + 'createTime' + event.id).text(event.createTime.toString());
         $("#" + 'address' + event.id).text(" " + (event.country + " " + event.city + " " + event.location).trim());
         $("#" + 'description' + event.id).text(event.description);
         $("#" + 'eventCreator' + event.id).text(event.creator);
@@ -108,6 +127,7 @@ function getEventDate(lastEventDateString) {
     return lastEventDate;
 }
 
+
 // we bind the scroll event, with the 'flyout' namespace
 // so we can unbind easily
 $(window).bind('scroll.flyout', (function check() {
@@ -127,10 +147,9 @@ $(window).bind('scroll.flyout', (function check() {
             // out of the event loop
             setTimeout(function() {
                 var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
-                alert(lastEventDate);
                 $.ajax({
                     type: "GET",
-                    url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
+                    url: "/event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
                 }).then(showEvents);
             }, 1);
 

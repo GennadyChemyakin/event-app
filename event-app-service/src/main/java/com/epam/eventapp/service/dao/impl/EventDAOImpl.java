@@ -64,7 +64,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                                 location(resultSet.getString("address")).
                                 gpsLatitude(resultSet.getDouble("gps_latitude")).
                                 gpsLongitude(resultSet.getDouble("gps_longitude")).
-                                eventTime(resultSet.getTimestamp("event_time").toLocalDateTime()).
+                                eventTime(resultSet.getTimestamp("event_time") == null ? null : resultSet.getTimestamp("event_time").toLocalDateTime()).
                                 creationTime(resultSet.getTimestamp("create_time").toLocalDateTime()).build();
                     })
             );
@@ -127,7 +127,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                                 location(resultSet.getString("address")).
                                 gpsLatitude(resultSet.getDouble("gps_latitude")).
                                 gpsLongitude(resultSet.getDouble("gps_longitude")).
-                                eventTime(resultSet.getTimestamp("event_time").toLocalDateTime()).
+                                eventTime((resultSet.getTimestamp("event_time") == null) ? null : resultSet.getTimestamp("event_time").toLocalDateTime()).
                                 creationTime(resultSet.getTimestamp("create_time").toLocalDateTime()).build();
                     })
             );

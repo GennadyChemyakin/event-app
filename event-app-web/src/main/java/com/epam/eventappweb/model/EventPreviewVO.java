@@ -19,7 +19,7 @@ public final class EventPreviewVO {
     private final int numberOfComments;
     private final byte[] picture;
     private final LocalDateTime eventTime;
-    private final LocalDateTime creationTime;
+    private final LocalDateTime createTime;
 
     private EventPreviewVO(EventPreviewModelBuilder builder) {
         this.id = builder.id;
@@ -32,7 +32,7 @@ public final class EventPreviewVO {
         this.numberOfComments = builder.numberOfComments;
         this.picture = builder.picture;
         this.eventTime = builder.eventTime;
-        this.creationTime = builder.creationTime;
+        this.createTime = builder.createTime;
     }
 
     public static EventPreviewModelBuilder builder(int id){
@@ -51,7 +51,7 @@ public final class EventPreviewVO {
         private int numberOfComments;
         private byte[] picture;
         private LocalDateTime eventTime;
-        private LocalDateTime creationTime;
+        private LocalDateTime createTime;
 
         private EventPreviewModelBuilder(@JsonProperty("id") int id) {
             this.id = id;
@@ -103,8 +103,8 @@ public final class EventPreviewVO {
             return this;
         }
 
-        public EventPreviewModelBuilder creationTime(LocalDateTime creationTime) {
-            this.creationTime = creationTime;
+        public EventPreviewModelBuilder creationTime(LocalDateTime createTime) {
+            this.createTime = createTime;
             return this;
         }
 
@@ -153,8 +153,8 @@ public final class EventPreviewVO {
         return eventTime;
     }
 
-    public LocalDateTime getCreationTime() {
-        return creationTime;
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
     @Override
@@ -170,7 +170,7 @@ public final class EventPreviewVO {
                 ", numberOfComments='" + numberOfComments + '\'' +
                 ", location='" + location + '\'' +
                 ", eventTime='" + eventTime + '\'' +
-                ", creationTime=" + creationTime +
+                ", createTime=" + createTime +
                 '}';
     }
 
