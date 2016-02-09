@@ -1,23 +1,33 @@
 
-    //listeners for input fields
-    //and submit button click
+    //adds error message in parent field
+    function addErrorMessage(field, text) {
+         var parentField = field.parent();
+         var errorField  = parentField.find('.alert:first');
+         errorField.text(text);
+         errorField.show();
+    }
 
-         function addErrorMessage(field, text) {
-            var parentField = field.parent();
-            var errorField  = parentField.find('.alert:first');
-            errorField.text(text);
-            errorField.show();
-         }
-
-     function checkTitle() {
+    //checks if the title is not empty
+     function isValidTitle() {
           	var title    = $('#title').val();
             return title.replace(/\s+/g, '').length > 0;
      }
+     //checks if date is valid
+     function isValidDate() {
+        var date = Date.parse($('#picker').val());
+        if(isNaN(date) || date.toString().replace(/\s+/g, '').length == 0) {
+            return false;
+        }
 
+        return true;
+
+     }
+
+    //mark necessary fields with green or red
           function markField(field, isGreen) {
 
                     var parentField = field.parent();
-                    var glyph = parentField.find('.glyphicon:first');
+                    var glyph = parentField.find('.glyphicon:last');
                     var errorField  = parentField.find('.alert:first').hide();
                     if(!isGreen) {
                        parentField.removeClass('has-success');
@@ -32,49 +42,45 @@
                      }
           }
 
+
      $(document).ready(function() {
 
 
-
       $('#title').keyup(function(){
-           markField($('#title'), checkTitle());
+           markField($('#title'), isValidTitle());
       });
 
       $('#picker').keyup(function(){
-            ('#picker').val(Date.parse(('#picker').val()));
+
+          $("#picker").parent().find('.alert:first').hide();
+
       });
 
 
-      var options = {
+      //reading coordinates if allowed
+      navigator.geolocation.getCurrentPosition(successGettingCoordinates, errorGettingCoordinates, optionsGettingCoordinates);
+
+
+      var optionsGettingCoordinates = {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0
       };
 
-      function success(pos) {
+     //on success getting coordinates
+      function successGettingCoordinates(pos) {
          crd = pos.coords;
          latitude = crd.latitude;
          longitude = crd.longitude;
       };
 
-      function error(err) {
+      //on error getting coordinates
+      function errorGettingCoordinates(err) {
 
       };
 
-      navigator.geolocation.getCurrentPosition(success, error, options);
-
-      function addZero(val) {
-        val = val.toString();
-        if(val.length == 1) {
-            return '0' + val;
-        } else if (val.length == 0) {
-            return '00'
-        }
-
-        return val;
-      };
-
-        $("#register_btn").click(function() {
+        //button click handler
+        $("#add_event_btn").click(function() {
         var name              = $("#title").val();
         var description       = $("#description").val();
         var dateObj           = new Date(Date.parse($('#picker').val()));
@@ -82,42 +88,45 @@
         var country           = $("#country").val();
         var address           = $("#address").val();
 
-        var dateStr = dateObj.getUTCFullYear() + "-" + addZero(1 + dateObj.getUTCMonth()) + "-" + addZero(dateObj.getUTCDay());
-        var timeStr = addZero(dateObj.getUTCHours()) + ':' + addZero(dateObj.getUTCMinutes()) + ':' + addZero(dateObj.getUTCSeconds());
-        var date = dateStr + "T" + timeStr;
-        var data = JSON.stringify({
-                        name: name,
-                        description: description,
-                        city: city,
-                        timeStamp:  date,
-                        country: country,
-                        gpsLatitude: latitude,
-                        gpsLongitude: longitude,
-                        location: address
-                    });
-
         var noMistakes = true;
-        if (!checkTitle()) {
-               markField($("#title"), false);
-               addErrorMessage($("#title"), "Title should not be empty.");
-               noMistakes = false;
+        if (!isValidTitle()) {
+            markField($("#title"), false);
+            addErrorMessage($("#title"), "Title should not be empty.");
+            noMistakes = false;
         }
+
+        if(!isValidDate()) {
+            addErrorMessage($("#picker").parent(), "Enter valid date & time");
+            noMistakes = false;
+        }
+
+        var date              = dateObj.toISOString();
+        var data = JSON.stringify({
+              name: name,
+              description:  description,
+              city:         city,
+              timeStamp:    date.substring(0,date.length-1),
+              country:      country,
+              gpsLatitude:  latitude,
+              gpsLongitude: longitude,
+              location:     address
+           });
+
 
         if(noMistakes) {
 
-            $("#register_btn").addClass('disabled').attr('disabled', 'disabled');
+            $("#add_event_btn").addClass('disabled').attr('disabled', 'disabled');
 
             $.ajax({
                 type: "POST",
-                url: "add_event",
+                url: "event",
                 data: data,
                 contentType: "application/json",
                 success: function (data) {
-                               setTimeout(function() {
-                                  window.location.href = "/event-app/home.html"}, 2000);
-                           },
+                    window.location.href = "/event-app/detail.html?id=" + data.id;
+                },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    $('#register_btn').removeClass('disabled').prop("disabled", false);
+                    $('#add_event_btn').removeClass('disabled').prop("disabled", false);
                 }
                 });
 
@@ -126,7 +135,7 @@
         );
 
 
-
+        //instantiate datePicker with appropriate settings
         $.datetimepicker.setLocale('en');
         var Dobj = new Date();
         var dateStr = Dobj.getFullYear() + "/" + Dobj.getMonth() + "/" + Dobj.getDay();
@@ -134,21 +143,10 @@
         $('#picker').datetimepicker({
         	formatTime:'H:i',
         	formatDate:'Y:m:d',
-        	defaultDate: dateStr, // it's my birthday
+        	defaultDate: dateStr,
         	defaultTime: timeStr,
-        	timepickerScrollbar:false //,
+        	timepickerScrollbar:false
 
         });
-
-        var logic = function( currentDateTime ){
-        	if (currentDateTime && currentDateTime.getDay() == 6){
-        		this.setOptions({
-        			minTime:'11:00'
-        		});
-        	}else
-        		this.setOptions({
-        			minTime:'8:00'
-        		});
-        };
 
      });

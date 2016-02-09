@@ -57,8 +57,8 @@ public class EventDetailController {
         return resultResponseEntity;
     }
 
-    @RequestMapping(value = "/add_event", method = RequestMethod.POST, consumes="application/json")
-    public ResponseEntity<?> addEvent(@RequestBody EventVO eventVO,Principal principal) {
+    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes="application/json")
+    public Event addEvent(@RequestBody EventVO eventVO,Principal principal) {
         LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 
         Event event = Event.builder(eventVO.getName()).
@@ -68,12 +68,13 @@ public class EventDetailController {
                 location(eventVO.getLocation()).
                 gpsLatitude(eventVO.getGpsLatitude()).
                 gpsLongitude(eventVO.getGpsLongitude()).
-                timeStamp(eventVO.getTimeStamp()).build();
+                timeStamp(eventVO.getTimeStamp()).
+                build();
 
-        eventService.createEvent(event,principal.getName());
+        Event newEvent = eventService.createEvent(event,principal.getName());
 
-        LOGGER.info("addEvent finished.");
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        LOGGER.info("addEvent finished. id = {}", event.getId());
+        return newEvent;
 
     }
 

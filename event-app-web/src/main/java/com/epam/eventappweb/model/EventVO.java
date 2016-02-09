@@ -27,20 +27,20 @@ public final class EventVO {
     private final String location;
     private final double gpsLatitude;
     private final double gpsLongitude;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private final LocalDateTime timeStamp;
+    private final int id;
 
     private EventVO(EventModelBuilder builder) {
-        this.name = builder.name;
-        this.creator = builder.creator;
-        this.description = builder.description;
-        this.country = builder.country;
-        this.city = builder.city;
-        this.location = builder.location;
-        this.gpsLatitude = builder.gpsLatitude;
-        this.gpsLongitude = builder.gpsLongitude;
-        this.timeStamp = builder.timeStamp;
+        this.name           = builder.name;
+        this.creator        = builder.creator;
+        this.description    = builder.description;
+        this.country        = builder.country;
+        this.city           = builder.city;
+        this.location       = builder.location;
+        this.gpsLatitude    = builder.gpsLatitude;
+        this.gpsLongitude   = builder.gpsLongitude;
+        this.timeStamp      = builder.timeStamp;
+        this.id             = builder.id;
     }
 
     public static EventModelBuilder builder(String name){
@@ -58,6 +58,7 @@ public final class EventVO {
         private double gpsLatitude;
         private double gpsLongitude;
         private LocalDateTime timeStamp;
+        private int id;
 
         private EventModelBuilder(@JsonProperty("name") String name) {
             this.name = name;
@@ -102,6 +103,12 @@ public final class EventVO {
             this.timeStamp = timeStamp;
             return this;
         }
+
+        public EventModelBuilder id(int id) {
+            this.id = id;
+            return this;
+        }
+
 
         public EventVO build() {
             return new EventVO(this);
@@ -156,6 +163,6 @@ public final class EventVO {
                 ", gpsLatitude=" + gpsLatitude +
                 ", gpsLongitude=" + gpsLongitude +
                 ", timeStamp=" + timeStamp +
-                '}';
+                ", id = " + id + " }";
     }
 }

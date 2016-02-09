@@ -5,8 +5,10 @@ import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -170,29 +172,33 @@ public class EventDetailControllerTest {
      * mock EventDetailController and expects status 201
      */
     @Test
-    public void shouldReturnStatusCreated() throws Exception {
+    public void shouldReturnStatusIsOk() throws Exception {
 
         //given
         final String userName  = "Admin";
         final String eventName = "test event";
         final String password  = "1234";
+        final int id = 100;
 
         EventVO eventVO = EventVO.builder(eventName).build();
-        Event   event   = Event.builder(eventName).build();
+        Event   event   = Event.builder(eventName).id(id).build();
         UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName,password);
 
-        Mockito.doNothing().when(eventServiceMock).createEvent(event,userName);
-        String jsonObj = new ObjectMapper().writeValueAsString(eventVO);
+        String jsonObj = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(eventVO);
+
+        Mockito.when(eventServiceMock.createEvent(event,userName)).thenReturn(event);
 
         //when
-        ResultActions resultActions = mockMvc.perform(post("/add_event")
+        ResultActions resultActions = mockMvc.perform(post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObj)
                 .principal(principal)
         );
 
         //then
-        resultActions.andExpect(status().isCreated());
+        resultActions.andExpect(status().isOk());
 
     }
 

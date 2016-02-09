@@ -30,6 +30,6 @@ public interface EventDAO {
      * @param event - Event to add.
      * @param userName    - name of user who adds Event.
      */
-    void addEvent(Event event, String userName);
+    Event addEvent(Event event, String userName);
 
 }

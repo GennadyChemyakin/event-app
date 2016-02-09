@@ -145,7 +145,6 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
      * No exceptions should be thrown.
      */
     @Test
-    @Ignore
     public void shouldAddEvent() {
         //given
         final String userName  = "Admin1";
@@ -156,16 +155,34 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         User user = User.builder(userName,email)
                 .password(pass).build();
 
-        Event event = Event.builder(eventName).build();
+        Event event = Event.builder(eventName)
+                .build();
 
         userDAO.createUser(user);
 
         //when
-        eventDAO.addEvent(event, userName);
+        Event newEvent = eventDAO.addEvent(event, userName);
 
         //then
-        Assert.fail("Event should be created");
+        Assert.assertNotEquals(0,newEvent.getId());
 
+    }
+
+    @Test(expected=EventNotCreatedException.class)
+    public void shouldThrowEventNotCreatedException() {
+
+        //given
+        final String eventName = "test event";
+        final String userName  = "Admin";
+
+        Event event = Event.builder(eventName)
+                .build();
+
+        //when
+        Event newEvent = eventDAO.addEvent(event, userName);
+
+        //then
+        //Exception should be thrown
     }
 
 }

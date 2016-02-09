@@ -4,6 +4,7 @@ import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.EventNotCreatedException;
+import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,9 +15,10 @@ import org.springframework.stereotype.Repository;
 
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.zone.ZoneRules;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -69,11 +71,9 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     }
 
     @Override
-    public void addEvent(Event event, String userName) {
+    public Event addEvent(Event event, String userName) {
 
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy MMM dd hh:mm:ss.SSS a");
-        final String currentDate = LocalDateTime.now().format(formatter);
-        final String dateOfEvent = event.getTimeStamp() == null ? "" : event.getTimeStamp().format(formatter);
+        Instant inst = Instant.now();
 
         SqlParameterSource ps = new MapSqlParameterSource()
                 .addValue("name"            , event.getName())
@@ -83,14 +83,28 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                 .addValue("gps_latitude"    , event.getGpsLatitude())
                 .addValue("gps_longitude"   , event.getGpsLongitude())
                 .addValue("address"         , event.getLocation())
-                .addValue("event_time"      , dateOfEvent)
-                .addValue("create_time"     , currentDate)
+                .addValue("event_time"      , event.getTimeStamp() != null ? Timestamp.valueOf(event.getTimeStamp()) : null)
+                .addValue("create_time"     , Timestamp.from(inst))
                 .addValue("username"        , userName);
 
         try {
-            getNamedParameterJdbcTemplate().update(ADD_EVENT, ps);
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            getNamedParameterJdbcTemplate().update(ADD_EVENT, ps, keyHolder, new String[]{"id"});
+
+            event = Event.builder(event.getName())
+                    .id(keyHolder.getKey().intValue())
+                    .country(event.getCountry())
+                    .city(event.getCity())
+                    .description(event.getDescription())
+                    .gpsLatitude(event.getGpsLatitude())
+                    .gpsLongitude(event.getGpsLongitude())
+                    .timeStamp(event.getTimeStamp())
+                    .location(event.getLocation())
+                    .build();
+
+            return event;
         } catch(DataAccessException ex) {
-            final String msg = String.format("Failed to connect to database and create event. Date: %s, Event_time: %s, User name: %s, Event: %s ",dateOfEvent, currentDate, userName, event);
+            final String msg = String.format("Failed to create event. Date: %s, User name: %s, Event: %s ", inst, userName, event);
             throw new EventNotCreatedException(msg);
         }
 

@@ -133,7 +133,7 @@ public class EventServiceTest {
         final String username = "admin";
         Event event =  Event.builder(name).build();
 
-        Mockito.doNothing().when(eventDAOMock).addEvent(event, username);
+        Mockito.when(eventDAOMock.addEvent(event,username)).thenReturn(event);
 
         //when
         sut.createEvent(event,username);

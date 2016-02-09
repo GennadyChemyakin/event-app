@@ -1,7 +1,7 @@
 package com.epam.eventapp.service.exceptions;
 
 /**
- * Created by Denys_Iakibchuk on 2/1/2016.
+ * Exception which is throwed in case event happened to be not created
  */
 public class EventNotCreatedException extends RuntimeException {
 
