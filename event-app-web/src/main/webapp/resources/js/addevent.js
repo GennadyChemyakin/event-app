@@ -23,6 +23,13 @@
 
      }
 
+      //function adds error message in the middle of the page
+          function addMainMessage(errormsg) {
+          	var field = $('#msg_main');
+            field.addClass('alert-danger').text(errormsg);
+            field.show();
+          }
+
     //mark necessary fields with green or red
           function markField(field, isGreen) {
 
@@ -81,13 +88,13 @@
 
         //button click handler
         $("#add_event_btn").click(function() {
+        $('#msg_main').hide();
         var name              = $("#title").val();
         var description       = $("#description").val();
         var dateObj           = new Date(Date.parse($('#picker').val()));
         var city              = $("#city").val();
         var country           = $("#country").val();
         var address           = $("#address").val();
-
         var noMistakes = true;
         if (!isValidTitle()) {
             markField($("#title"), false);
@@ -114,7 +121,7 @@
 
 
         if(noMistakes) {
-
+            $("#msg_main").hide();
             $("#add_event_btn").addClass('disabled').attr('disabled', 'disabled');
 
             $.ajax({
@@ -123,9 +130,11 @@
                 data: data,
                 contentType: "application/json",
                 success: function (data) {
+
                     window.location.href = "/event-app/detail.html?id=" + data.id;
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
+                    addMainMessage("Problem connecting to database. Please try again.");
                     $('#add_event_btn').removeClass('disabled').prop("disabled", false);
                 }
                 });
