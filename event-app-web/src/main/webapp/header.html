@@ -2,9 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="resources/js/header.js" type="text/javascript"></script>
 </head>
 <body>
@@ -13,23 +10,36 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="/event-app/home.html">EVENT-APP</a>
         </div>
-        <ul class="nav navbar-nav navbar-right">
-            <li style="margin:0px 50px 0px 0px">
-                <div>
-                    <button type="button" id="addEventButton" class="btn btn-primary navbar-btn">Add Event</button>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <button type="button" id="signInButton" class="btn btn-success navbar-btn">Sign in</button>
-                </div>
-            </li>
-            <li style="margin:0px 30px 0px 10px">
-                <div>
-                    <button type="button" id="signUnButton" class="btn btn-default navbar-btn">Sign up</button>
-                </div>
-            </li>
-        </ul>
+        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li style="margin:0px 50px 0px 0px">
+                    <div>
+                        <button type="button" id="addEventButton" class="btn btn-primary navbar-btn">Add Event</button>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <button type="button" id="logInButton" class="btn btn-success navbar-btn" style="display: none">
+                            Log in
+                        </button>
+                    </div>
+                </li>
+                <li style="margin:0px 0px 0px 10px">
+                    <div>
+                        <button type="button" id="signUpButton" class="btn btn-default navbar-btn">Sign up</button>
+                    </div>
+                </li>
+                <li class="dropdown" style="margin:0px 10px 0px 10px">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false" id="dropDownMenu"><span id="dropDownMenuText"></span><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id="profile">Profile <span class="glyphicon glyphicon-user"></span></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/event-app/logout">Log out <span class="glyphicon glyphicon-log-out"></span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 </body>

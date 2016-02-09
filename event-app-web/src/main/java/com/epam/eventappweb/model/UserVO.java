@@ -37,6 +37,10 @@ public final class UserVO {
         return new Builder();
     }
 
+    public static Builder builder(){
+        return new Builder();
+    }
+
     @JsonPOJOBuilder(withPrefix = "")
     public static class Builder {
 
