@@ -26,11 +26,11 @@ public class CommentServiceImpl implements CommentService {
     private CommentDAO commentDAO;
 
     @Override
-    public CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime commentTime, int amount) throws SQLException {
-        LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate started: Params eventId = {}, commentTime = {}, amount = {}", eventId,
-                commentTime, amount);
+    public CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) throws SQLException {
+        LOGGER.debug("getCommentsListOfFixedSizeByEventIdBeforeDate started: Params eventId = {}, before = {}, amount = {}", eventId,
+                before, amount);
         CommentPack commentPack;
-        List<Comment> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, commentTime, amount);
+        List<Comment> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, before, amount);
         int commentListSize = commentList.size();
         if (commentListSize > 0) {
             int remainingCommentsCount = commentDAO.countOfCommentsAddedBeforeDate(eventId,
@@ -52,10 +52,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getListOfNewComments(int eventId, LocalDateTime commentTime) {
-        LOGGER.debug("getListOfNewComments started: Params eventId = {}, commentTime = {}", eventId,
-                commentTime);
-        List<Comment> commentList = commentDAO.getListOfNewComments(eventId, commentTime);
+    public List<Comment> getListOfNewComments(int eventId, LocalDateTime after) {
+        LOGGER.debug("getListOfNewComments started: Params eventId = {}, after = {}", eventId,
+                after);
+        List<Comment> commentList = commentDAO.getListOfNewComments(eventId, after);
         LOGGER.debug("getListOfNewComments finished. Result: {}", commentList);
         return commentList;
     }

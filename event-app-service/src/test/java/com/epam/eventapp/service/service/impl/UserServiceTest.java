@@ -65,6 +65,7 @@ public class UserServiceTest {
         //then
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getUsername(), username);
+        Assert.assertEquals(user.getEmail(), email);
     }
 
 }

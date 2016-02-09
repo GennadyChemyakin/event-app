@@ -5,13 +5,11 @@ import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
-import com.epam.eventappweb.exceptions.UserNotLoggedInException;
 import com.epam.eventappweb.model.CommentVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matchers;
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -20,15 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.util.NestedServletException;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,14 +36,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
  */
 public class CommentControllerTest {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Mock
     private CommentService commentServiceMock;
-
-    @Mock
-    private Principal principalMock;
 
     @Mock
     private UserService userServiceMock;
@@ -116,25 +105,22 @@ public class CommentControllerTest {
     }
 
 
-
     /**
-     * testing addComment from CommentController
+     * testing showNewComments from CommentController
      * expect JSON with right fields
      *
      * @throws Exception
      */
     @Test
-    public void shouldAddCommentAndReturnListOfNewComments() throws Exception {
+    public void shouldReturnListOfNewComments() throws Exception {
         //given
         final int id = 0;
         final String firstCommentTime = "2016-01-21 15:00:00";
         final String secondCommentTime = "2016-01-22 15:00:00";
-        final String newCommentTime = "2016-01-23 15:00:10";
-        final String commentTime = "2016-01-23 15:00:00";
+        final String commentTime = "2016-01-19 15:00:00";
         final LocalDateTime commentDateTime = LocalDateTime.parse(commentTime,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        User newCommentUser = User.builder("Ivan", "ivan@gmail.com").id(0).build();
 
         Comment commentFromIvan = Comment.builder().user(User.builder("Ivan", "ivan@gmail.com").build()).
                 message("Great!").id(0).
@@ -142,42 +128,25 @@ public class CommentControllerTest {
         Comment commentFromPete = Comment.builder().user(User.builder("Peter", "pete@gmail.com").build()).
                 message("I like it!").id(1).
                 commentTime(LocalDateTime.parse(secondCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).build();
-        Comment newComment = Comment.builder().user(newCommentUser).id(2).eventId(id).message("Hello!").
-                commentTime(LocalDateTime.parse(newCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).build();
 
-        CommentVO newCommentVO = CommentVO.builder().username(newComment.getUser().getUsername()).message(newComment.getMessage()).
-                commentTime(newComment.getCommentTime()).eventId(newComment.getEventId()).build();
 
         List<Comment> expectedCommentList = new ArrayList<>();
         expectedCommentList.add(commentFromIvan);
         expectedCommentList.add(commentFromPete);
-        expectedCommentList.add(newComment);
 
 
-
-        when(userServiceMock.getUserByUsername(newCommentVO.getUsername())).thenReturn(newCommentUser);
-        when(principalMock.getName()).thenReturn(newCommentUser.getUsername());
         when(commentServiceMock.getListOfNewComments(id, commentDateTime)).
                 thenReturn(expectedCommentList);
-        Mockito.doNothing().when(commentServiceMock).addComment(argThat(Matchers.isA(Comment.class)));
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
 
         //when
-        ResultActions resultActions = mockMvc.perform(post("/comment?after=" + commentDateTime).
-                principal(new TestingAuthenticationToken("username", null)).
-                contentType(MediaType.APPLICATION_JSON).
-                content(objectMapper.writeValueAsString(newCommentVO)));
+        ResultActions resultActions = mockMvc.perform(get("/comment/new?eventId=" + id + "&after=" + commentDateTime));
 
         //then
         resultActions.andExpect(status().isOk()).
                 andExpect(jsonPath("$.[0].id", Matchers.is(expectedCommentList.get(0).getId()))).
                 andExpect(jsonPath("$.[1].id", Matchers.is(expectedCommentList.get(1).getId()))).
-                andExpect(jsonPath("$.[2].id", Matchers.is(expectedCommentList.get(2).getId()))).
                 andExpect(jsonPath("$.[0].message", Matchers.is(expectedCommentList.get(0).getMessage()))).
                 andExpect(jsonPath("$.[1].message", Matchers.is(expectedCommentList.get(1).getMessage()))).
-                andExpect(jsonPath("$.[2].message", Matchers.is(expectedCommentList.get(2).getMessage()))).
                 andExpect(jsonPath("$.[0].username", Matchers.is(expectedCommentList.get(0).getUser().getUsername()))).
                 andExpect(jsonPath("$.[1].username", Matchers.is(expectedCommentList.get(1).getUser().getUsername())));
     }
@@ -185,39 +154,38 @@ public class CommentControllerTest {
 
     /**
      * testing addComment from CommentController
-     * expect UserNotLoggedInException thrown
+     * expect status code 200
      *
      * @throws Exception
      */
     @Test
-    public void shouldThrowUserNotLoggedException() throws Exception {
+    public void shouldAddComment() throws Exception {
 
         //given
-        final String commentTime = "2016-01-23 15:00:00";
         final String newCommentTime = "2016-01-23 15:00:10";
-        final LocalDateTime commentDateTime = LocalDateTime.parse(commentTime,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
         User newCommentUser = User.builder("Ivan", "ivan@gmail.com").id(0).build();
 
-        Comment newComment = Comment.builder().user(newCommentUser).id(0).eventId(0).message("Hello!").
-                commentTime(LocalDateTime.parse(newCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).build();
+        CommentVO newCommentVO = CommentVO.builder().username(newCommentUser.getUsername()).message("Hello!").
+                commentTime(LocalDateTime.parse(newCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).
+                eventId(0).build();
 
-        CommentVO newCommentVO = CommentVO.builder().username(newComment.getUser().getUsername()).message(newComment.getMessage()).
-                commentTime(newComment.getCommentTime()).eventId(newComment.getEventId()).build();
+        Comment newComment = Comment.builder().user(newCommentUser).id(newCommentVO.getId()).eventId(newCommentVO.getEventId()).
+                message(newCommentVO.getMessage()).commentTime(newCommentVO.getCommentTime()).build();
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
+        when(userServiceMock.getUserByUsername(newCommentUser.getUsername())).thenReturn(newCommentUser);
+        Mockito.doNothing().when(commentServiceMock).addComment(newComment);
+
         //when
-        thrown.expect(NestedServletException.class);
-        thrown.expectCause(org.hamcrest.Matchers.isA(UserNotLoggedInException.class));
-        mockMvc.perform(post("/comment?after=" + commentDateTime).
+        ResultActions resultActions = mockMvc.perform(post("/comment").
+                principal(new TestingAuthenticationToken(newCommentUser.getUsername(), null)).
                 contentType(MediaType.APPLICATION_JSON).
                 content(objectMapper.writeValueAsString(newCommentVO)));
 
         //then
-        Assert.fail("UserNotLoggedInException not thrown");
+        resultActions.andExpect(status().isOk());
     }
 
 }

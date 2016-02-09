@@ -180,6 +180,6 @@ public class CommentServiceTest {
         List<Comment> commentList = sut.getListOfNewComments(id, commentDateTime);
 
         //then
-        Assert.assertEquals(commentList.size(), 0);
+        Assert.assertTrue(commentList.isEmpty());
     }
 }

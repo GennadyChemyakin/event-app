@@ -15,13 +15,13 @@ public interface CommentService {
 
     /**
      * method for getting list of fixed size of amount of comments that were added
-     * before commentTime for event by event id
+     * before after for event by event id
      * @param eventId event id
-     * @param commentTime time when comment was added
+     * @param before we are looking for comments that were added before this time
      * @param amount amount of comments to receive
      * @return CommentPack with list of founded comments and amount of remaining comments
      */
-    CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime commentTime, int amount) throws SQLException;
+    CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) throws SQLException;
 
 
     /**
@@ -31,11 +31,11 @@ public interface CommentService {
     void addComment(Comment comment);
 
     /**
-     * method for getting list of comments that were added after commentTime to event with id = eventId
+     * method for getting list of comments that were added after after to event with id = eventId
      * @param eventId id of event
-     * @param commentTime specified time. We are looking for comments that were added after it
+     * @param after specified time. We are looking for comments that were added after it
      * @return list of founded comments
      */
-    List<Comment> getListOfNewComments(int eventId, LocalDateTime commentTime);
+    List<Comment> getListOfNewComments(int eventId, LocalDateTime after);
 
 }

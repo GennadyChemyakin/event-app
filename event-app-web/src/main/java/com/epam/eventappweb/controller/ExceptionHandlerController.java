@@ -2,7 +2,6 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
-import com.epam.eventappweb.exceptions.UserNotLoggedInException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,11 +27,5 @@ public class ExceptionHandlerController {
     @ExceptionHandler(EventNotUpdatedException.class)
     public void handleEventNotUpdated(EventNotUpdatedException exception) {
         LOGGER.info("handleEventNotUpdated handle exception. Exception: message = {}", exception.getMessage());
-    }
-
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Event not updated")
-    @ExceptionHandler(UserNotLoggedInException.class)
-    public void handleUserNotLoggedIn(UserNotLoggedInException exception) {
-        LOGGER.info("handleUserNotLoggedIn handle exception. Exception: message = {}", exception.getMessage());
     }
 }

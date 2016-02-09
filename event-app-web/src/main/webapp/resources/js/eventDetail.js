@@ -39,11 +39,11 @@ $(document).ready(function () {
     }).then(function () {
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + new Date(new Date().getTime() - window.timezoneOffset * 60000).toISOString()
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + getCommentDateOrNow()
         }).then(showComments);
     });
     $('#loadComments').click(function () {
-        var lastCommentDate = getCommentDate($("#commentTime" + $(".commentRow:first").attr("id")).text());
+        var lastCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:first").attr("id")).text());
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&commentTime=" + lastCommentDate
@@ -54,50 +54,51 @@ $(document).ready(function () {
     });
     $('#addCommentButton').click(function () {
         var message = $('#commentArea').val();
-        var firstCommentDate = getCommentDate($("#commentTime" + $(".commentRow:last").attr("id")).text());
+        var firstCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:last").attr("id")).text());
         if (message) {
-            var commentTime = new Date(new Date().getTime() - window.timezoneOffset * 60000).toISOString();
+            var commentTime = getCommentDateOrNow();
             commentTime = commentTime.slice(0, commentTime.length - 1);
             $.ajax({
                 type: "POST",
-                url: "/event-app/comment?after=" + firstCommentDate,
+                url: "/event-app/comment",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     "eventId": urlParam("id"),
                     "message": message,
                     "commentTime": commentTime
                 })
-            }).done(function (data) {
-                showNewComments(data);
-                $("#addCommentFailMessage").css("display", "none");
-                $('#commentArea').val("");
-            }).error(function (xhr, statusText) {
-                if (xhr.status == 401) {
-                    $("#addCommentFailMessage").slideDown();
-                }
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + firstCommentDate
+                }).then(function (data) {
+                    showNewComments(data);
+                    $('#commentArea').val("");
+                })
             });
         }
     });
 
 });
 
-
-function getCommentDate(lastCommentDateString) {
-    var lastCommentDate;
-    if (lastCommentDateString) {
-        lastCommentDate = new Date(lastCommentDateString);
+//return local date made from commentDateString or now if commentDateString == null
+function getCommentDateOrNow(commentDateString) {
+    var commentDate;
+    if (commentDateString) {
+        commentDate = new Date(commentDateString);
         //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        lastCommentDate = new Date(lastCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+        commentDate = new Date(commentDate.getTime() - window.timezoneOffset * 60000).toISOString();
     } else {
-        lastCommentDate = new Date();
-        lastCommentDate = new Date(lastCommentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+        commentDate = new Date();
+        commentDate = new Date(commentDate.getTime() - window.timezoneOffset * 60000).toISOString();
     }
-    return lastCommentDate;
+    return commentDate;
 }
 
+//function for displaying list of comments
 function showComments(data) {
     for (var i = 0; i < data.commentVOList.length; i++) {
-        var comment = getComment(data.commentVOList[i]);
+        var comment = buildComment(data.commentVOList[i]);
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
@@ -120,9 +121,10 @@ function showComments(data) {
     }
 }
 
+//function for displaying list of new comments
 function showNewComments(data) {
     for (var i = 0; i < data.length; i++) {
-        var comment = getComment(data[i]);
+        var comment = buildComment(data[i]);
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
@@ -140,7 +142,8 @@ function showNewComments(data) {
     }
 }
 
-function getComment(data) {
+//function for building comment object from Json
+function buildComment(data) {
     var comment = {};
     comment.id = data.id;
     comment.message = data.message;
