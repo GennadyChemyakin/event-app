@@ -1,74 +1,82 @@
 $(document).ready(function () {
-            window.timezoneOffset = new Date().getTimezoneOffset();
-            var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
-            $.ajax({
-                type: "GET",
-                url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
-            }).then(showEvents);
+        window.timezoneOffset = new Date().getTimezoneOffset();
+        getEventsFromServer(true);
+        $('#loadNewEvents').click(function() { getEventsFromServer(false); });
 });
 
-function prepare(data) {
-        $('#loadNewEvents').click(function () {
-            var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
-            var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
-
-            $.ajax({
-                type: "GET",
-                url: "../../event-app/events/?queryMode=MORE_THAN&newestTime=" +firstEventDate + "&oldestTime=" + lastEventDate
-            }).then(showEvents)
-        });
-    showEvents(data);
+//Function for requesting events from server
+function getEventsFromServer(isLess) {
+    var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
+    var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
+    var tempEventDate = getEventDate(null);
+    console.log(tempEventDate);
+    if(isLess) {
+        $.ajax({
+            type: "GET",
+            url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + firstEventDate + "&oldestTime=" + lastEventDate
+        }).then(function(data) { showEvents(data, true); });
+    }
+    else {
+        $.ajax({
+            type: "GET",
+            url: "../../event-app/events/?queryMode=MORE_THAN&newestTime=" + tempEventDate + "&oldestTime=" + lastEventDate
+        }).then(function(data) { showEvents(data, false); });
+    }
 }
 
-function showEvents(data) {
-    for(var i = 0; i < data.eventPreviewVOList.length; i++) {
-        arg = data.eventPreviewVOList[i];
-        var event = {};
-        event.id = arg.id != null ? arg.id : "";
-        event.name = arg.name != null ? arg.name : "";
-        event.creator = arg.creator != null ? arg.creator : "";
-        event.description = arg.description != null ? arg.description : "Description will be added later...";
-        event.country = arg.country != null ? arg.country : "";
-        event.city = arg.city != null ? arg.city : "";
-        event.location = arg.location != null ? arg.location : "";
-        event.numberOfComments = arg.numberOfComments != null ? arg.numberOfComments : "0";
-        event.picture = arg.picture;
-        event.eventTime = null;
-        if (arg.eventTime != null) {
-            event.eventTime = new Date(arg.eventTime.year, arg.eventTime.monthValue - 1, arg.eventTime.dayOfMonth,
-                            arg.eventTime.hour, arg.eventTime.minute, arg.eventTime.second, arg.eventTime.nano/1000000);
+//function for hiding or showing button for new events with message
+function processNewEventsButton(numberOfNewEvents) {
+        if (numberOfNewEvents != 0) {
+            var buttonText;
+            if(numberOfNewEvents <= 3) {
+                buttonText = "Load all of" + numberOfNewEvents + " new events";
+            }
+            else {
+                buttonText = "Load 3 of " + numberOfNewEvents + " new events";
+            }
+            $('#loadNewEvents').text(buttonText).show();
+        } else {
+            $('#loadNewEvents').hide();
         }
-        event.createTime = null;
-        if (arg.createTime != null) {
-            event.createTime = new Date(arg.createTime.year, arg.createTime.monthValue - 1, arg.createTime.dayOfMonth,
-                            arg.createTime.hour, arg.createTime.minute, arg.createTime.second, arg.createTime.nano/1000000);
-        }
+}
 
-        $('<div class="row eventRow"> ' +
-            '<div class="col-md-2">' +
-            '<a href="" id="picture"><div class="thumbnail">' +
-                '<img class="img-responsive event-photo" src="http://lorempixel.com/400/400/animals/' + i + '">' +
-            '</div></a>' +
-            '</div>' +
-            '<div class="panel panel-success col-md-10">' +
-                '<div class="panel-heading">' +
-                    '<h2>' +
-                        '<a href="" id="name"></a> ' +
-                    '</h2>' +
+//function shows events from data on page
+function showEvents(data, isOnBottom) {
+    console.log(data);
+    for(var i = 0; i < data.eventPreviewVOList.length; i++) {
+        var emptyEvent = '' +
+            '<div class="row eventRow"> ' +
+                '<div class="col-md-2">' +
+                    '<a href="" id="picture"><div class="thumbnail">' +
+                        '<img class="img-responsive event-photo" src="http://lorempixel.com/400/400/animals/' + i + '">' +
+                    '</div></a>' +
                 '</div>' +
-                '<div class="panel-footer">' +
-                    '<h4 class="glyphicon glyphicon-time" id="eventTime"></h4>' +
-                    '<h4 class="glyphicon glyphicon glyphicon-map-marker col-md-offset-3" id="address"></h4>' +
+                '<div class="panel panel-success col-md-10">' +
+                    '<div class="panel-heading">' +
+                        '<h2>' +
+                            '<a href="" id="name"></a> ' +
+                        '</h2>' +
+                    '</div>' +
+                    '<div class="panel-footer">' +
+                        '<h4 class="glyphicon glyphicon-time" id="eventTime"></h4>' +
+                        '<h4 class="glyphicon glyphicon glyphicon-map-marker col-md-offset-3" id="address"></h4>' +
+                    '</div>' +
+                    '<div class="panel-body">' +
+                        '<h4 id="description"></h4>' +
+                    '</div>' +
+                    '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
+                    '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsForEvent"></h4>' +
+                    '<div id="createTime" style="display:none"></div>' +
                 '</div>' +
-                '<div class="panel-body">' +
-                    '<h4 id="description"></h4>' +
-                '</div>' +
-                '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
-                '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsforEvent"></h4>' +
-                '<div id="createTime" style="display:none"></div>' +
-            '</div> ' +
-        '</div> '
-        ).attr("id", event.id).appendTo("#eventPanel");
+            '</div>';
+
+        var event = getEventFromModel(data.eventPreviewVOList[i]);
+        if(isOnBottom ) {
+            $(emptyEvent).attr("id", event.id).appendTo("#eventPanel");
+        }
+        else {
+            $(emptyEvent).attr("id", event.id).prependTo("#eventPanel");
+        }
 
         $("#" + event.id).find("#name").attr("id", 'name' + event.id);
         $("#" + event.id).find("#picture").attr("id", 'picture' + event.id);
@@ -76,7 +84,7 @@ function showEvents(data) {
         $("#" + event.id).find("#address").attr("id", 'address' + event.id);
         $("#" + event.id).find("#description").attr("id", 'description' + event.id);
         $("#" + event.id).find("#eventCreator").attr("id", "eventCreator" + event.id);
-        $("#" + event.id).find("#numberOfCommentsforEvent").attr("id", 'numberOfCommentsforEvent' + event.id);
+        $("#" + event.id).find("#numberOfCommentsForEvent").attr("id", 'numberOfCommentsForEvent' + event.id);
         $("#" + event.id).find("#createTime").attr("id", 'createTime' + event.id);
         $("#" + 'name' + event.id).text(event.name + ' ');
         $("#" + 'name' + event.id).attr("href", '../../event-app/event.html?id=' + event.id);
@@ -88,48 +96,71 @@ function showEvents(data) {
             $("#" + 'eventTime' + event.id).text("Not specified");
         }
         $("#" + 'createTime' + event.id).text(event.createTime.toString());
-        $("#" + 'address' + event.id).text(" " + (event.country + " " + event.city + " " + event.location).trim());
+
+        var address = (event.country + " " + event.city + " " + event.location).trim();
+        if(address == "") {
+            $("#" + 'address' + event.id).hide();
+        }
+        else {
+            $("#" + 'address' + event.id).text(" " + address);
+        }
         $("#" + 'description' + event.id).text(event.description);
         $("#" + 'eventCreator' + event.id).text(event.creator);
-        $("#" + 'numberOfCommentsforEvent' + event.id).text(event.numberOfComments);
+        $("#" + 'numberOfCommentsForEvent' + event.id).text(event.numberOfComments);
         $("#" + event.id).slideDown();
 
-        if (data.numberOfNewEvents != 0) {
-            var buttonText;
-            if(data.numberOfNewEvents <= 3) {
-                buttonText = "Load " + data.numberOfNewEvents + " new events";
-            }
-            else {
-                buttonText = "Load 3 of " + data.numberOfNewEvents + " new events";
-            }
-            $('#loadNewEvents').text(buttonText);
-        } else {
-            $('#loadNewEvents').hide();
-        }
+        processNewEventsButton(data.numberOfNewEvents);
     }
 }
 
-//function for converting user local time to UTC
-function convertToUTC(date) {
+//function returns event object made from model from server
+function getEventFromModel(previewVO) {
+        var event = {};
+        event.id = previewVO.id != null ? previewVO.id : "";
+        event.name = previewVO.name != null ? previewVO.name : "";
+        event.creator = previewVO.creator != null ? previewVO.creator : "";
+        event.description = previewVO.description != null ? previewVO.description : "Description will be added later...";
+        event.country = previewVO.country != null ? previewVO.country : "";
+        event.city = previewVO.city != null ? previewVO.city : "";
+        event.location = previewVO.location != null ? previewVO.location : "";
+        event.numberOfComments = previewVO.numberOfComments != null ? previewVO.numberOfComments : "0";
+        event.picture = previewVO.picture;
+        event.eventTime = null;
+        if (previewVO.eventTime != null) {
+            event.eventTime = new Date(previewVO.eventTime.year, previewVO.eventTime.monthValue - 1, previewVO.eventTime.dayOfMonth,
+                            previewVO.eventTime.hour, previewVO.eventTime.minute, previewVO.eventTime.second, previewVO.eventTime.nano/1000000);
+        }
+        event.createTime = null;
+        if (previewVO.createTime != null) {
+            event.createTime = new Date(previewVO.createTime.year, previewVO.createTime.monthValue - 1, previewVO.createTime.dayOfMonth,
+                            previewVO.createTime.hour, previewVO.createTime.minute, previewVO.createTime.second, previewVO.createTime.nano/1000000);
+        }
+        return event;
+}
+
+//function for converting datetime to datetime + 3 hours ISO format
+function convertToLocalTime(date) {
     return new Date(date.getTime() - window.timezoneOffset * 60000).toISOString();
 }
 
-function getEventDate(lastEventDateString) {
-    var lastEventDate;
-    if (lastEventDateString) {
-        lastEventDate = new Date(lastEventDateString);
+//function returns ISO formatted datetime from dateString if it isn't null or current datetime otherwise
+function getEventDate(dateString) {
+    var date;
+    if (dateString) {
+        date = new Date(dateString);
         //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        lastEventDate = convertToUTC(lastEventDate);
+        date = convertToLocalTime(date);
     } else {
-        lastEventDate = new Date();
-        lastEventDate = convertToUTC(lastEventDate);
+        date = new Date();
+        date = convertToLocalTime(date);
     }
-    return lastEventDate;
+    return date;
 }
 
 
 // we bind the scroll event, with the 'flyout' namespace
 // so we can unbind easily
+// TODO:enable autoscroll when page height is < than whole page
 $(window).bind('scroll.flyout', (function check() {
 
     // this function is defined only once
@@ -147,9 +178,10 @@ $(window).bind('scroll.flyout', (function check() {
             // out of the event loop
             setTimeout(function() {
                 var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
+                var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
                 $.ajax({
                     type: "GET",
-                    url: "/event-app/events/?queryMode=LESS_THAN&newestTime=" + lastEventDate + "&oldestTime=" + lastEventDate
+                    url: "/event-app/events/?queryMode=LESS_THAN&newestTime=" + firstEventDate + "&oldestTime=" + lastEventDate
                 }).then(showEvents);
             }, 1);
 
@@ -159,7 +191,7 @@ $(window).bind('scroll.flyout', (function check() {
             //bind it again
             setTimeout(function() {
                 $(window).bind('scroll.flyout', check());
-            }, 1000);
+            }, 300);
         }
     };
 })());
