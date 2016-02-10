@@ -73,7 +73,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     @Override
     public Event addEvent(Event event, String userName) {
 
-        Instant inst = Instant.now();
+        Instant now = Instant.now();
 
         SqlParameterSource ps = new MapSqlParameterSource()
                 .addValue("name"            , event.getName())
@@ -84,7 +84,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                 .addValue("gps_longitude"   , event.getGpsLongitude())
                 .addValue("address"         , event.getLocation())
                 .addValue("event_time"      , event.getTimeStamp() != null ? Timestamp.valueOf(event.getTimeStamp()) : null)
-                .addValue("create_time"     , Timestamp.from(inst))
+                .addValue("create_time"     , Timestamp.from(now))
                 .addValue("username"        , userName);
 
         try {
@@ -104,7 +104,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
 
             return event;
         } catch(DataAccessException ex) {
-            final String msg = String.format("Failed to create event. Date: %s, User name: %s, Event: %s ", inst, userName, event);
+            final String msg = String.format("Failed to create event. Date: %s, User name: %s, Event: %s ", now, userName, event);
             throw new EventNotCreatedException(msg);
         }
 

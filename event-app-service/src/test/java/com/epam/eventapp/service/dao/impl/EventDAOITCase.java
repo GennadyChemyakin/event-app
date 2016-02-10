@@ -182,7 +182,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         Event newEvent = eventDAO.addEvent(event, userName);
 
         //then
-        //Exception should be thrown
+        Assert.fail("EventNotCreatedException should be thrown");
     }
 
 }

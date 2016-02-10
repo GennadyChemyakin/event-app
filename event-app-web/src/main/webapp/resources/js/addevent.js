@@ -83,7 +83,7 @@
 
       //on error getting coordinates
       function errorGettingCoordinates(err) {
-
+            console.log(err);
       };
 
         //button click handler
