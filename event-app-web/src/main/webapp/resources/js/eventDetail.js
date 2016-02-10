@@ -53,29 +53,33 @@ $(document).ready(function () {
         $(this).css("background-color", "red");
     });
     $('#addCommentButton').click(function () {
-        var message = $('#commentArea').val();
-        var firstCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:last").attr("id")).text());
-        if (message) {
-            var commentTime = getCommentDateOrNow();
-            commentTime = commentTime.slice(0, commentTime.length - 1);
-            $.ajax({
-                type: "POST",
-                url: "/event-app/comment",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    "eventId": urlParam("id"),
-                    "message": message,
-                    "commentTime": commentTime
-                })
-            }).then(function () {
+        if (window.username) {
+            var message = $('#commentArea').val();
+            var firstCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:last").attr("id")).text());
+            if (message) {
+                var commentTime = getCommentDateOrNow();
+                commentTime = commentTime.slice(0, commentTime.length - 1);
                 $.ajax({
-                    type: "GET",
-                    url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + firstCommentDate
-                }).then(function (data) {
-                    showNewComments(data);
-                    $('#commentArea').val("");
-                })
-            });
+                    type: "POST",
+                    url: "/event-app/comment",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        "eventId": urlParam("id"),
+                        "message": message,
+                        "commentTime": commentTime
+                    })
+                }).then(function () {
+                    $.ajax({
+                        type: "GET",
+                        url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + firstCommentDate
+                    }).then(function (data) {
+                        showNewComments(data);
+                        $('#commentArea').val("");
+                    })
+                });
+            }
+        } else {
+            $('#addCommentFailMessage').slideDown();
         }
     });
 
@@ -102,16 +106,26 @@ function showComments(data) {
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
-            ' <strong class= "commentUsername"></strong> <span class="text-muted commentTime"></span> </div> ' +
+            '<div class = "col-md-2"><strong class= "commentUsername"></strong></div><div class="col-md-8"> <span class="text-muted commentTime">' +
+            '</span></div><div class="col-md-offset-11"><a role="button" class="deleteCommentButton" style="color:transparent">Delete</a></div></div>' +
             '<div class="panel-body" ><span class="commentMessage"></span></div> </div> </div> </div> ').
             attr('id', comment.id).css("display", "none").prependTo('#commentPanel');
 
         $("#" + comment.id).find("strong.commentUsername").attr("id", 'commentUsername' + comment.id);
         $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
         $("#" + comment.id).find("span.commentMessage").attr("id", 'commentMessage' + comment.id);
+        $("#" + comment.id).find("a.deleteCommentButton").attr("id", 'deleteCommentButton' + comment.id);
         $("#" + 'commentUsername' + comment.id).text(comment.username);
         $("#" + 'commentTime' + comment.id).text(comment.date.toString());
         $("#" + 'commentMessage' + comment.id).text(comment.message);
+
+        if (window.username == $('#username').text() || window.username == comment.username) {
+            $("#deleteCommentButton" + comment.id).css("color", "black");
+            $("#deleteCommentButton" + comment.id).bind("click", function () {
+                var id = $(this).attr("id").slice('deleteCommentButton'.length, $(this).attr("id").length);
+                $("#" + id).slideUp();
+            })
+        }
         $("#" + comment.id).slideDown();
     }
     if (data.remainingCommentsCount == 0) {
@@ -128,16 +142,25 @@ function showNewComments(data) {
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
-            ' <strong class= "commentUsername"></strong> <span class="text-muted commentTime"></span> </div> ' +
+            '<div class = "col-md-2"><strong class= "commentUsername"></strong></div><div class="col-md-8"> <span class="text-muted commentTime">' +
+            '</span></div><div class="col-md-offset-11"><a role="button" class="deleteCommentButton" style="color:transparent">Delete</a></div></div>' +
             '<div class="panel-body" ><span class="commentMessage"></span></div> </div> </div> </div> ').
             attr('id', comment.id).css("display", "none").appendTo("#commentPanel");
 
         $("#" + comment.id).find("strong.commentUsername").attr("id", 'commentUsername' + comment.id);
         $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
         $("#" + comment.id).find("span.commentMessage").attr("id", 'commentMessage' + comment.id);
+        $("#" + comment.id).find("a.deleteCommentButton").attr("id", 'deleteCommentButton' + comment.id);
         $("#" + 'commentUsername' + comment.id).text(comment.username);
         $("#" + 'commentTime' + comment.id).text(comment.date.toString());
         $("#" + 'commentMessage' + comment.id).text(comment.message);
+        if (window.username == $('#username').text() || window.username == comment.username) {
+            $("#deleteCommentButton" + comment.id).css("color", "black");
+            $("#deleteCommentButton" + comment.id).bind("click", function () {
+                var id = $(this).attr("id").slice('deleteCommentButton'.length, $(this).attr("id").length);
+                $("#" + id).slideUp();
+            })
+        }
         $("#" + comment.id).slideDown();
     }
 }

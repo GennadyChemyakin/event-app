@@ -1,6 +1,7 @@
 package com.epam.eventappweb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -8,8 +9,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
 
 /**
  * Configuration for Spring Security. Extends WebSecurityConfigurerAdapter to override method for configuration
@@ -30,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //dataSource bean has to be described in spring db config class
     @Autowired
     private DataSource dataSource;
+
 
     /**
      * Method for configuring data store options.
@@ -60,8 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .formLogin().loginPage("/login.html")
-                .and()
+                .formLogin().loginPage("/login.html").successHandler(authenticationSuccessHandler())
+                .and().logout().logoutSuccessHandler(logoutSuccessHandler()).and()
                 .authorizeRequests()
                 .antMatchers("/login.html").permitAll()
                 .antMatchers("/register.html").permitAll()
@@ -72,9 +79,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resources/js/*").permitAll()
                 .antMatchers("/event.html").permitAll()
                 .antMatchers("/event/*").permitAll()
-                .antMatchers(HttpMethod.GET,"/comment*").permitAll()
+                .antMatchers(HttpMethod.GET, "/comment*").permitAll()
                 .antMatchers("/header.html").permitAll()
                 .antMatchers("/user/current").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
+    }
+
+    @Bean
+    public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
+        SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        authenticationSuccessHandler.setUseReferer(true);
+        return authenticationSuccessHandler;
+    }
+
+    @Bean
+    public SimpleUrlLogoutSuccessHandler logoutSuccessHandler() {
+        SimpleUrlLogoutSuccessHandler logoutSuccessHandler = new SimpleUrlLogoutSuccessHandler();
+        logoutSuccessHandler.setUseReferer(true);
+        return logoutSuccessHandler;
     }
 }
