@@ -36,6 +36,10 @@ public class User {
         return new UserBuilder(username,email);
     }
 
+    public static UserBuilder builder(){
+        return new UserBuilder();
+    }
+
     public static class UserBuilder {
         private int id;
         private String username;
@@ -53,6 +57,19 @@ public class User {
         private UserBuilder(String username, String email){
             this.username = username;
             this.email = email;
+        }
+
+        private UserBuilder(){
+        }
+
+        public UserBuilder username(String username){
+            this.username = username;
+            return this;
+        }
+
+        public UserBuilder email(String email){
+            this.email = email;
+            return this;
         }
 
         public UserBuilder id(int id){

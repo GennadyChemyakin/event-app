@@ -36,4 +36,10 @@ public interface CommentService {
      */
     List<Comment> getListOfNewComments(int eventId, LocalDateTime after);
 
+    /**
+     * method for deleting commentary
+     * @param comment deleting commentary
+     */
+    void deleteComment(Comment comment);
+
 }

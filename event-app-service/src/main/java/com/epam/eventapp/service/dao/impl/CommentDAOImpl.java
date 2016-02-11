@@ -4,6 +4,7 @@ import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.CommentaryNotAddedException;
+import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,8 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
             "u.country, u.city, u.bio from commentary c join sec_user u on c.sec_user_id = u.id " +
             "where c.event_id=:eventId and c.comment_time > :after ORDER BY c.comment_time DESC";
 
+    private final static String DELETE_COMMENTARY_BY_ID = "delete from commentary where id=:id";
+
     @Override
     public List<Comment> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -65,7 +68,7 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
     public int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime before) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("eventId", eventId);
-            params.addValue("before", Timestamp.valueOf(before));
+        params.addValue("before", Timestamp.valueOf(before));
         return getNamedParameterJdbcTemplate().queryForObject(GET_COUNT_OF_REMAINING_COMMENTS, params, Integer.class);
     }
 
@@ -103,5 +106,12 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
                         id(resultSet.getInt("c_id")).
                         build());
         return commentList;
+    }
+
+    @Override
+    public void deleteCommentById(int id) {
+        int rows = getNamedParameterJdbcTemplate().update(DELETE_COMMENTARY_BY_ID, Collections.singletonMap("id", id));
+        if (rows == 0)
+            throw new IdentifierNotDeletedException("commentary not deleted by id = " + id);
     }
 }

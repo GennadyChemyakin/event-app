@@ -68,6 +68,18 @@
             <version>${version.spring}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${version.spring-security}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${version.spring-security}</version>
+        </dependency>
+
         <!-- Testing -->
 
         <dependency>

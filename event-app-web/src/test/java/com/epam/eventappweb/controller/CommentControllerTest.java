@@ -2,6 +2,7 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
@@ -9,8 +10,11 @@ import com.epam.eventappweb.model.CommentVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -19,13 +23,19 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,6 +46,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
  * test Class for CommentController
  */
 public class CommentControllerTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Mock
     private CommentService commentServiceMock;
@@ -96,13 +109,13 @@ public class CommentControllerTest {
 
         //then
         resultActions.andExpect(status().isOk()).
-                andExpect(jsonPath("$.commentVOList.[0].id", Matchers.is(firstCommentId))).
-                andExpect(jsonPath("$.commentVOList.[1].id", Matchers.is(secondCommentId))).
-                andExpect(jsonPath("$.commentVOList.[0].message", Matchers.is(firstCommentMessage))).
-                andExpect(jsonPath("$.commentVOList.[1].message", Matchers.is(secondCommentMessage))).
-                andExpect(jsonPath("$.commentVOList.[0].username", Matchers.is(firstCommentUsername))).
-                andExpect(jsonPath("$.commentVOList.[1].username", Matchers.is(secondCommentUsername))).
-                andExpect(jsonPath("$.remainingCommentsCount", Matchers.is(remainingComments)));
+                andExpect(jsonPath("$.commentVOList.[0].id", is(firstCommentId))).
+                andExpect(jsonPath("$.commentVOList.[1].id", is(secondCommentId))).
+                andExpect(jsonPath("$.commentVOList.[0].message", is(firstCommentMessage))).
+                andExpect(jsonPath("$.commentVOList.[1].message", is(secondCommentMessage))).
+                andExpect(jsonPath("$.commentVOList.[0].username", is(firstCommentUsername))).
+                andExpect(jsonPath("$.commentVOList.[1].username", is(secondCommentUsername))).
+                andExpect(jsonPath("$.remainingCommentsCount", is(remainingComments)));
     }
 
     /**
@@ -143,12 +156,12 @@ public class CommentControllerTest {
 
         //then
         resultActions.andExpect(status().isOk()).
-                andExpect(jsonPath("$.[0].id", Matchers.is(expectedCommentList.get(0).getId()))).
-                andExpect(jsonPath("$.[1].id", Matchers.is(expectedCommentList.get(1).getId()))).
-                andExpect(jsonPath("$.[0].message", Matchers.is(expectedCommentList.get(0).getMessage()))).
-                andExpect(jsonPath("$.[1].message", Matchers.is(expectedCommentList.get(1).getMessage()))).
-                andExpect(jsonPath("$.[0].username", Matchers.is(expectedCommentList.get(0).getUser().getUsername()))).
-                andExpect(jsonPath("$.[1].username", Matchers.is(expectedCommentList.get(1).getUser().getUsername())));
+                andExpect(jsonPath("$.[0].id", is(expectedCommentList.get(0).getId()))).
+                andExpect(jsonPath("$.[1].id", is(expectedCommentList.get(1).getId()))).
+                andExpect(jsonPath("$.[0].message", is(expectedCommentList.get(0).getMessage()))).
+                andExpect(jsonPath("$.[1].message", is(expectedCommentList.get(1).getMessage()))).
+                andExpect(jsonPath("$.[0].username", is(expectedCommentList.get(0).getUser().getUsername()))).
+                andExpect(jsonPath("$.[1].username", is(expectedCommentList.get(1).getUser().getUsername())));
     }
 
 
@@ -186,5 +199,75 @@ public class CommentControllerTest {
 
         //then
         resultActions.andExpect(status().isOk());
+    }
+
+    /**
+     * testing deleteCommentary from CommentController
+     * expect status code 200
+     *
+     * @throws Exception
+     */
+    @Test
+    public void shouldDeleteComment() throws Exception {
+        //given
+        final String newCommentTime = "2016-01-23 15:00:10";
+        User commentUser = User.builder("Ivan", "ivan@gmail.com").id(0).build();
+
+        CommentVO commentVO = CommentVO.builder().username(commentUser.getUsername()).message("Hello!").
+                commentTime(LocalDateTime.parse(newCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).
+                eventId(0).id(0).build();
+
+        Comment comment = Comment.builder().user(commentUser).id(commentVO.getId()).eventId(commentVO.getEventId()).
+                message(commentVO.getMessage()).commentTime(commentVO.getCommentTime()).id(0).build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        Mockito.doNothing().when(commentServiceMock).deleteComment(comment);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(delete("/comment").
+                contentType(MediaType.APPLICATION_JSON).
+                content(objectMapper.writeValueAsString(commentVO)));
+
+        //then
+        resultActions.andExpect(status().isOk());
+
+    }
+
+    /**
+     * testing deleteCommentary from CommentController
+     * expect IdentifierNotDeletedException thrown
+     *
+     * @throws Exception
+     */
+    @Test
+    public void shouldThrowExceptionIfCommentaryNotDeleted() throws Exception {
+        //given
+        final String newCommentTime = "2016-01-23 15:00:10";
+        User commentUser = User.builder("Ivan", "ivan@gmail.com").id(0).build();
+
+        CommentVO commentVO = CommentVO.builder().username(commentUser.getUsername()).message("Hello!").
+                commentTime(LocalDateTime.parse(newCommentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).
+                eventId(0).id(0).build();
+
+        Comment comment = Comment.builder().user(commentUser).id(commentVO.getId()).eventId(commentVO.getEventId()).
+                message(commentVO.getMessage()).commentTime(commentVO.getCommentTime()).id(0).build();
+
+        Mockito.doThrow(IdentifierNotDeletedException.class).when(commentServiceMock).
+                deleteComment(argThat(allOf(Matchers.isA(Comment.class), hasProperty("id", is(comment.getId())))));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        //when
+        thrown.expect(NestedServletException.class);
+        thrown.expectCause(Matchers.isA(IdentifierNotDeletedException.class));
+        mockMvc.perform(delete("/comment").
+                contentType(MediaType.APPLICATION_JSON).
+                content(objectMapper.writeValueAsString(commentVO)));
+
+        //then
+        Assert.fail("IdentifierNotDeletedException not thrown");
     }
 }
