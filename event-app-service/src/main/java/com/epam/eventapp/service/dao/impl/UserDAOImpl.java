@@ -11,6 +11,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
+import java.util.Collections;
+import java.util.Optional;
+
 /**
  * Insert user into table
  * Get user id generated in the database
@@ -28,6 +32,9 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
     private static final String СOUNT_USER_BY_USERNAME = "SELECT count(*) FROM SEC_USER WHERE username = :username";
 
     private static final String СOUNT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
+
+    private static final String GET_USER_BY_USERNAME = "SELECT username, email, name, surname, gender, photo, country, city, bio " +
+            "FROM SEC_USER WHERE username = :username";
 
     @Override
     @Transactional
@@ -84,6 +91,30 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
             return cnt > 0;
         } catch (DataAccessException ex) {
             return false;
+        }
+
+    }
+
+    @Override
+    public Optional<User> getUserByUserName(String userName) {
+        try {
+            User user = getNamedParameterJdbcTemplate().queryForObject(GET_USER_BY_USERNAME, Collections.singletonMap("username", userName),
+                    ((resultSet, i) -> {
+                        return User.builder(resultSet.getString("username"), resultSet.getString("email"))
+                                .bio(resultSet.getString("bio"))
+                                .city(resultSet.getString("city"))
+                                .country(resultSet.getString("country"))
+                                .photo(resultSet.getBytes("photo"))
+                                .surname(resultSet.getString("surname"))
+                                .name(resultSet.getString("name"))
+                                .gender(resultSet.getString("gender"))
+                                .build();
+                    }));
+
+            return Optional.of(user);
+        } catch (Exception ex) {
+            final String msg = String.format("failed to find user with username %s", userName);
+            throw new UserNotCreatedException(msg);
         }
 
     }

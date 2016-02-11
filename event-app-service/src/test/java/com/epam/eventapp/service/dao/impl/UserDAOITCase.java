@@ -12,6 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Optional;
+
 /**
  * Class provides methods for testing UserDAOImpl. Use DataAccessConfig.class for creating context.
  */
@@ -39,6 +41,18 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
 
         int rowsAfter  = countRowsInTable("SEC_USER");
         Assert.assertNotEquals(rowsBefore, rowsAfter);
+
+    }
+
+    @Test
+    public void shouldFindUserByName() {
+
+        shouldAddUserInTheTable();
+        final String userName = "Vasya12";
+
+        Optional<User> user = userDAO.getUserByUserName(userName);
+
+        Assert.assertEquals(user.isPresent(), true);
 
     }
 

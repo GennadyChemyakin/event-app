@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 /**
  * User service implementation
@@ -43,5 +45,17 @@ public class UserServiceImpl implements UserService {
 
         LOGGER.debug("createUser finished: Params user = {}", user);
 
+    }
+
+    @Override
+    public Optional<User> getUserByUserName(String username) {
+
+        LOGGER.debug("getUserByUserName started. Params username = {}", username);
+
+        Optional<User> user = userDao.getUserByUserName(username);
+
+        LOGGER.debug("getUserByUserName finished: Returns user = {}", user.get());
+
+        return user;
     }
 }
