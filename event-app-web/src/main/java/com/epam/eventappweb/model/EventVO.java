@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @JsonDeserialize(builder = EventVO.EventModelBuilder.class)
 @Immutable
 public final class EventVO {
+
     private final String name;
     private final String creator;
     private final String description;
@@ -49,6 +50,7 @@ public final class EventVO {
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventModelBuilder {
+
         private String name;
         private String creator;
         private String description;
@@ -109,7 +111,6 @@ public final class EventVO {
             return this;
         }
 
-
         public EventVO build() {
             return new EventVO(this);
         }
@@ -150,6 +151,8 @@ public final class EventVO {
     public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
+
+    public int getId () {return id;}
 
     @Override
     public String toString() {

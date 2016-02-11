@@ -30,9 +30,4 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         configurer.setUseSuffixPatternMatch(false);
     }
 
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        super.extendMessageConverters(converters);
-
-    }
 }

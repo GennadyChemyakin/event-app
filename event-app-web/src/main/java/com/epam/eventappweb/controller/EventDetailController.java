@@ -57,8 +57,8 @@ public class EventDetailController {
         return resultResponseEntity;
     }
 
-    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes="application/json")
-    public Event addEvent(@RequestBody EventVO eventVO,Principal principal) {
+    @RequestMapping(value = "/create", method = RequestMethod.POST, consumes="application/json")
+    public EventVO addEvent(@RequestBody EventVO eventVO,Principal principal) {
         LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 
         Event event = Event.builder(eventVO.getName()).
@@ -73,8 +73,19 @@ public class EventDetailController {
 
         Event newEvent = eventService.createEvent(event,principal.getName());
 
-        LOGGER.info("addEvent finished. id = {}", event.getId());
-        return newEvent;
+        EventVO newEventVO = EventVO.builder(newEvent.getName())
+                .city(newEvent.getCity())
+                .country(newEvent.getCountry())
+                .description(newEvent.getDescription())
+                .id(newEvent.getId())
+                .timeStamp(newEvent.getTimeStamp())
+                .gpsLatitude(newEvent.getGpsLatitude())
+                .gpsLongitude(newEvent.getGpsLongitude())
+                .location(newEvent.getLocation())
+                .build();
+
+        LOGGER.info("addEvent finished. eventVO = {}", newEventVO);
+        return newEventVO;
 
     }
 

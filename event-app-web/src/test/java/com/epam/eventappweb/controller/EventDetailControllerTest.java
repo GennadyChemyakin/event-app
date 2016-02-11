@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,14 +15,17 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
@@ -44,7 +46,8 @@ public class EventDetailControllerTest {
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        mockMvc = standaloneSetup(controller).build();
+        mockMvc = standaloneSetup(controller)
+                .build();
     }
 
     /**
@@ -167,12 +170,17 @@ public class EventDetailControllerTest {
         );
     }
 
+    public static RequestPostProcessor userHttpBasic(User user) {
+        return SecurityMockMvcRequestPostProcessors
+                .httpBasic(user.getUsername(), user.getPassword());
+    }
+
     /**
      * Test addEvent of EventDetailController
      * mock EventDetailController and expects status 201
      */
     @Test
-    public void shouldReturnStatusIsOk() throws Exception {
+    public void shouldCreateEvent() throws Exception {
 
         //given
         final String userName  = "Admin";
@@ -180,7 +188,7 @@ public class EventDetailControllerTest {
         final String password  = "1234";
         final int id = 100;
 
-        EventVO eventVO = EventVO.builder(eventName).build();
+        EventVO eventVO = EventVO.builder(eventName).id(0).build();
         Event   event   = Event.builder(eventName).id(id).build();
         UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName,password);
 
@@ -188,17 +196,20 @@ public class EventDetailControllerTest {
                 .registerModule(new JavaTimeModule())
                 .writeValueAsString(eventVO);
 
-        Mockito.when(eventServiceMock.createEvent(event,userName)).thenReturn(event);
+        Mockito.when(eventServiceMock.createEvent(any(),any())).thenReturn(event);
 
         //when
-        ResultActions resultActions = mockMvc.perform(post("/event")
+        ResultActions resultActions = mockMvc.perform(post("/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObj)
                 .principal(principal)
         );
 
         //then
-        resultActions.andExpect(status().isOk());
+        resultActions
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(id)));
 
     }
 
