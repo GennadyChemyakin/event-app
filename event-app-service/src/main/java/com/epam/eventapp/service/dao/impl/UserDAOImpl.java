@@ -3,6 +3,8 @@ package com.epam.eventapp.service.dao.impl;
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import org.springframework.dao.DataAccessException;
@@ -21,6 +23,8 @@ import java.util.Collections;
  */
 @Repository("UserDAO")
 public class UserDAOImpl extends GenericDAO implements UserDAO {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDAOImpl.class);
 
     private static final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +
             "country, city, bio) VALUES(SEC_USER_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
@@ -77,6 +81,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("username", username), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
+            LOGGER.error("DataAccessException in isUserNameRegistered. msg = {}",ex.getMessage());
             return false;
         }
 
@@ -89,6 +94,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("email", email), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
+            LOGGER.error("DataAccessException in isEmailRegistered. msg = {}",ex.getMessage());
             return false;
         }
     }
