@@ -14,7 +14,9 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /**
@@ -26,7 +28,7 @@ public class UserDetailControllerTest {
     private UserService userServiceMock;
 
     @InjectMocks
-    private RegistrationController controller;
+    private UserDetailController controller;
 
     private MockMvc mockMvc;
 
@@ -53,7 +55,8 @@ public class UserDetailControllerTest {
                 .param("name",userName));
 
         //then
-        resultActions.andExpect(jsonPath("$.userName").value(userName))
+        resultActions.andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.username").value(userName))
                 .andExpect(jsonPath("$.email").value(userEmail))
                 .andExpect(jsonPath("$.country").value(country))
         ;
