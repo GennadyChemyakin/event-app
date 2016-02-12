@@ -14,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
+
 
 /**
  * Unit tests for {@link UserService}
@@ -98,5 +100,26 @@ public class UserServiceTest {
         Assert.fail("EmailAlreadyExistsException is expected to be thrown");
 
     }
+
+    @Test
+    public void shouldFindUserByUsername() {
+
+        //given
+        final String userName = "admin";
+        final String email    = "email";
+
+        User user = User.builder(userName, email).build();
+
+        Mockito.when(userDAOMock.getUserByUserName(userName)).thenReturn(Optional.of(user));
+
+        //when
+        user  = userService.getUserByUserName(userName).get();
+
+        //then
+        Assert.assertEquals(userName,user.getUsername());
+        Assert.assertEquals(email,user.getEmail());
+
+    }
+
 
 }

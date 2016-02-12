@@ -100,7 +100,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
         try {
             User user = getNamedParameterJdbcTemplate().queryForObject(GET_USER_BY_USERNAME, Collections.singletonMap("username", userName),
                     ((resultSet, i) -> {
-                        return User.builder(resultSet.getString("username"), resultSet.getString("email"))
+                        return User.builder(userName, resultSet.getString("email"))
                                 .bio(resultSet.getString("bio"))
                                 .city(resultSet.getString("city"))
                                 .country(resultSet.getString("country"))
