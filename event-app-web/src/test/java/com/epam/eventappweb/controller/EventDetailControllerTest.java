@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -201,6 +200,26 @@ public class EventDetailControllerTest {
                 .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
                 .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
                 .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
+    }
+
+    /**
+     * Testing getEventList from EventDetailController.
+     * Passing as parameter string that doesn't correspond with existing enum valueю
+     * Expect 400 status.
+     * @throws Exception
+     */
+    @Test
+    public void shoudReturn400inCaseWrongQueryModeSpecified() throws Exception {
+        //given
+        final LocalDateTime after = LocalDateTime.now();
+        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final String queryMode = "WRONG MODE";
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode +
+                "&after=" + after + "&before=" + before));
+        //then
+        resultActions.andExpect(status().isBadRequest());
     }
 
     /**

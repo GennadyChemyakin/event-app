@@ -68,23 +68,30 @@ public class EventDetailController {
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                         @RequestParam("after") LocalDateTime after,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("before") LocalDateTime before)
-            throws SQLException, IllegalArgumentException {
+                                                        @RequestParam("before") LocalDateTime before) {
         LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
         List<Event> eventList;
+        EventPackVO eventPackVO;
+
         switch (queryMode) {
             case BEFORE:
                 eventList = eventService.getOrderedEvents(before, queryMode);
+                eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(after));
                 break;
             case AFTER:
                 eventList = eventService.getOrderedEvents(after, queryMode);
+                if(eventList.isEmpty()) {
+                    eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(after));
+                }
+                else {
+                    eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(eventList.get(0).getCreationTime()));
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported query mode");
         }
 
         ResponseEntity<EventPackVO> resultResponseEntity;
-        EventPackVO eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(after));
         for(Event event: eventList) {
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getId()).
                     name(event.getName()).
@@ -101,7 +108,7 @@ public class EventDetailController {
         }
 
         resultResponseEntity = new ResponseEntity<>(eventPackVO, HttpStatus.OK);
-        LOGGER.info("getEventList finished.");
+        LOGGER.info("getEventList finished. Resuls: {}", eventPackVO);
         return resultResponseEntity;
     }
 }

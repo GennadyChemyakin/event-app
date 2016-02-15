@@ -45,7 +45,7 @@ public class EventServiceImpl implements EventService {
     public List<Event> getOrderedEvents(LocalDateTime specifiedTime, QueryMode queryMode) {
         LOGGER.debug("getOrderedEvents started: Params specifiedTime = {}, queryMode = {}, amount = {}",
                 specifiedTime, queryMode, EVENTS_AMOUNT);
-        List<Event> eventList = eventDAO.getOrderedEvents(specifiedTime, EVENTS_AMOUNT, QueryMode.BEFORE);
+        List<Event> eventList = eventDAO.getOrderedEvents(specifiedTime, EVENTS_AMOUNT, queryMode);
         LOGGER.debug("getOrderedEvents finished. Result: {}", eventList);
         return eventList;
     }

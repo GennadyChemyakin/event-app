@@ -1,27 +1,36 @@
 $(document).ready(function () {
         window.timezoneOffset = new Date().getTimezoneOffset();
         getEventsFromServer(true);
+        //Handle button for getting new events
         $('#loadNewEvents').click(function() { getEventsFromServer(false); });
 });
 
 //Function for requesting events from server
-function getEventsFromServer(isLess) {
+//isBefore - mode(boolean) for request
+function getEventsFromServer(isBefore) {
+    //date for top event on page
     var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
+    //date for bottom event on page
     var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
-    var tempEventDate = getEventDate(null);
-    console.log(tempEventDate);
-    if(isLess) {
-        $.ajax({
-            type: "GET",
-            url: "../../event-app/events/?queryMode=LESS_THAN&newestTime=" + firstEventDate + "&oldestTime=" + lastEventDate
-        }).then(function(data) { showEvents(data, true); });
-    }
-    else {
-        $.ajax({
-            type: "GET",
-            url: "../../event-app/events/?queryMode=MORE_THAN&newestTime=" + tempEventDate + "&oldestTime=" + lastEventDate
-        }).then(function(data) { showEvents(data, false); });
-    }
+    var url = "../../event-app/event/?queryMode=" + (isBefore ? "BEFORE" : "AFTER") + "&after=" + firstEventDate + "&before=" + lastEventDate;
+    $.ajax({
+                type: "GET",
+                url: url
+            }).then(function(data) {
+                //Showing existing events on page
+                if(isBefore) {
+                    for(var i = 0; i < data.eventPreviewVOList.length; i++) {
+                        showEvents(data.eventPreviewVOList[i], isBefore, i);
+                    }
+                }
+                //Showing new events. Since events are sorted in DESC order we need to iterate through them in reverse
+                else {
+                    for(var i = data.eventPreviewVOList.length - 1; i >=0 ; i--) {
+                        showEvents(data.eventPreviewVOList[i], isBefore, i);
+                    }
+                }
+                processNewEventsButton(data.numberOfNewEvents);
+            });
 }
 
 //function for hiding or showing button for new events with message
@@ -29,7 +38,7 @@ function processNewEventsButton(numberOfNewEvents) {
         if (numberOfNewEvents != 0) {
             var buttonText;
             if(numberOfNewEvents <= 3) {
-                buttonText = "Load all of" + numberOfNewEvents + " new events";
+                buttonText = "Load all of " + numberOfNewEvents + " new events";
             }
             else {
                 buttonText = "Load 3 of " + numberOfNewEvents + " new events";
@@ -41,9 +50,7 @@ function processNewEventsButton(numberOfNewEvents) {
 }
 
 //function shows events from data on page
-function showEvents(data, isOnBottom) {
-    console.log(data);
-    for(var i = 0; i < data.eventPreviewVOList.length; i++) {
+function showEvents(eventPreviewVO, isOnBottom, i) {
         var emptyEvent = '' +
             '<div class="row eventRow"> ' +
                 '<div class="col-md-2">' +
@@ -70,7 +77,7 @@ function showEvents(data, isOnBottom) {
                 '</div>' +
             '</div>';
 
-        var event = getEventFromModel(data.eventPreviewVOList[i]);
+        var event = getEventFromModel(eventPreviewVO);
         if(isOnBottom ) {
             $(emptyEvent).attr("id", event.id).appendTo("#eventPanel");
         }
@@ -95,7 +102,7 @@ function showEvents(data, isOnBottom) {
         else {
             $("#" + 'eventTime' + event.id).text("Not specified");
         }
-        $("#" + 'createTime' + event.id).text(event.createTime.toString());
+        $("#" + 'createTime' + event.id).text(event.createTime.toISOString());
 
         var address = (event.country + " " + event.city + " " + event.location).trim();
         if(address == "") {
@@ -108,9 +115,6 @@ function showEvents(data, isOnBottom) {
         $("#" + 'eventCreator' + event.id).text(event.creator);
         $("#" + 'numberOfCommentsForEvent' + event.id).text(event.numberOfComments);
         $("#" + event.id).slideDown();
-
-        processNewEventsButton(data.numberOfNewEvents);
-    }
 }
 
 //function returns event object made from model from server
@@ -138,7 +142,7 @@ function getEventFromModel(previewVO) {
         return event;
 }
 
-//function for converting datetime to datetime + 3 hours ISO format
+//function for converting datetime to UTC+3 ISO format. Will be deleted when we change server time to UTC
 function convertToLocalTime(date) {
     return new Date(date.getTime() - window.timezoneOffset * 60000).toISOString();
 }
@@ -176,14 +180,7 @@ $(window).bind('scroll.flyout', (function check() {
         if (getScrollTop() > (document.body.scrollHeight-$(window).height()) * 0.85) {
             // flyout
             // out of the event loop
-            setTimeout(function() {
-                var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
-                var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
-                $.ajax({
-                    type: "GET",
-                    url: "/event-app/events/?queryMode=LESS_THAN&newestTime=" + firstEventDate + "&oldestTime=" + lastEventDate
-                }).then(showEvents);
-            }, 1);
+            setTimeout(function() { getEventsFromServer(true); }, 1);
 
             // unbind the event handler
             // so that it wasn't called multiple times
