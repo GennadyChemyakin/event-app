@@ -147,7 +147,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     @Test
     public void shouldAddEvent() {
         //given
-        final String userName  = "Admin1";
+        final String userName  = "admin";
         final String email     = "admin1@email.com";
         final String pass      = "11111";
         final String eventName = "test event";
@@ -155,7 +155,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         User user = User.builder(userName,email)
                 .password(pass).build();
 
-        Event event = Event.builder(eventName)
+        Event event = Event.builder(eventName).timeStamp(LocalDateTime.now())
                 .build();
 
         userDAO.createUser(user);

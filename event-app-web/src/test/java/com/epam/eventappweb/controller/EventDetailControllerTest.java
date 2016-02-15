@@ -7,6 +7,7 @@ import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -185,21 +186,23 @@ public class EventDetailControllerTest {
         //given
         final String userName  = "Admin";
         final String eventName = "test event";
+        final String location  = "Obvodniy kanal";
+        final String city      = "spb";
         final String password  = "1234";
-        final int id = 100;
 
-        EventVO eventVO = EventVO.builder(eventName).id(0).build();
-        Event   event   = Event.builder(eventName).id(id).build();
+        EventVO eventVO = EventVO.builder(eventName).location(location).city(city).build();
+        Event   event   = Event.builder(eventName).location(location).city(city).build();
         UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName,password);
 
         String jsonObj = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .writeValueAsString(eventVO);
 
-        Mockito.when(eventServiceMock.createEvent(any(),any())).thenReturn(event);
+        Mockito.when(eventServiceMock.createEvent(argThat(allOf(Matchers.isA(Event.class),hasProperty("location", Matchers.is(location)),
+                hasProperty("name", Matchers.is(eventName)), hasProperty("city", Matchers.is(city)))), eq(userName))).thenReturn(event);
 
         //when
-        ResultActions resultActions = mockMvc.perform(post("/create")
+        ResultActions resultActions = mockMvc.perform(post("/event")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObj)
                 .principal(principal)
@@ -207,11 +210,14 @@ public class EventDetailControllerTest {
 
         //then
         resultActions
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id)));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is(eventName)))
+                .andExpect(jsonPath("$.city", is(city)))
+                .andExpect(jsonPath("$.location", is(location)));
 
     }
+
+
 
 }
 

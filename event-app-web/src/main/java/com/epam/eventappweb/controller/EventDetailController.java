@@ -57,7 +57,8 @@ public class EventDetailController {
         return resultResponseEntity;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST, consumes="application/json")
+    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes="application/json")
+    @ResponseStatus(HttpStatus.CREATED)
     public EventVO addEvent(@RequestBody EventVO eventVO,Principal principal) {
         LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 

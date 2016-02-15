@@ -32,7 +32,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
             "e.gps_latitude as e_gps_latitude, e.gps_longitude as e_gps_longitude, e.event_time as e_event_time, u.id as u_id, u.username as u_username, u.email as u_email, " +
             "u.name as u_name, u.surname as u_surname, u.country as u_country, u.city as u_city, " +
             "u.bio as u_bio from event e JOIN sec_user u on e.sec_user_id = u.id where e.id=:id";
-	private static final String UPDATE_EVENT_BY_ID = "UPDATE event SET name=:name, description=:description, country=:country," +
+    private static final String UPDATE_EVENT_BY_ID = "UPDATE event SET name=:name, description=:description, country=:country," +
             " city=:city, address=:address, gps_latitude=:gps_latitude, gps_longitude=:gps_longitude, " +
             "event_time=:event_time WHERE id=:id";
 
@@ -54,14 +54,14 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                                         country(resultSet.getString("u_country")).
                                         city(resultSet.getString("u_city")).
                                         bio(resultSet.getString("u_bio")).build()).
-                                        id(resultSet.getInt("e_id")).
-                                        description(resultSet.getString("e_description")).
-                                        country(resultSet.getString("e_country")).
-                                        city(resultSet.getString("e_city")).
-                                        location(resultSet.getString("e_address")).
-                                        gpsLatitude(resultSet.getDouble("e_gps_latitude")).
-                                        gpsLongitude(resultSet.getDouble("e_gps_longitude")).
-                                        timeStamp(resultSet.getTimestamp("e_event_time").toLocalDateTime()).build();
+                                id(resultSet.getInt("e_id")).
+                                description(resultSet.getString("e_description")).
+                                country(resultSet.getString("e_country")).
+                                city(resultSet.getString("e_city")).
+                                location(resultSet.getString("e_address")).
+                                gpsLatitude(resultSet.getDouble("e_gps_latitude")).
+                                gpsLongitude(resultSet.getDouble("e_gps_longitude")).
+                                timeStamp(resultSet.getTimestamp("e_event_time").toLocalDateTime()).build();
                     })
             );
             return Optional.of(event);
@@ -72,20 +72,18 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
 
     @Override
     public Event addEvent(Event event, String userName) {
-
-        Instant now = Instant.now();
-
+        LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
         SqlParameterSource ps = new MapSqlParameterSource()
-                .addValue("name"            , event.getName())
-                .addValue("country"         , event.getCountry())
-                .addValue("city"            , event.getCity())
-                .addValue("description"     , event.getDescription())
-                .addValue("gps_latitude"    , event.getGpsLatitude())
-                .addValue("gps_longitude"   , event.getGpsLongitude())
-                .addValue("address"         , event.getLocation())
-                .addValue("event_time"      , event.getTimeStamp() != null ? Timestamp.valueOf(event.getTimeStamp()) : null)
-                .addValue("create_time"     , Timestamp.from(now))
-                .addValue("username"        , userName);
+                .addValue("name", event.getName())
+                .addValue("country", event.getCountry())
+                .addValue("city", event.getCity())
+                .addValue("description", event.getDescription())
+                .addValue("gps_latitude", event.getGpsLatitude())
+                .addValue("gps_longitude", event.getGpsLongitude())
+                .addValue("address", event.getLocation())
+                .addValue("event_time", event.getTimeStamp() != null ? Timestamp.valueOf(event.getTimeStamp()) : null)
+                .addValue("create_time", Timestamp.valueOf(now))
+                .addValue("username", userName);
 
         try {
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -103,7 +101,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                     .build();
 
             return event;
-        } catch(DataAccessException ex) {
+        } catch (DataAccessException ex) {
             final String msg = String.format("Failed to create event. Date: %s, User name: %s, Event: %s ", now, userName, event);
             throw new EventNotCreatedException(msg);
         }

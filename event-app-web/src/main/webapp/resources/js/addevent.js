@@ -126,7 +126,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "create",
+                url: "event",
                 data: data,
                 contentType: "application/json",
                 success: function (data) {

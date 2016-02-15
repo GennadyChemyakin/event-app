@@ -30,6 +30,7 @@ public interface EventService {
      * @param event - Event to add.
      * @param userName  login of user who adds event
      */
+    //TO DO change signature for this method.
     Event createEvent(Event event, String userName);
 
 }
