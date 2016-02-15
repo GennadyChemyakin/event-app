@@ -4,7 +4,6 @@ import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

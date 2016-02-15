@@ -1,8 +1,8 @@
 package com.epam.eventapp.service.service.impl;
 
+import com.epam.eventapp.service.conditions.QueryMode;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
-import com.epam.eventapp.service.model.EventPack;
 import com.epam.eventapp.service.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,20 +36,25 @@ public class EventServiceImpl implements EventService {
     @Override
     public int updateEvent(Event event) {
         LOGGER.debug("updateEvent started: Params event = {}", event);
-        int updatedEntries = eventDAO.updateEventById(event);
+        int updatedEntries = eventDAO.updateEvent(event);
         LOGGER.debug("findById finished. Result: {}", updatedEntries);
         return updatedEntries;
     }
 
     @Override
-    public EventPack getEventsBeforeTime(LocalDateTime newestEventCreationTime, LocalDateTime oldestEventCreationTime,
-                                         String creationTimeQueryMode) {
-        LOGGER.debug("getEventsBeforeTimes started: Params firstEventCreationTime = {}, lastEventCreationTime = {}, amount = {}, " +
-                "creationTimeQueryMode = {}", newestEventCreationTime, oldestEventCreationTime, EVENTS_AMOUNT, creationTimeQueryMode);
-        List<Event> eventList = eventDAO.getOrderedEvents(newestEventCreationTime, oldestEventCreationTime,
-                EVENTS_AMOUNT, creationTimeQueryMode);
-        EventPack eventPack = new EventPack(eventList, eventDAO.getNumberOfNewEvents(newestEventCreationTime));
-        LOGGER.debug("getEventsBeforeTime finished: Result: {}", eventPack);
-        return eventPack;
+    public List<Event> getOrderedEvents(LocalDateTime specifiedTime, QueryMode queryMode) {
+        LOGGER.debug("getOrderedEvents started: Params specifiedTime = {}, queryMode = {}, amount = {}",
+                specifiedTime, queryMode, EVENTS_AMOUNT);
+        List<Event> eventList = eventDAO.getOrderedEvents(specifiedTime, EVENTS_AMOUNT, QueryMode.BEFORE);
+        LOGGER.debug("getOrderedEvents finished. Result: {}", eventList);
+        return eventList;
+    }
+
+    @Override
+    public int getNumberOfNewEvents(LocalDateTime before) {
+        LOGGER.debug("getNumberOfNewEvents started: Params before = {}", before);
+        int numberOfNewEvents = eventDAO.getNumberOfNewEvents(before);
+        LOGGER.debug("getNumberOfNewEvents finished. Result: {}", numberOfNewEvents);
+        return numberOfNewEvents;
     }
 }

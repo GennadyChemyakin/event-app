@@ -1,9 +1,9 @@
 package com.epam.eventapp.service.service.impl;
 
+import com.epam.eventapp.service.conditions.QueryMode;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.model.EventPack;
 import com.epam.eventapp.service.service.EventService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -93,7 +93,7 @@ public class EventServiceTest {
                 city(newCity).
                 location(newLocation).
                 eventTime(LocalDateTime.parse(newDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))).build();
-        when(eventDAOMock.updateEventById(updatedEvent)).thenReturn(1);
+        when(eventDAOMock.updateEvent(updatedEvent)).thenReturn(1);
 
         //when
         int updatedEntries = sut.updateEvent(updatedEvent);
@@ -118,7 +118,7 @@ public class EventServiceTest {
                 user(User.builder("Vasya", "vasya@vasya.com").build()).
                 id(id).
                 eventTime(newDateTime).build();
-        when(eventDAOMock.updateEventById(updatedEvent)).thenReturn(0);
+        when(eventDAOMock.updateEvent(updatedEvent)).thenReturn(0);
 
         //when
         int updatedEntries = sut.updateEvent(updatedEvent);
@@ -131,37 +131,60 @@ public class EventServiceTest {
      * Method for getting prepared event list
      * @return List of expected Events
      */
-    private static List<Event> getExpectedEventsList() {
+    private static List<Event> getExpectedEventList() {
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
+        final LocalDateTime firstCreationTime = LocalDateTime.parse("2015-09-11T15:00");
+        final LocalDateTime secondCreationTime = LocalDateTime.parse("2005-09-11T15:00");
         final String username = "Vasya";
         final String email = "vasya@vasya.com";
         final User user = User.builder(username, email).build();
-        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).build();
-        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).build();
-        final List<Event> expectedEventsList = new ArrayList<>();
-        expectedEventsList.add(firstEvent);
-        expectedEventsList.add(secondEvent);
-        return expectedEventsList;
+        final Event firstEvent = Event.builder(firstEventName).id(0).creationTime(firstCreationTime).user(user).build();
+        final Event secondEvent = Event.builder(secondEventName).id(1).creationTime(secondCreationTime).user(user).build();
+        final List<Event> expectedEventList = new ArrayList<>();
+        expectedEventList.add(firstEvent);
+        expectedEventList.add(secondEvent);
+        return expectedEventList;
     }
 
+    /**
+     * Testing getOrderedEvents method from EventServiceImpl.
+     * Looking for events that were created before specified time.
+     * Checking if we've got less or equal than amount events.
+     */
     @Test
-    public void shouldReturnEventPackWithSortedEventsAndNumberOfAllEvents() {
+    public void shouldReturnEventListWithSortedEventsAndNumberOfAllEvents() {
         //given
         final int amount = 2;
-        final int numberOfEvents = 3;
-        final String queryMode = "LESS_THAN";
-        final LocalDateTime newestEventCreationTime = LocalDateTime.now();
-        final List<Event> expectedEventsList = getExpectedEventsList();
+        final QueryMode queryMode = QueryMode.BEFORE;
+        final LocalDateTime effectiveTime = LocalDateTime.now();
+        final List<Event> expectedEventList = getExpectedEventList();
 
-        when(eventDAOMock.getOrderedEvents(newestEventCreationTime, newestEventCreationTime, amount, queryMode)).thenReturn(expectedEventsList);
-        when(eventDAOMock.getNumberOfNewEvents(newestEventCreationTime)).thenReturn(numberOfEvents);
+        when(eventDAOMock.getOrderedEvents(effectiveTime, amount, queryMode)).thenReturn(expectedEventList);
 
         //when
-        EventPack eventPack = sut.getEventsBeforeTime(newestEventCreationTime, newestEventCreationTime, queryMode);
+        List<Event> eventList = sut.getOrderedEvents(effectiveTime, queryMode);
 
         //then
-        Assert.assertTrue(eventPack.getEvents().size() <= amount);
-        Assert.assertEquals(eventPack.getNumberOfNewEvents(), numberOfEvents);
+        Assert.assertTrue(eventList.size() <= amount);
+    }
+
+    /**
+     * Testing getNumberOfNewEvents method from EventServiceImpl.
+     * Looking for number of events that were created after specified time.
+     * Checking if we've got expected number of events.
+     */
+    @Test
+    public void shouldReturnNumberOfNewEvents() {
+        final int expectedNumber = 1;
+        final LocalDateTime after = LocalDateTime.parse("2005-09-11T15:00");
+
+        when(eventDAOMock.getNumberOfNewEvents(after)).thenReturn(expectedNumber);
+
+        //when
+        int numberOfNewEvents = sut.getNumberOfNewEvents(after);
+
+        //then
+        Assert.assertEquals(expectedNumber, numberOfNewEvents);
     }
 }

@@ -1,10 +1,10 @@
 package com.epam.eventapp.service.service;
 
+import com.epam.eventapp.service.conditions.QueryMode;
 import com.epam.eventapp.service.domain.Event;
-import com.epam.eventapp.service.model.EventPack;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -29,12 +29,20 @@ public interface EventService {
     int updateEvent(Event event);
 
     /**
-     * Gets eventPack that consists of list of events ordered by create time in desc mode and number of new events.
-     * Size of the list is limited by the provided amount. Depending on creationTimeQueryMode creationTime of all these
-     * events will be less than oldestEventCreationTime or more than newestEventCreationTime.
-     * @param newestEventCreationTime creationTime of the newest event in the list of events.
-     * @param oldestEventCreationTime creationTime of the oldest event in the list of events.
-     * @return Page of Events
+     * Gets events before or after the specified effective time.
+     * If the provided mode is <BEFORE> the method will fetch events before the specified effective time,
+     * if the mode is <AFTER> — after the specified effective time.
+     * @param effectiveTime Effective time.
+     * @param queryMode Specifies whether the method should fetch events before the effective date or after.
+     * @return List of Events.
      */
-    EventPack getEventsBeforeTime(LocalDateTime newestEventCreationTime, LocalDateTime oldestEventCreationTime, String creationTimeQueryMode);
+    List<Event> getOrderedEvents(LocalDateTime effectiveTime, QueryMode queryMode);
+
+    /**
+     * Gets number of events before specified date.
+     * @param before Specified date.
+     * @return Number of events.
+     */
+    int getNumberOfNewEvents(LocalDateTime before);
 }
+

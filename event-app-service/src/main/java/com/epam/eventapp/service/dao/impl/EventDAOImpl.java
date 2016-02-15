@@ -1,12 +1,12 @@
 package com.epam.eventapp.service.dao.impl;
 
+import com.epam.eventapp.service.conditions.QueryMode;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
-
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -28,21 +28,17 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
             " city=:city, address=:address, gps_latitude=:gps_latitude, gps_longitude=:gps_longitude, " +
             "event_time=:event_time WHERE id=:id";
 
-    private static final String GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING_SELECT =
+    private static final String SELECT_EVENT =
             "SELECT event_alias.*, rownum rnum FROM (SELECT e.id as e_id, e.name as e_name, e.description, " +
                     "e.country as e_country, e.city as e_city, e.address, e.gps_latitude, e.gps_longitude, e.event_time, " +
                     "e.create_time, u.id as u_id, u.username, u.email, u.name as u_name, u.surname, " +
                     "u.country as u_country, u.city as u_city, u.bio FROM event e JOIN sec_user u on e.sec_user_id = u.id ";
-    private static final String GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_LESS =
+    private static final String WHERE_CREATION_TIME_BEFORE =
                     "WHERE e.create_time < :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
-    private static final String GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_MORE =
+    private static final String WHERE_CREATION_TIME_AFTER =
             "WHERE e.create_time > :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
 
     private static final String GET_NUMBER_OF_EVENTS = "SELECT COUNT(*) FROM event WHERE event.create_time > :creation_time";
-
-    private static final String MODE_LESS_THAN = "LESS_THAN";
-    private static final String MODE_MORE_THAN = "MORE_THAN";
-
 
     @Override
     public Optional<Event> findById(int id) {
@@ -75,7 +71,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     }
 
     @Override
-    public int updateEventById(Event updatedEvent) {
+    public int updateEvent(Event updatedEvent) {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("id", updatedEvent.getId());
         namedParameters.addValue("name", updatedEvent.getName());
@@ -90,24 +86,20 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     }
 
     @Override
-    public List<Event> getOrderedEvents(LocalDateTime newestEventCreationTime, LocalDateTime oldestEventCreationTime,
-                                        int amount, String creationTimeQueryMode) {
+    public List<Event> getOrderedEvents(LocalDateTime effectiveTime, int amount, QueryMode queryMode) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("amount", amount);
-        String sqlQuery;
-        switch (creationTimeQueryMode) {
-            case MODE_LESS_THAN:
-                params.addValue("creation_time", Timestamp.valueOf(oldestEventCreationTime));
-                sqlQuery = GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING_SELECT +
-                        GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_LESS;
+        String sqlQuery = SELECT_EVENT;
+        params.addValue("creation_time", Timestamp.valueOf(effectiveTime));
+        switch (queryMode) {
+            case BEFORE:
+                sqlQuery += WHERE_CREATION_TIME_BEFORE;
                 break;
-            case MODE_MORE_THAN:
-                params.addValue("creation_time", Timestamp.valueOf(newestEventCreationTime));
-                sqlQuery = GET_FIXED_NUMBER_OF_EVENTS_BEFORE_TIME_ORDERED_BY_CREATION_TIME_DESCENDING_SELECT +
-                        GET_FIXED_NUMBER_OF_EVENTS_WHERE_CREATION_TIME_IS_MORE;
+            case AFTER:
+                sqlQuery += WHERE_CREATION_TIME_AFTER;
                 break;
             default: {
-                throw new IllegalArgumentException("Illegal argument " + creationTimeQueryMode + " for SQL query");
+                throw new IllegalArgumentException("Unsupported query mode " + queryMode);
             }
         }
 
@@ -135,9 +127,9 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
     }
 
     @Override
-    public int getNumberOfNewEvents(LocalDateTime newestEventCreationTime) {
+    public int getNumberOfNewEvents(LocalDateTime before) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("creation_time", Timestamp.valueOf(newestEventCreationTime));
+        params.addValue("creation_time", Timestamp.valueOf(before));
         return getNamedParameterJdbcTemplate().queryForObject(GET_NUMBER_OF_EVENTS, params, Integer.class);
     }
 }
