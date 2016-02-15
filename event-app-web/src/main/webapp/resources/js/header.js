@@ -21,6 +21,6 @@ $(document).ready(function () {
         window.location.href = "/event-app/register.html";
     });
     $("#addEventButton").click(function () {
-        window.location.href = "/event-app/new-event.html";
+        window.location.href = "/event-app/create.html";
     });
 });
