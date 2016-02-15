@@ -24,4 +24,13 @@ public interface EventDAO {
      * @return Number of updated rows
      */
     int updateEventById(Event event);
+
+    /**
+     * Method for adding new Event.
+     * @param event - Event to add.
+     * @param userName    - name of user who adds Event.
+     */
+    //TO DO change signature for this method.
+    Event addEvent(Event event, String userName);
+
 }

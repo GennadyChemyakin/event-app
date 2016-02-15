@@ -3,6 +3,11 @@ package com.epam.eventappweb.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.time.LocalDateTime;
@@ -14,6 +19,7 @@ import java.time.LocalDateTime;
 @JsonDeserialize(builder = EventVO.EventModelBuilder.class)
 @Immutable
 public final class EventVO {
+
     private final String name;
     private final String creator;
     private final String description;
@@ -23,17 +29,19 @@ public final class EventVO {
     private final double gpsLatitude;
     private final double gpsLongitude;
     private final LocalDateTime timeStamp;
+    private final int id;
 
     private EventVO(EventModelBuilder builder) {
-        this.name = builder.name;
-        this.creator = builder.creator;
-        this.description = builder.description;
-        this.country = builder.country;
-        this.city = builder.city;
-        this.location = builder.location;
-        this.gpsLatitude = builder.gpsLatitude;
-        this.gpsLongitude = builder.gpsLongitude;
-        this.timeStamp = builder.timeStamp;
+        this.name           = builder.name;
+        this.creator        = builder.creator;
+        this.description    = builder.description;
+        this.country        = builder.country;
+        this.city           = builder.city;
+        this.location       = builder.location;
+        this.gpsLatitude    = builder.gpsLatitude;
+        this.gpsLongitude   = builder.gpsLongitude;
+        this.timeStamp      = builder.timeStamp;
+        this.id             = builder.id;
     }
 
     public static EventModelBuilder builder(String name){
@@ -42,6 +50,7 @@ public final class EventVO {
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
     public static class EventModelBuilder {
+
         private String name;
         private String creator;
         private String description;
@@ -51,6 +60,7 @@ public final class EventVO {
         private double gpsLatitude;
         private double gpsLongitude;
         private LocalDateTime timeStamp;
+        private int id;
 
         private EventModelBuilder(@JsonProperty("name") String name) {
             this.name = name;
@@ -96,6 +106,11 @@ public final class EventVO {
             return this;
         }
 
+        public EventModelBuilder id(int id) {
+            this.id = id;
+            return this;
+        }
+
         public EventVO build() {
             return new EventVO(this);
         }
@@ -137,6 +152,8 @@ public final class EventVO {
         return timeStamp;
     }
 
+    public int getId () {return id;}
+
     @Override
     public String toString() {
         return "EventVO{" +
@@ -149,6 +166,6 @@ public final class EventVO {
                 ", gpsLatitude=" + gpsLatitude +
                 ", gpsLongitude=" + gpsLongitude +
                 ", timeStamp=" + timeStamp +
-                '}';
+                ", id = " + id + " }";
     }
 }
