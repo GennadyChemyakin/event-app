@@ -1,8 +1,8 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.conditions.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.model.EventPack;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -154,13 +154,12 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * Method for getting prepared EventPack
+     * Method for getting prepared list of Events
      * @param firstEventName name of first Event
      * @param secondEventName name of second Event
-     * @param numberOfEvents number of all events in DB
-     * @return EventPack of expected Events
+     * @return list of expected Events
      */
-    private static EventPack getExpectedEventsList(String firstEventName, String secondEventName, int numberOfEvents) {
+    private static List<Event> getExpectedEventsList(String firstEventName, String secondEventName) {
         final String username = "Vasya";
         final String email = "vasya@vasya.com";
         final User user = User.builder(username, email).build();
@@ -169,15 +168,13 @@ public class EventDetailControllerTest {
         final List<Event> expectedEventsList = new ArrayList<>();
         expectedEventsList.add(firstEvent);
         expectedEventsList.add(secondEvent);
-        final EventPack eventPack = new EventPack(expectedEventsList, numberOfEvents);
-        return eventPack;
+        return expectedEventsList;
     }
 
     /**
      * Testing getEventList from EventDetailController.
-     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
-     * expect JSON with right fields
-     *
+     * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * expect JSON with right fields.
      * @throws Exception
      */
     @Test
@@ -185,24 +182,24 @@ public class EventDetailControllerTest {
         //given
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
-        final int numberOfEvents = 10;
-        final LocalDateTime creationTime = LocalDateTime.now();
-        final String queryMode = "LESS_THAN";
-        final EventPack eventPack = getExpectedEventsList(firstEventName, secondEventName, numberOfEvents);
+        final int numberOfNewEvents = 2;
+        final LocalDateTime after = LocalDateTime.now();
+        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final QueryMode queryMode = QueryMode.BEFORE;
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName);
 
-        when(eventServiceMock.getEventsBeforeTime(creationTime, creationTime, queryMode)).thenReturn(eventPack);
+        when(eventServiceMock.getOrderedEvents(before, queryMode)).thenReturn(eventList);
+        when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/events?queryMode=" + queryMode +
-                "&newestTime=" + creationTime + "&oldestTime=" + creationTime));
+        ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
+                "&after=" + after + "&before=" + before));
 
         //then
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
                 .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
-                .andExpect(jsonPath("$.numberOfEvents", Matchers.is(numberOfEvents)))
-        ;
-
+                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.conditions.QueryMode;
 import com.epam.eventapp.service.domain.Event;
-import com.epam.eventapp.service.model.EventPack;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.model.EventPackVO;
 import com.epam.eventappweb.model.EventPreviewVO;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,7 +27,6 @@ import java.util.Optional;
 public class EventDetailController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
-
 
     @Autowired
     private EventService eventService;
@@ -63,17 +63,29 @@ public class EventDetailController {
         return resultResponseEntity;
     }
 
-    @RequestMapping(value = "/events", method = RequestMethod.GET)
-    public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") String queryMode,
+    @RequestMapping(value = "/event/", method = RequestMethod.GET)
+    public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") QueryMode queryMode,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("newestTime") LocalDateTime oldestEventCreationTime,
+                                                        @RequestParam("after") LocalDateTime after,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("oldestTime") LocalDateTime newestEventCreationTime) throws SQLException {
-        LOGGER.info("getEventList started. Param: oldestEventCreationTime = {} ", oldestEventCreationTime);
-        EventPack eventPack = eventService.getEventsBeforeTime(oldestEventCreationTime, newestEventCreationTime, queryMode);
+                                                        @RequestParam("before") LocalDateTime before)
+            throws SQLException, IllegalArgumentException {
+        LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
+        List<Event> eventList;
+        switch (queryMode) {
+            case BEFORE:
+                eventList = eventService.getOrderedEvents(before, queryMode);
+                break;
+            case AFTER:
+                eventList = eventService.getOrderedEvents(after, queryMode);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported query mode");
+        }
+
         ResponseEntity<EventPackVO> resultResponseEntity;
-        EventPackVO eventPackVO = new EventPackVO(eventPack.getNumberOfNewEvents());
-        for(Event event: eventPack.getEvents()) {
+        EventPackVO eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(after));
+        for(Event event: eventList) {
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getName()).
                     creator(event.getUser().getUsername()).
                     description(event.getDescription()).
@@ -86,8 +98,8 @@ public class EventDetailController {
                     creationTime(event.getCreationTime()).build();
             eventPackVO.addEventPreviewVO(eventPreviewVO);
         }
-        resultResponseEntity = new ResponseEntity<EventPackVO>(eventPackVO, HttpStatus.OK);
-        LOGGER.info("getEventList finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
+        resultResponseEntity = new ResponseEntity<>(eventPackVO, HttpStatus.OK);
+        LOGGER.info("getEventList finished.");
         return resultResponseEntity;
     }
 }
