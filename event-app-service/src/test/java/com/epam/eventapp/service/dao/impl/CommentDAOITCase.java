@@ -5,7 +5,7 @@ import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
+import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -183,9 +183,9 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
 
     /**
      * testing deleteCommentById from CommentDAOImpl
-     * expect that IdentifierNotDeletedException thrown if wrong id specified
+     * expect that ObjectNotDeletedException thrown if wrong id specified
      */
-    @Test(expected = IdentifierNotDeletedException.class)
+    @Test(expected = ObjectNotDeletedException.class)
     public void shouldThrowExceptionInCaseWrongIdSpecified() {
         //given
         final int id = -1;
@@ -194,6 +194,6 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
         commentDAO.deleteCommentById(id);
 
         //then
-        Assert.fail("IdentifierNotDeletedException not thrown");
+        Assert.fail("ObjectNotDeletedException not thrown");
     }
 }

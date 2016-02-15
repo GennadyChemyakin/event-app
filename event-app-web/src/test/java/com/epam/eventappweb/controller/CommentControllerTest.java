@@ -2,7 +2,7 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
+import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
@@ -203,7 +203,7 @@ public class CommentControllerTest {
 
     /**
      * testing deleteCommentary from CommentController
-     * expect status code 200
+     * expect status code 204
      *
      * @throws Exception
      */
@@ -222,22 +222,23 @@ public class CommentControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+        String content = objectMapper.writeValueAsString(commentVO);
 
         Mockito.doNothing().when(commentServiceMock).deleteComment(comment);
 
         //when
         ResultActions resultActions = mockMvc.perform(delete("/comment").
                 contentType(MediaType.APPLICATION_JSON).
-                content(objectMapper.writeValueAsString(commentVO)));
+                content(content));
 
         //then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isNoContent());
 
     }
 
     /**
      * testing deleteCommentary from CommentController
-     * expect IdentifierNotDeletedException thrown
+     * expect ObjectNotDeletedException thrown
      *
      * @throws Exception
      */
@@ -254,7 +255,7 @@ public class CommentControllerTest {
         Comment comment = Comment.builder().user(commentUser).id(commentVO.getId()).eventId(commentVO.getEventId()).
                 message(commentVO.getMessage()).commentTime(commentVO.getCommentTime()).id(0).build();
 
-        Mockito.doThrow(IdentifierNotDeletedException.class).when(commentServiceMock).
+        Mockito.doThrow(ObjectNotDeletedException.class).when(commentServiceMock).
                 deleteComment(argThat(allOf(Matchers.isA(Comment.class), hasProperty("id", is(comment.getId())))));
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -262,12 +263,12 @@ public class CommentControllerTest {
 
         //when
         thrown.expect(NestedServletException.class);
-        thrown.expectCause(Matchers.isA(IdentifierNotDeletedException.class));
+        thrown.expectCause(Matchers.isA(ObjectNotDeletedException.class));
         mockMvc.perform(delete("/comment").
                 contentType(MediaType.APPLICATION_JSON).
                 content(objectMapper.writeValueAsString(commentVO)));
 
         //then
-        Assert.fail("IdentifierNotDeletedException not thrown");
+        Assert.fail("ObjectNotDeletedException not thrown");
     }
 }

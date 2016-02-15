@@ -3,7 +3,7 @@ package com.epam.eventapp.service.service.impl;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
+import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
 import org.junit.Assert;
@@ -201,20 +201,20 @@ public class CommentServiceTest {
 
     /**
      * testing deleteCommentById from CommentServiceImpl
-     * expect that IdentifierNotDeletedException thrown if wrong id specified
+     * expect that ObjectNotDeletedException thrown if wrong id specified
      */
-    @Test(expected = IdentifierNotDeletedException.class)
+    @Test(expected = ObjectNotDeletedException.class)
     public void shouldThrowExceptionInCaseWrongIdSpecified() {
         //given
         final int id = -1;
         User user = User.builder().username("Peter").build();
-        Mockito.doThrow(IdentifierNotDeletedException.class).when(commentDAOMock).deleteCommentById(id);
+        Mockito.doThrow(ObjectNotDeletedException.class).when(commentDAOMock).deleteCommentById(id);
         Comment comment = Comment.builder().id(id).user(user).build();
 
         //when
         sut.deleteComment(comment);
 
         //then
-        Assert.fail("IdentifierNotDeletedException not thrown");
+        Assert.fail("ObjectNotDeletedException not thrown");
     }
 }

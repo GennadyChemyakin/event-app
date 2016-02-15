@@ -4,7 +4,7 @@ import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.CommentaryNotAddedException;
-import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
+import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -112,6 +112,6 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
     public void deleteCommentById(int id) {
         int rows = getNamedParameterJdbcTemplate().update(DELETE_COMMENTARY_BY_ID, Collections.singletonMap("id", id));
         if (rows == 0)
-            throw new IdentifierNotDeletedException("commentary not deleted by id = " + id);
+            throw new ObjectNotDeletedException("commentary not deleted by id = " + id);
     }
 }

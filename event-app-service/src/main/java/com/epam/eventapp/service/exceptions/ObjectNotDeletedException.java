@@ -3,12 +3,12 @@ package com.epam.eventapp.service.exceptions;
 /**
  * class for representing exceptions when some object not deleted from datasource
  */
-public class IdentifierNotDeletedException extends RuntimeException {
+public class ObjectNotDeletedException extends RuntimeException {
 
-    public IdentifierNotDeletedException() {
+    public ObjectNotDeletedException() {
     }
 
-    public IdentifierNotDeletedException(String message) {
+    public ObjectNotDeletedException(String message) {
         super(message);
     }
 }

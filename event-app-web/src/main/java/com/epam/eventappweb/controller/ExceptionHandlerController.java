@@ -1,6 +1,6 @@
 package com.epam.eventappweb.controller;
 
-import com.epam.eventapp.service.exceptions.IdentifierNotDeletedException;
+import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
 import org.slf4j.Logger;
@@ -22,24 +22,24 @@ public class ExceptionHandlerController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Event not found by id")
     @ExceptionHandler(EventNotFoundException.class)
     public void handleEventNotFound(EventNotFoundException exception) {
-        LOGGER.error("handleEventNotFound handle exception. Exception: message = {}", exception.getMessage());
+        LOGGER.error("handleEventNotFound handle exception. Exception: message = {}", exception.getMessage(), exception);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Event not updated")
     @ExceptionHandler(EventNotUpdatedException.class)
     public void handleEventNotUpdated(EventNotUpdatedException exception) {
-        LOGGER.error("handleEventNotUpdated handle exception. Exception: message = {}", exception.getMessage());
+        LOGGER.error("handleEventNotUpdated handle exception. Exception: message = {}", exception.getMessage(), exception);
     }
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Identifier not deleted")
-    @ExceptionHandler(IdentifierNotDeletedException.class)
-    public void handleIdentifierNotDeleted(IdentifierNotDeletedException exception) {
-        LOGGER.error("handleIdentifierNotDeleted handle exception. Exception: message = {}", exception.getMessage());
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object not deleted")
+    @ExceptionHandler(ObjectNotDeletedException.class)
+    public void handleObjectNotDeleted(ObjectNotDeletedException exception) {
+        LOGGER.error("handleObjectNotDeleted handle exception. Exception: message = {}", exception.getMessage(), exception);
     }
 
-    @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "forbidden action")
+    @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Forbidden action")
     @ExceptionHandler(AccessDeniedException.class)
     public void handleAccessDenied(AccessDeniedException exception) {
-        LOGGER.error("handleAccessDenied handle exception. Exception: message = {}", exception.getMessage());
+        LOGGER.error("handleAccessDenied handle exception. Exception: message = {}", exception.getMessage(), exception);
     }
 }
