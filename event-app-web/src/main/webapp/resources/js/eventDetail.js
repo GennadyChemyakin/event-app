@@ -10,6 +10,7 @@ $(document).ready(function () {
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
+
         if (data.timeStamp != null) {
             event.date = new Date(data.timeStamp[0], data.timeStamp[1] - 1, data.timeStamp[2],
                 data.timeStamp[3], data.timeStamp[4]);
