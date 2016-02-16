@@ -6,7 +6,7 @@ $(document).ready(function () {
 });
 
 //Function for requesting events from server
-//isBefore - mode(boolean) for request
+//isBefore - tells whether the method should get events before the last event of after the first event
 function getEventsFromServer(isBefore) {
     //date for top event on page
     var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());

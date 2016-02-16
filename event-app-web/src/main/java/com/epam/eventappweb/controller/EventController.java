@@ -72,24 +72,21 @@ public class EventController {
         LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
         List<Event> eventList;
         EventPackVO eventPackVO;
+        LocalDateTime effectiveDate;
 
         switch (queryMode) {
             case BEFORE:
                 eventList = eventService.getOrderedEvents(before, queryMode);
-                eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(after));
+                effectiveDate = after;
                 break;
             case AFTER:
                 eventList = eventService.getOrderedEvents(after, queryMode);
-                if(eventList.isEmpty()) {
-                    eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(after));
-                }
-                else {
-                    eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(eventList.get(0).getCreationTime()));
-                }
+                effectiveDate = eventList.isEmpty() ? after : eventList.get(0).getCreationTime();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported query mode");
         }
+        eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(effectiveDate));
 
         ResponseEntity<EventPackVO> resultResponseEntity;
         for(Event event: eventList) {

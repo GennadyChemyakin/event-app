@@ -159,12 +159,13 @@ public class EventControllerTest {
      * @param secondEventName name of second Event
      * @return list of expected Events
      */
-    private static List<Event> getExpectedEventsList(String firstEventName, String secondEventName) {
+    private static List<Event> getExpectedEventsList(String firstEventName, String secondEventName,
+                                                     LocalDateTime firstEventTime, LocalDateTime secondEventTime) {
         final String username = "Vasya";
         final String email = "vasya@vasya.com";
         final User user = User.builder(username, email).build();
-        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).build();
-        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).build();
+        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).creationTime(firstEventTime).build();
+        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).creationTime(secondEventTime).build();
         final List<Event> expectedEventsList = new ArrayList<>();
         expectedEventsList.add(firstEvent);
         expectedEventsList.add(secondEvent);
@@ -182,11 +183,13 @@ public class EventControllerTest {
         //given
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
+        final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
+        final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
         final int numberOfNewEvents = 2;
         final LocalDateTime after = LocalDateTime.now();
         final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
         final QueryMode queryMode = QueryMode.BEFORE;
-        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName);
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
 
         when(eventServiceMock.getOrderedEvents(before, queryMode)).thenReturn(eventList);
         when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
@@ -213,14 +216,16 @@ public class EventControllerTest {
         //given
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
+        final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
+        final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
         final int numberOfNewEvents = 2;
         final LocalDateTime after = LocalDateTime.now();
         final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
         final QueryMode queryMode = QueryMode.AFTER;
-        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName);
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
 
         when(eventServiceMock.getOrderedEvents(after, queryMode)).thenReturn(eventList);
-        when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
+        when(eventServiceMock.getNumberOfNewEvents(firstEventTime)).thenReturn(numberOfNewEvents);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +

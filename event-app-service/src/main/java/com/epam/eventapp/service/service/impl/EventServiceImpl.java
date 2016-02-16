@@ -20,7 +20,7 @@ import java.util.Optional;
 public class EventServiceImpl implements EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);
-    private static final int EVENTS_AMOUNT = 3;
+    private static final int EVENTS_AMOUNT = 2;
 
     @Autowired
     private EventDAO eventDAO;
