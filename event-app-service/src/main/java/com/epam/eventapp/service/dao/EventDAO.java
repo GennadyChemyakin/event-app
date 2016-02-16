@@ -1,6 +1,6 @@
 package com.epam.eventapp.service.dao;
 
-import com.epam.eventapp.service.conditions.QueryMode;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public interface EventDAO {
     /**
      * Gets events before or after the specified effective time.
      * If the provided mode is <BEFORE> the method will fetch events before the specified effective date,
-     * if the mode is <AFTER> — after the specified effective date.
+     * if the mode is <AFTER> - after the specified effective date.
      * @param effectiveTime Effective time.
      * @param amount Limits the number of events to fetch.
      * @param queryMode Specifies whether the method should fetch events before the effective date or after.

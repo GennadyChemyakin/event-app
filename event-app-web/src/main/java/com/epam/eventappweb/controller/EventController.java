@@ -1,6 +1,6 @@
 package com.epam.eventappweb.controller;
 
-import com.epam.eventapp.service.conditions.QueryMode;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.model.EventPackVO;
@@ -24,9 +24,9 @@ import java.util.Optional;
  * otherwise return ResponseEntity with HttpStatus code 404
  */
 @RestController
-public class EventDetailController {
+public class EventController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
 
     @Autowired
     private EventService eventService;

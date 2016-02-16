@@ -1,6 +1,6 @@
 package com.epam.eventapp.service.service;
 
-import com.epam.eventapp.service.conditions.QueryMode;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public interface EventService {
     /**
      * Gets events before or after the specified effective time.
      * If the provided mode is <BEFORE> the method will fetch events before the specified effective time,
-     * if the mode is <AFTER> — after the specified effective time.
+     * if the mode is <AFTER> - after the specified effective time.
      * @param effectiveTime Effective time.
      * @param queryMode Specifies whether the method should fetch events before the effective date or after.
      * @return List of Events.
