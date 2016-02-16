@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * EventService implementation
  */
-@Service
+@Service("eventService")
 public class EventServiceImpl implements EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);

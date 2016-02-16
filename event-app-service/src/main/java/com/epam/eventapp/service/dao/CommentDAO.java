@@ -40,4 +40,10 @@ public interface CommentDAO {
      * @return list of founded comments
      */
     List<Comment> getListOfNewComments(int eventId, LocalDateTime after);
+
+    /**
+     * method for deleting commentary by id
+     * @param id id of deleting commentary
+     */
+    void deleteCommentById(int id);
 }

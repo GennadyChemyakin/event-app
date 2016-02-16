@@ -5,6 +5,7 @@ import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -160,5 +161,39 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
 
         //then
         Assert.assertEquals(0, commentList.size());
+    }
+
+    /**
+     * testing deleteCommentById from CommentDAOImpl
+     * expect that after deleting comment count of rows in COMMENTARY table decrease by 1
+     */
+    @Test
+    public void shouldDeleteComment() {
+        //given
+        final int id = 1;
+        int rowsBefore = countRowsInTable("commentary");
+
+        //when
+        commentDAO.deleteCommentById(id);
+
+        //then
+        int rowsAfter = countRowsInTable("commentary");
+        Assert.assertEquals(1, rowsBefore - rowsAfter);
+    }
+
+    /**
+     * testing deleteCommentById from CommentDAOImpl
+     * expect that ObjectNotDeletedException thrown if wrong id specified
+     */
+    @Test(expected = ObjectNotDeletedException.class)
+    public void shouldThrowExceptionInCaseWrongIdSpecified() {
+        //given
+        final int id = -1;
+
+        //when
+        commentDAO.deleteCommentById(id);
+
+        //then
+        Assert.fail("ObjectNotDeletedException not thrown");
     }
 }
