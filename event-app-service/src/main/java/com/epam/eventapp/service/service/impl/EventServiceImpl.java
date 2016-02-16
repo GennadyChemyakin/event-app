@@ -1,6 +1,6 @@
 package com.epam.eventapp.service.service.impl;
 
-import com.epam.eventapp.service.conditions.QueryMode;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.EventService;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class EventServiceImpl implements EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceImpl.class);
-    private static final int EVENTS_AMOUNT = 2;
+    private static final int EVENTS_AMOUNT = 3;
 
     @Autowired
     private EventDAO eventDAO;

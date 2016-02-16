@@ -1,6 +1,6 @@
 package com.epam.eventappweb.controller;
 
-import com.epam.eventapp.service.conditions.QueryMode;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
@@ -29,16 +29,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 /**
- * test Class for EventDetailController
+ * test Class for EventController
  */
-public class EventDetailControllerTest {
+public class EventControllerTest {
 
 
     @Mock
     private EventService eventServiceMock;
 
     @InjectMocks
-    private EventDetailController controller;
+    private EventController controller;
 
     private MockMvc mockMvc;
 
@@ -49,7 +49,7 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * testing getEventDetail from EventDetailController
+     * testing getEventDetail from EventController
      * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields
      *
@@ -77,7 +77,7 @@ public class EventDetailControllerTest {
 
 
     /**
-     * testing getEventDetail from EventDetailController
+     * testing getEventDetail from EventController
      * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect 404 status code
      *
@@ -98,7 +98,7 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * Testing updateEvent from EventDetailController.
+     * Testing updateEvent from EventController.
      * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect 200 status code
      *
@@ -127,7 +127,7 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * Testing updateEvent from EventDetailController.
+     * Testing updateEvent from EventController.
      * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect 404 status code
      */
@@ -172,13 +172,13 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * Testing getEventList from EventDetailController.
+     * Testing getEventList from EventController in <BEFORE> queryMode.
      * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields.
      * @throws Exception
      */
     @Test
-    public void shouldReturnEventPackAsJSON() throws Exception {
+    public void shouldReturnEventsBeforeTimeAsJSON() throws Exception {
         //given
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
@@ -189,6 +189,37 @@ public class EventDetailControllerTest {
         final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName);
 
         when(eventServiceMock.getOrderedEvents(before, queryMode)).thenReturn(eventList);
+        when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
+                "&after=" + after + "&before=" + before));
+
+        //then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
+                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
+    }
+
+    /**
+     * Testing getEventList from EventController in <AFTER> queryMode.
+     * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * expect JSON with right fields.
+     * @throws Exception
+     */
+    @Test
+    public void shouldReturnEventsAfterTimeAsJSON() throws Exception {
+        //given
+        final String firstEventName = "EPAM fanfest 1";
+        final String secondEventName = "EPAM fanfest 2";
+        final int numberOfNewEvents = 2;
+        final LocalDateTime after = LocalDateTime.now();
+        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final QueryMode queryMode = QueryMode.AFTER;
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName);
+
+        when(eventServiceMock.getOrderedEvents(after, queryMode)).thenReturn(eventList);
         when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
 
         //when
