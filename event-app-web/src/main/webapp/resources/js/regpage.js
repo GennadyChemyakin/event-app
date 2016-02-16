@@ -143,7 +143,7 @@
                 data: data,
                 contentType: "application/json",
                 success: function (data) {
-										addMainMessage(true);
+					addMainMessage(true);
                     setTimeout(function() {
                        window.location.href = "/event-app/home.html"}, 2000);
                 },

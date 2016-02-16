@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -64,4 +65,38 @@ public class EventDetailController {
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
         return resultResponseEntity;
     }
+
+    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes="application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventVO addEvent(@RequestBody EventVO eventVO,Principal principal) {
+        LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
+
+        Event event = Event.builder(eventVO.getName()).
+                description(eventVO.getDescription()).
+                country(eventVO.getCountry()).
+                city(eventVO.getCity()).
+                location(eventVO.getLocation()).
+                gpsLatitude(eventVO.getGpsLatitude()).
+                gpsLongitude(eventVO.getGpsLongitude()).
+                timeStamp(eventVO.getTimeStamp()).
+                build();
+
+        Event newEvent = eventService.createEvent(event,principal.getName());
+
+        EventVO newEventVO = EventVO.builder(newEvent.getName())
+                .city(newEvent.getCity())
+                .country(newEvent.getCountry())
+                .description(newEvent.getDescription())
+                .id(newEvent.getId())
+                .timeStamp(newEvent.getTimeStamp())
+                .gpsLatitude(newEvent.getGpsLatitude())
+                .gpsLongitude(newEvent.getGpsLongitude())
+                .location(newEvent.getLocation())
+                .build();
+
+        LOGGER.info("addEvent finished. eventVO = {}", newEventVO);
+        return newEventVO;
+
+    }
+
 }

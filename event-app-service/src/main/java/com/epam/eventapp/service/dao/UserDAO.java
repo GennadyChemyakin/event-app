@@ -1,6 +1,7 @@
 package com.epam.eventapp.service.dao;
 
 import com.epam.eventapp.service.domain.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
@@ -33,9 +34,10 @@ public interface UserDAO {
     boolean isEmailRegistered(String email);
 
     /**
-     * Method for getting user details by his username.
-     * @Param username - string with user user name
-     * @return returns optional of user object
+     * method for getting user by username
+     * @param username
+     * @return
      */
-    Optional<User> getUserByUserName(String userName);
+    User getUserByUsername(String username);
+
 }

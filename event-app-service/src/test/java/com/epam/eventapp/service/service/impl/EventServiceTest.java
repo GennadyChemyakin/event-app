@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public class EventServiceTest {
     public void shouldReturnEventById(){
         //given
         final int id = 0;
-        Optional<Event> expectedEvent = Optional.of(Event.builder("Party").build());
+        Optional<Event> expectedEvent = Optional.of(Event.builder("Party").id(id).build());
         when(eventDAOMock.findById(id)).thenReturn(expectedEvent);
 
         //when
@@ -123,5 +124,23 @@ public class EventServiceTest {
         //then
         Assert.assertEquals(0, updatedEntries);
     }
+
+    @Test
+    public void shouldAddEvent() {
+
+        //given
+        final String name = "My event";
+        final String username = "admin";
+        Event event =  Event.builder(name).build();
+
+        Mockito.when(eventDAOMock.addEvent(event,username)).thenReturn(event);
+
+        //when
+        sut.createEvent(event,username);
+
+        //then
+        //no exception is thrown
+    }
+
 }
 

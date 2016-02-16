@@ -2,6 +2,10 @@ package com.epam.eventapp.service.dao.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.exceptions.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,20 +15,29 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+<<<<<<< HEAD
 import java.sql.ResultSet;
 import java.util.Collections;
 import java.util.Optional;
+=======
+import java.util.Collections;
+>>>>>>> int
 
 /**
  * Insert user into table
  * Get user id generated in the database
  */
-@Repository
+@Repository("UserDAO")
 public class UserDAOImpl extends GenericDAO implements UserDAO {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDAOImpl.class);
 
     private static final String CREATE_USER_QUERY = "INSERT INTO SEC_USER (id, username, password, email, name, surname, gender, photo," +
             "country, city, bio) VALUES(SEC_USER_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
+
+    private final String GET_USER_BY_USERNAME = "select id, username, email, name, surname," +
+            "country, city, bio, gender, photo from sec_user where username = :username";
 
     private static final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
             + "(SELECT ID FROM AUTHORITY WHERE AUTHORITY = 'ROLE_USER'))";
@@ -39,7 +52,6 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
     @Override
     @Transactional
     public void createUser(User user) {
-
             KeyHolder keyHolder = new GeneratedKeyHolder();
             SqlParameterSource ps = new MapSqlParameterSource()
                                     .addValue("username", user.getUsername())
@@ -78,6 +90,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("username", username), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
+            LOGGER.error("DataAccessException in isUserNameRegistered. msg = {}",ex.getMessage());
             return false;
         }
 
@@ -90,9 +103,28 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("email", email), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
+            LOGGER.error("DataAccessException in isEmailRegistered. msg = {}",ex.getMessage());
             return false;
         }
+    }
 
+    @Override
+    public User getUserByUsername(String username) {
+        try {
+            User user = getNamedParameterJdbcTemplate().queryForObject(GET_USER_BY_USERNAME, Collections.singletonMap("username", username),
+                    ((resultSet, i) -> User.builder(resultSet.getString("username"), resultSet.getString("email")).
+                            id(resultSet.getInt("id")).
+                            country(resultSet.getString("country")).
+                            city(resultSet.getString("city")).
+                            bio(resultSet.getString("bio")).
+                            name(resultSet.getString("name")).
+                            surname(resultSet.getString("surname")).
+                            gender(resultSet.getString("gender")).
+                            photo(resultSet.getBytes("photo")).build()));
+            return user;
+        } catch (EmptyResultDataAccessException e) {
+            throw new UserNotFoundException("can't find user by username = " + username);
+        }
     }
 
     @Override

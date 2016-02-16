@@ -7,20 +7,25 @@ import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matcher;
 import org.junit.Assert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.NestedServletException;
-
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import java.util.Optional;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -28,12 +33,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
-
 /**
  * test Class for EventDetailController
  */
 public class EventDetailControllerTest {
-
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -49,7 +52,8 @@ public class EventDetailControllerTest {
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        mockMvc = standaloneSetup(controller).build();
+        mockMvc = standaloneSetup(controller)
+                .build();
     }
 
     /**
@@ -175,5 +179,54 @@ public class EventDetailControllerTest {
                 hasProperty("location", is(equalTo(location)))
         );
     }
+
+    public static RequestPostProcessor userHttpBasic(User user) {
+        return SecurityMockMvcRequestPostProcessors
+                .httpBasic(user.getUsername(), user.getPassword());
+    }
+
+    /**
+     * Test addEvent of EventDetailController
+     * mock EventDetailController and expects status 201
+     */
+    @Test
+    public void shouldCreateEvent() throws Exception {
+
+        //given
+        final String userName  = "Admin";
+        final String eventName = "test event";
+        final String location  = "Obvodniy kanal";
+        final String city      = "spb";
+        final String password  = "1234";
+
+        EventVO eventVO = EventVO.builder(eventName).location(location).city(city).build();
+        Event   event   = Event.builder(eventName).location(location).city(city).build();
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName,password);
+
+        String jsonObj = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(eventVO);
+
+        Mockito.when(eventServiceMock.createEvent(argThat(allOf(Matchers.isA(Event.class),hasProperty("location", Matchers.is(location)),
+                hasProperty("name", Matchers.is(eventName)), hasProperty("city", Matchers.is(city)))), eq(userName))).thenReturn(event);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(post("/event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonObj)
+                .principal(principal)
+        );
+
+        //then
+        resultActions
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is(eventName)))
+                .andExpect(jsonPath("$.city", is(city)))
+                .andExpect(jsonPath("$.location", is(location)));
+
+    }
+
+
+
 }
 

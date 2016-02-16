@@ -2,6 +2,7 @@ package com.epam.eventappweb.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -63,14 +64,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login.html").permitAll()
-                .antMatchers("/register.html").permitAll()
+                .antMatchers("/register.html").not().authenticated()
                 .antMatchers("/index.html").permitAll()
                 .antMatchers("/home.html").permitAll()
                 .antMatchers("/event-app/home.html").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/resources/js/*").permitAll()
-                .antMatchers("/event.html").permitAll()
+                .antMatchers("/event/*").permitAll()
+                .antMatchers(HttpMethod.GET,"/comment*").permitAll()
+                .antMatchers("/header.html").permitAll()
+                .antMatchers("/user/current").permitAll()
+                .antMatchers("/detail.html").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
-
     }
 }

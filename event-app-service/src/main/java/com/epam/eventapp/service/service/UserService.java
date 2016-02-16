@@ -16,10 +16,11 @@ public interface UserService {
     void createUser(User user);
 
     /**
-     * Method for saving new user into database
-     * @param username String value of the user name
-     * @return  returns Optional<User> - user to save into db
+     * method for getting user by username
+     * @param username
+     * @return user object if we found user by username
      */
-    Optional<User> getUserByUserName(String username);
+    User getUserByUsername(String username);
+
 
 }

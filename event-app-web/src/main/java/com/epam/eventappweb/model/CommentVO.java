@@ -1,10 +1,14 @@
 package com.epam.eventappweb.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 import java.time.LocalDateTime;
 
 /**
  * class for representing Commentary domain on presentation layer
  */
+@JsonDeserialize(builder = CommentVO.CommentVOBuilder.class)
 public final class CommentVO {
 
     private final int id;
@@ -12,56 +16,57 @@ public final class CommentVO {
     private final String username;
     private final byte[] userPhoto;
     private final String message;
-    private final LocalDateTime timeStamp;
+    private final LocalDateTime commentTime;
 
-    private CommentVO(CommentViewBuilder builder) {
+    private CommentVO(CommentVOBuilder builder){
         this.id = builder.id;
         this.eventId = builder.eventId;
         this.username = builder.username;
         this.userPhoto = builder.userPhoto;
         this.message = builder.message;
-        this.timeStamp = builder.timeStamp;
+        this.commentTime = builder.commentTime;
     }
 
-    public static CommentViewBuilder builder() {
-        return new CommentViewBuilder();
+    public static CommentVOBuilder builder(){
+        return new CommentVOBuilder();
     }
 
-    public static class CommentViewBuilder {
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
+    public static class CommentVOBuilder {
         private int id;
         private int eventId;
         private String username;
         private byte[] userPhoto;
         private String message;
-        private LocalDateTime timeStamp;
+        private LocalDateTime commentTime;
 
-        public CommentViewBuilder id(int id) {
+        public CommentVOBuilder id(int id){
             this.id = id;
             return this;
         }
 
-        public CommentViewBuilder eventId(int eventId) {
+        public CommentVOBuilder eventId(int eventId){
             this.eventId = eventId;
             return this;
         }
 
-        public CommentViewBuilder username(String username) {
+        public CommentVOBuilder username(String username){
             this.username = username;
             return this;
         }
 
-        public CommentViewBuilder userPhoto(byte[] userPhoto) {
+        public CommentVOBuilder userPhoto(byte[] userPhoto){
             this.userPhoto = userPhoto;
             return this;
         }
 
-        public CommentViewBuilder message(String message) {
+        public CommentVOBuilder message(String message){
             this.message = message;
             return this;
         }
 
-        public CommentViewBuilder timeStamp(LocalDateTime timeStamp) {
-            this.timeStamp = timeStamp;
+        public CommentVOBuilder commentTime(LocalDateTime commentTime){
+            this.commentTime = commentTime;
             return this;
         }
 
@@ -90,8 +95,8 @@ public final class CommentVO {
         return message;
     }
 
-    public LocalDateTime getTimeStamp() {
-        return timeStamp;
+    public LocalDateTime getCommentTime() {
+        return commentTime;
     }
 
     @Override
@@ -101,7 +106,7 @@ public final class CommentVO {
                 ", eventId=" + eventId +
                 ", username='" + username + '\'' +
                 ", message='" + message + '\'' +
-                ", timeStamp=" + timeStamp +
+                ", commentTime=" + commentTime +
                 '}';
     }
 }

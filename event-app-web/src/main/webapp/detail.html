@@ -7,10 +7,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="resources/js/eventDetail.js" type="text/javascript"></script>
+    <script src="resources/js/addHeader.js" type="text/javascript"></script>
 </head>
 <body>
 <br>
-
 <div class="container">
     <div class="col-md-8">
         <div class="container-fluid" id="eventPhoto">
@@ -25,14 +25,19 @@
                 </div>
             </div>
             <div>
-                <button id="loadComments" type="button" class="btn btn-primary" aria-haspopup="true"
+                <button id="loadComments" type="button" class="btn btn-primary btn-block" aria-haspopup="true"
                         aria-expanded="true">Load previous comments
                 </button>
             </div>
             <br>
         </div>
+        <div class="container-fluid" id="commentPanel">
+        </div>
         <div class="container-fluid" id="addCommentPanel">
             <textarea class="form-control" rows="3" id="commentArea"></textarea>
+            <div class="alert alert-danger" id="addCommentFailMessage" role="alert" style="display: none;">You must be
+                logged!
+            </div>
             <br>
             <button id="addCommentButton" type="button" class="btn btn-success" aria-haspopup="true"
                     aria-expanded="false">Add comment
@@ -93,5 +98,7 @@
         </div>
     </div>
 </div>
+
+<br>
 </body>
 </html>

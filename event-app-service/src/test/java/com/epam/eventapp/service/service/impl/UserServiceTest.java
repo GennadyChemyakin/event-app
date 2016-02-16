@@ -14,7 +14,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+<<<<<<< HEAD
 import java.util.Optional;
+=======
+import static org.mockito.Mockito.when;
+>>>>>>> int
 
 
 /**
@@ -29,7 +33,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         userService = new UserServiceImpl();
         MockitoAnnotations.initMocks(this);
     }
@@ -74,7 +78,7 @@ public class UserServiceTest {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
-        Mockito.when(userDAOMock.isUserNameRegistered(user.getUsername())).thenReturn(true);
+        when(userDAOMock.isUserNameRegistered(user.getUsername())).thenReturn(true);
 
         //when
         userService.createUser(user);
@@ -90,7 +94,7 @@ public class UserServiceTest {
 
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
-        Mockito.when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);
+        when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);
 
         //when
         userService.createUser(user);
@@ -101,6 +105,7 @@ public class UserServiceTest {
 
     }
 
+<<<<<<< HEAD
     @Test
     public void shouldFindUserByUsername() {
 
@@ -122,4 +127,28 @@ public class UserServiceTest {
     }
 
 
+=======
+    /**
+     * testing getUserByUsername method form UserServiceImpl
+     * looking for user with username = 'username'.
+     * Checking if it is not null and user username is equal to expected username
+     */
+    @Test
+    public void shouldReturnUserByUsername() {
+        //given
+        final String username = "username";
+        final String email = "email";
+        User expectedUser = User.builder(username, email).build();
+        when(userDAOMock.getUserByUsername(username)).thenReturn(expectedUser);
+
+        //when
+        User user = userService.getUserByUsername(username);
+
+        //then
+        Assert.assertNotNull(user);
+        Assert.assertEquals(user.getUsername(), username);
+        Assert.assertEquals(user.getEmail(), email);
+    }
+
+>>>>>>> int
 }

@@ -4,13 +4,15 @@ $(document).ready(function () {
         url: "/event-app/event/" + urlParam("id")
     }).then(function (data) {
 
+        window.timezoneOffset = new Date().getTimezoneOffset();
+
         var event = {};
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
         if (data.timeStamp != null) {
-            event.date = new Date(data.timeStamp.year, data.timeStamp.monthValue - 1, data.timeStamp.dayOfMonth,
-                data.timeStamp.hour, data.timeStamp.minute);
+            event.date = new Date(data.timeStamp[0], data.timeStamp[1] - 1, data.timeStamp[2],
+                data.timeStamp[3], data.timeStamp[4]);
         }
         event.user = {};
         event.user.username = data.user.username;
@@ -35,51 +37,74 @@ $(document).ready(function () {
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
     }).then(function () {
-        var timezoneOffset = new Date().getTimezoneOffset();
         $.ajax({
             type: "GET",
-            url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + new Date(new Date().getTime() - timezoneOffset * 60000).toISOString()
+            url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + getCommentDateOrNow()
         }).then(showComments);
     });
     $('#loadComments').click(function () {
-        var lastCommentDate = $("#commentTime" + $(".commentRow:first").attr("id")).text();
-        var timezoneOffset = new Date().getTimezoneOffset();
-        if (lastCommentDate) {
-            lastCommentDate = new Date(lastCommentDate);
-            //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-            lastCommentDate = new Date(lastCommentDate.getTime() - timezoneOffset * 60000).toISOString();
-        } else {
-            lastCommentDate = new Date();
-            lastCommentDate = new Date(lastCommentDate.getTime() - timezoneOffset * 60000).toISOString();
-        }
+        var lastCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:first").attr("id")).text());
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + lastCommentDate
         }).then(showComments)
     });
+    $('#loadCommentsPanel').mouseenter(function () {
+        $(this).css("background-color", "red");
+    });
+    $('#addCommentButton').click(function () {
+        var message = $('#commentArea').val();
+        var firstCommentDate = getCommentDateOrNow($("#commentTime" + $(".commentRow:last").attr("id")).text());
+        if (message) {
+            var commentTime = getCommentDateOrNow();
+            commentTime = commentTime.slice(0, commentTime.length - 1);
+            $.ajax({
+                type: "POST",
+                url: "/event-app/comment",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    "eventId": urlParam("id"),
+                    "message": message,
+                    "commentTime": commentTime
+                })
+            }).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + firstCommentDate
+                }).then(function (data) {
+                    showNewComments(data);
+                    $('#commentArea').val("");
+                })
+            });
+        }
+    });
 
 });
 
+//return local date made from commentDateString or now if commentDateString == null
+function getCommentDateOrNow(commentDateString) {
+    var commentDate;
+    if (commentDateString) {
+        commentDate = new Date(commentDateString);
+        //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
+        commentDate = new Date(commentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+    } else {
+        commentDate = new Date();
+        commentDate = new Date(commentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+    }
+    return commentDate;
+}
 
+//function for displaying list of comments
 function showComments(data) {
     for (var i = 0; i < data.commentVOList.length; i++) {
-        arg = data.commentVOList[i];
-        var comment = {};
-        comment.id = arg.id;
-        comment.remainingCommentsCount = data.remainingCommentsCount;
-        comment.message = arg.message;
-        comment.username = arg.username;
-        comment.date = null;
-        if (arg.timeStamp != null) {
-            comment.date = new Date(arg.timeStamp.year, arg.timeStamp.monthValue - 1, arg.timeStamp.dayOfMonth,
-                arg.timeStamp.hour, arg.timeStamp.minute, arg.timeStamp.second, arg.timeStamp.nano);
-        }
+        var comment = buildComment(data.commentVOList[i]);
         $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
             '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
             '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
             ' <strong class= "commentUsername"></strong> <span class="text-muted commentTime"></span> </div> ' +
             '<div class="panel-body" ><span class="commentMessage"></span></div> </div> </div> </div> ').
-            attr('id', comment.id).css("display", "none").prependTo('#addCommentPanel');
+            attr('id', comment.id).css("display", "none").prependTo('#commentPanel');
 
         $("#" + comment.id).find("strong.commentUsername").attr("id", 'commentUsername' + comment.id);
         $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
@@ -88,16 +113,54 @@ function showComments(data) {
         $("#" + 'commentTime' + comment.id).text(comment.date.toString());
         $("#" + 'commentMessage' + comment.id).text(comment.message);
         $("#" + comment.id).slideDown();
-
-        if (comment.remainingCommentsCount == 0) {
-            $('#loadComments').hide();
-        } else if (comment.remainingCommentsCount < 10) {
-            $('#loadComments').text("Load previous " + comment.remainingCommentsCount + " comment(s)");
-        } else {
-            $('#loadComments').text("Load previous 10 comments of " + comment.remainingCommentsCount);
-        }
+    }
+    if (data.remainingCommentsCount == 0) {
+        $('#loadComments').hide();
+    } else {
+        $('#loadComments').text("Load previous 10 comments of " + comment.remainingCommentsCount);
     }
 }
+
+//function for displaying list of new comments
+function showNewComments(data) {
+    for (var i = 0; i < data.length; i++) {
+        var comment = buildComment(data[i]);
+        $('<div class="row commentRow"> <div class="col-md-2"> <div class="thumbnail"> ' +
+            '<img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png"> ' +
+            '</div> </div> <div class="col-md-10"> <div class="panel panel-default"> <div class="panel-heading">' +
+            ' <strong class= "commentUsername"></strong> <span class="text-muted commentTime"></span> </div> ' +
+            '<div class="panel-body" ><span class="commentMessage"></span></div> </div> </div> </div> ').
+            attr('id', comment.id).css("display", "none").appendTo("#commentPanel");
+
+        $("#" + comment.id).find("strong.commentUsername").attr("id", 'commentUsername' + comment.id);
+        $("#" + comment.id).find("span.commentTime").attr("id", 'commentTime' + comment.id);
+        $("#" + comment.id).find("span.commentMessage").attr("id", 'commentMessage' + comment.id);
+        $("#" + 'commentUsername' + comment.id).text(comment.username);
+        $("#" + 'commentTime' + comment.id).text(comment.date.toString());
+        $("#" + 'commentMessage' + comment.id).text(comment.message);
+        $("#" + comment.id).slideDown();
+    }
+}
+
+//function for building comment object from Json
+function buildComment(data) {
+    var comment = {};
+    comment.id = data.id;
+    comment.message = data.message;
+    comment.username = data.username;
+    comment.date = null;
+    if (data.commentTime != null) {
+        var year = data.commentTime[0];
+        var month = data.commentTime[1];
+        var day = data.commentTime[2];
+        var hour = data.commentTime[3] ? data.commentTime[3] : 0;
+        var minutes = data.commentTime[4] ? data.commentTime[4] : 0;
+        var seconds = data.commentTime[5] ? data.commentTime[5] : 0;
+        comment.date = new Date(year, month - 1, day, hour, minutes, seconds);
+    }
+    return comment;
+}
+
 
 //getting params from request
 function urlParam(name) {
