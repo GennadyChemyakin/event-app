@@ -24,4 +24,13 @@ public interface EventService {
      * @return Number of updated rows
      */
     int updateEvent(Event event);
+
+    /**
+     * Method for creating a new Event.
+     * @param event - Event to add.
+     * @param userName  login of user who adds event
+     */
+    //TO DO change signature for this method.
+    Event createEvent(Event event, String userName);
+
 }

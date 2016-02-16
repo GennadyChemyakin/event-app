@@ -36,4 +36,12 @@ public class EventServiceImpl implements EventService {
         LOGGER.debug("findById finished. Result: {}", updatedEntries);
         return updatedEntries;
     }
+
+    @Override
+    public Event createEvent(Event event, String userName) {
+        LOGGER.debug("createEvent started: Params event = {}, userName = {}", event, userName);
+        Event newEvent = eventDAO.addEvent(event,userName);
+        LOGGER.debug("createEvent finished.");
+        return newEvent;
+    }
 }

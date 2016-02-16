@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 import javax.servlet.Filter;
+
 import javax.sql.DataSource;
 
 /**
@@ -77,17 +78,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().logout().logoutSuccessHandler(logoutSuccessHandler()).and()
                 .authorizeRequests()
                 .antMatchers("/login.html").permitAll()
-                .antMatchers("/register.html").permitAll()
+                .antMatchers("/register.html").not().authenticated()
                 .antMatchers("/index.html").permitAll()
                 .antMatchers("/home.html").permitAll()
                 .antMatchers("/event-app/home.html").permitAll()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/resources/js/*").permitAll()
-                .antMatchers("/event.html").permitAll()
                 .antMatchers("/event/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/comment*").permitAll()
+                .antMatchers(HttpMethod.GET,"/comment*").permitAll()
                 .antMatchers("/header.html").permitAll()
                 .antMatchers("/user/current").permitAll()
+                .antMatchers("/detail.html").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
 
         http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class);

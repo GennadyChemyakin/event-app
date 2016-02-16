@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * controller whick handles user creation process
- * @return retuns ResponseEntity object with status 201 (created)
+ * @return returns ResponseEntity object with status 201 (created)
  */
 @RestController
 public class RegistrationController {

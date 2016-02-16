@@ -1,5 +1,7 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.exceptions.EmailAlreadyExistsException;
+import com.epam.eventapp.service.exceptions.UserNameAlreadyExistsException;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
@@ -22,24 +24,36 @@ public class ExceptionHandlerController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Event not found by id")
     @ExceptionHandler(EventNotFoundException.class)
     public void handleEventNotFound(EventNotFoundException exception) {
-        LOGGER.error("handleEventNotFound handle exception. Exception: message = {}", exception.getMessage(), exception);
+        LOGGER.error("handleEventNotFound handle exception.", exception);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Event not updated")
     @ExceptionHandler(EventNotUpdatedException.class)
     public void handleEventNotUpdated(EventNotUpdatedException exception) {
-        LOGGER.error("handleEventNotUpdated handle exception. Exception: message = {}", exception.getMessage(), exception);
+        LOGGER.error("handleEventNotUpdated handle exception.", exception);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object not deleted")
     @ExceptionHandler(ObjectNotDeletedException.class)
     public void handleObjectNotDeleted(ObjectNotDeletedException exception) {
-        LOGGER.error("handleObjectNotDeleted handle exception. Exception: message = {}", exception.getMessage(), exception);
+        LOGGER.error("handleObjectNotDeleted handle exception.", exception);
     }
 
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Forbidden action")
     @ExceptionHandler(AccessDeniedException.class)
     public void handleAccessDenied(AccessDeniedException exception) {
-        LOGGER.error("handleAccessDenied handle exception. Exception: message = {}", exception.getMessage(), exception);
+        LOGGER.error("handleAccessDenied handle exception.", exception);
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "username is busy")
+    @ExceptionHandler(UserNameAlreadyExistsException.class)
+    public void handleUserNameAlreadyExists(UserNameAlreadyExistsException exception) {
+        LOGGER.error("handleUserNameAlreadyExists handle exception.", exception);
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "email is busy")
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public void handleEmailAlreadyExists(EmailAlreadyExistsException exception) {
+        LOGGER.error("handleEmailAlreadyExists handle exception.", exception);
     }
 }
