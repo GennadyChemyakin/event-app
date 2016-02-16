@@ -52,7 +52,11 @@ $(document).ready(function () {
     $('#addCommentButton').click(function () {
         if (window.username) {
             var message = $('#commentArea').val();
-            var firstCommentDate = getCommentDateOrNow($("#commentISOTime" + $(".commentRow:last").attr("id")).text());
+            var firstCommentDateString = $("#commentISOTime" + $(".commentRow:last").attr("id")).text();
+            var firstCommentDate = getCommentDateOrNow(firstCommentDateString);
+            if (!firstCommentDateString) {
+                firstCommentDate = new Date(new Date(firstCommentDate).getTime() - 60).toISOString();
+            }
             if (message) {
                 var commentTime = getCommentDateOrNow();
                 commentTime = commentTime.slice(0, commentTime.length - 1);
@@ -159,7 +163,7 @@ function displayCommentary(comment, mode) {
                     "username": username
                 })
             }).then(function (data, statusText, xhr) {
-                if(xhr.status == 204){
+                if (xhr.status == 204) {
                     $("#" + id).slideUp();
                 }
             })
