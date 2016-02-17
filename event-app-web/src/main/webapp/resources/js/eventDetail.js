@@ -37,6 +37,8 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
+        $('#profile').attr("href","profile.html?name=" + event.user.username.trim());
+
     }).then(function () {
         $.ajax({
             type: "GET",
