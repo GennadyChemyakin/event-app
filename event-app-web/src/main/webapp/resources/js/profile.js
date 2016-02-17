@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     $.ajax({
         type: "GET",
-        url: "profile?name=" + urlParam("name")
+        url: "user?name=" + urlParam("name")
     }).then(function (data) {
 
         var country = data.country == null ? 'Country: N/A'  : 'Country: ' + data.country;

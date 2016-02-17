@@ -14,14 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-<<<<<<< HEAD
-import java.sql.ResultSet;
 import java.util.Collections;
-import java.util.Optional;
-=======
-import java.util.Collections;
->>>>>>> int
 
 /**
  * Insert user into table
@@ -36,9 +29,6 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
             "country, city, bio) VALUES(SEC_USER_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
 
-    private final String GET_USER_BY_USERNAME = "select id, username, email, name, surname," +
-            "country, city, bio, gender, photo from sec_user where username = :username";
-
     private static final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
             + "(SELECT ID FROM AUTHORITY WHERE AUTHORITY = 'ROLE_USER'))";
 
@@ -46,7 +36,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
 
     private static final String СOUNT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
 
-    private static final String GET_USER_BY_USERNAME = "SELECT username, email, name, surname, gender, photo, country, city, bio " +
+    private static final String GET_USER_BY_USERNAME = "SELECT id, username, email, name, surname, gender, photo, country, city, bio " +
             "FROM SEC_USER WHERE username = :username";
 
     @Override
@@ -127,27 +117,4 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
         }
     }
 
-    @Override
-    public Optional<User> getUserByUserName(String userName) {
-        try {
-            User user = getNamedParameterJdbcTemplate().queryForObject(GET_USER_BY_USERNAME, Collections.singletonMap("username", userName),
-                    ((resultSet, i) -> {
-                        return User.builder(userName, resultSet.getString("email"))
-                                .bio(resultSet.getString("bio"))
-                                .city(resultSet.getString("city"))
-                                .country(resultSet.getString("country"))
-                                .photo(resultSet.getBytes("photo"))
-                                .surname(resultSet.getString("surname"))
-                                .name(resultSet.getString("name"))
-                                .gender(resultSet.getString("gender"))
-                                .build();
-                    }));
-
-            return Optional.of(user);
-        } catch (Exception ex) {
-            final String msg = String.format("failed to find user with username %s", userName);
-            throw new UserNotCreatedException(msg);
-        }
-
-    }
 }

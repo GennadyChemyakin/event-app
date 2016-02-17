@@ -13,12 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-<<<<<<< HEAD
-import java.util.Optional;
-=======
 import static org.mockito.Mockito.when;
->>>>>>> int
+
 
 
 /**
@@ -105,29 +101,6 @@ public class UserServiceTest {
 
     }
 
-<<<<<<< HEAD
-    @Test
-    public void shouldFindUserByUsername() {
-
-        //given
-        final String userName = "admin";
-        final String email    = "email";
-
-        User user = User.builder(userName, email).build();
-
-        Mockito.when(userDAOMock.getUserByUserName(userName)).thenReturn(Optional.of(user));
-
-        //when
-        user  = userService.getUserByUserName(userName).get();
-
-        //then
-        Assert.assertEquals(userName,user.getUsername());
-        Assert.assertEquals(email,user.getEmail());
-
-    }
-
-
-=======
     /**
      * testing getUserByUsername method form UserServiceImpl
      * looking for user with username = 'username'.
@@ -150,5 +123,4 @@ public class UserServiceTest {
         Assert.assertEquals(user.getEmail(), email);
     }
 
->>>>>>> int
 }
