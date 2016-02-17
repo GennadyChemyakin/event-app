@@ -145,7 +145,7 @@
                 success: function (data) {
 					addMainMessage(true);
                     setTimeout(function() {
-                       window.location.href = "/event-app/home.html"}, 2000);
+                       window.location.href = "/event-app/events.html"}, 2000);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     $('#register_btn').removeClass('disabled').prop("disabled", false);

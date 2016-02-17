@@ -1,18 +1,25 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
+import com.epam.eventappweb.model.EventPackVO;
+import com.epam.eventappweb.model.EventPreviewVO;
 import com.epam.eventappweb.model.EventVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,9 +27,9 @@ import java.util.Optional;
  * otherwise return ResponseEntity with HttpStatus code 404
  */
 @RestController
-public class EventDetailController {
+public class EventController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
 
     @Autowired
     private EventService eventService;
@@ -54,7 +61,7 @@ public class EventDetailController {
                 location(eventVO.getLocation()).
                 gpsLatitude(eventVO.getGpsLatitude()).
                 gpsLongitude(eventVO.getGpsLongitude()).
-                timeStamp(eventVO.getTimeStamp()).build();
+                eventTime(eventVO.getEventTime()).build();
 
         int updatedEntries = eventService.updateEvent(event);
         if (updatedEntries == 1) {
@@ -63,6 +70,52 @@ public class EventDetailController {
             throw new EventNotUpdatedException("Event with id = " + eventId + " not updated with new fields value:" + eventVO);
 
         LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
+        return resultResponseEntity;
+    }
+
+    @RequestMapping(value = "/event/", method = RequestMethod.GET)
+    public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") QueryMode queryMode,
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                        @RequestParam("after") LocalDateTime after,
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                        @RequestParam("before") LocalDateTime before) {
+        LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
+        List<Event> eventList;
+        EventPackVO eventPackVO;
+        LocalDateTime effectiveDate;
+
+        switch (queryMode) {
+            case BEFORE:
+                eventList = eventService.getOrderedEvents(before, queryMode);
+                effectiveDate = after;
+                break;
+            case AFTER:
+                eventList = eventService.getOrderedEvents(after, queryMode);
+                effectiveDate = eventList.isEmpty() ? after : eventList.get(0).getCreationTime();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported query mode");
+        }
+        eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(effectiveDate));
+
+        ResponseEntity<EventPackVO> resultResponseEntity;
+        for(Event event: eventList) {
+            EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getId()).
+                    name(event.getName()).
+                    creator(event.getUser().getUsername()).
+                    description(event.getDescription()).
+                    country(event.getCountry()).
+                    city(event.getCity()).
+                    location(event.getLocation()).
+                    numberOfComments(5).
+                    picture(new byte[0]).
+                    eventTime(event.getEventTime()).
+                    creationTime(event.getCreationTime()).build();
+            eventPackVO.addEventPreviewVO(eventPreviewVO);
+        }
+
+        resultResponseEntity = new ResponseEntity<>(eventPackVO, HttpStatus.OK);
+        LOGGER.info("getEventList finished. Resuls: {}", eventPackVO);
         return resultResponseEntity;
     }
 
@@ -78,7 +131,7 @@ public class EventDetailController {
                 location(eventVO.getLocation()).
                 gpsLatitude(eventVO.getGpsLatitude()).
                 gpsLongitude(eventVO.getGpsLongitude()).
-                timeStamp(eventVO.getTimeStamp()).
+                eventTime(eventVO.getEventTime()).
                 build();
 
         Event newEvent = eventService.createEvent(event,principal.getName());
@@ -88,7 +141,7 @@ public class EventDetailController {
                 .country(newEvent.getCountry())
                 .description(newEvent.getDescription())
                 .id(newEvent.getId())
-                .timeStamp(newEvent.getTimeStamp())
+                .eventTime(newEvent.getEventTime())
                 .gpsLatitude(newEvent.getGpsLatitude())
                 .gpsLongitude(newEvent.getGpsLongitude())
                 .location(newEvent.getLocation())
@@ -98,5 +151,4 @@ public class EventDetailController {
         return newEventVO;
 
     }
-
 }

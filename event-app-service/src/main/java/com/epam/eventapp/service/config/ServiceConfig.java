@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ComponentScan("com.epam.eventapp.service.service.impl")
-@Import(value = DataAccessConfig.class)
+@Import(value = {DataAccessConfig.class, MethodSecurityConfig.class})
 public class ServiceConfig {
 }

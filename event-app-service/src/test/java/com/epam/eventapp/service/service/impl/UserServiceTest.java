@@ -87,7 +87,6 @@ public class UserServiceTest {
 
     @Test(expected = EmailAlreadyExistsException.class)
     public void shouldThrowEmailExistsInTheDatabase() {
-
         //given
         User user = User.builder("Danil","Danya@mail.com").build();
         when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);

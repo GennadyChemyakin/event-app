@@ -40,8 +40,9 @@ public class CommentController {
     /**
      * method for getting list of of comments that were added
      * before commentTime for event by event id
+     *
      * @param eventId id of event
-     * @param before we are looking for comments that were added before this time
+     * @param before  we are looking for comments that were added before this time
      * @return pack of comments
      */
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
@@ -73,6 +74,7 @@ public class CommentController {
 
     /**
      * method for adding new commentary
+     *
      * @param commentVO new commentary
      * @param principal principle of logged user
      * @return status code 200 in case of success
@@ -94,8 +96,9 @@ public class CommentController {
 
     /**
      * method for getting list of new comments, that were added after specified date after
+     *
      * @param eventId id of commented event
-     * @param after specified date
+     * @param after   specified date
      * @return list of new comments
      */
     @RequestMapping(value = "/comment/new", method = RequestMethod.GET)
@@ -108,8 +111,25 @@ public class CommentController {
         List<CommentVO> newCommentsVO = newComments.stream().map(comment -> CommentVO.builder().id(comment.getId()).eventId(comment.getEventId()).
                 username(comment.getUser().getUsername()).message(comment.getMessage()).
                 commentTime(comment.getCommentTime()).userPhoto(comment.getUser().getPhoto()).build()).collect(Collectors.toList());
-        LOGGER.info("addComment finished. Result:", newCommentsVO);
+        LOGGER.info("showNewComments finished. Result:", newCommentsVO);
         return newCommentsVO;
+    }
+
+    /**
+     * method for deleting commentary
+     *
+     * @param commentVO deleting commentary
+     * @return status code 204 if commentary deleted
+     */
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/comment", method = RequestMethod.DELETE)
+    public void deleteCommentary(@RequestBody CommentVO commentVO) {
+        LOGGER.info("deleteCommentary started. Param: commentVO = {}", commentVO);
+        User user = User.builder().username(commentVO.getUsername()).build();
+        Comment comment = Comment.builder().eventId(commentVO.getEventId()).message(commentVO.getMessage()).id(commentVO.getId()).
+                commentTime(commentVO.getCommentTime()).user(user).build();
+        commentService.deleteComment(comment);
+        LOGGER.info("deleteCommentary finished.");
     }
 
 }

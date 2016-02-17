@@ -4,11 +4,13 @@ $(document).ready(function () {
         url: "/event-app/user/current"
     }).then(function (data) {
         if (data.username) {
+            window.username = data.username;
             $("#logInButton").css("display", "none");
             $("#signUpButton").css("display", "none");
             $("#dropDownMenuText").text(data.username);
             $("#dropDownMenu").css("display", "block");
         } else {
+            window.username = null;
             $("#logInButton").css("display", "block");
             $("#signUpButton").css("display", "block");
             $("#dropDownMenu").css("display", "none");

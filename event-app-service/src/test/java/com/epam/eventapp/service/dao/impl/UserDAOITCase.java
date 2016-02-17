@@ -24,7 +24,6 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
     @Autowired
     private UserDAO userDAO;
 
-    @Ignore
     @Test
     public void shouldAddUserInTheTable() {
         final String userName = "Vasya12";

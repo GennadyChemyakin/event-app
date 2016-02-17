@@ -4,10 +4,14 @@ import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.model.CommentPack;
 import com.epam.eventapp.service.service.CommentService;
+import com.epam.eventapp.service.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +26,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private CommentDAO commentDAO;
+
 
     @Override
     public CommentPack getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount) {
@@ -56,5 +61,14 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentDAO.getListOfNewComments(eventId, after);
         LOGGER.debug("getListOfNewComments finished. Result: {}", commentList);
         return commentList;
+    }
+
+    @Override
+    @PreAuthorize("#comment.getUser().getUsername() == authentication.name || " +
+            "@eventService.findById(#comment.getEventId()).get().getUser().getUsername() == authentication.name")
+    public void deleteComment(Comment comment) {
+        LOGGER.debug("deleteComment started. Params: comment = {}", comment);
+        commentDAO.deleteCommentById(comment.getId());
+        LOGGER.debug("deleteComment finished.");
     }
 }
