@@ -3,8 +3,7 @@ package com.epam.eventappweb.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.util.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,24 +36,23 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
             String targetUrl = null;
             if(this.getTargetUrlParameter() != null) {
                 targetUrl = request.getParameter(this.getTargetUrlParameter());
-                if(StringUtils.hasText(targetUrl)) {
+                if(StringUtils.isNotBlank(targetUrl)) {
                     LOGGER.debug("Redirect to URL = {} that found in request", targetUrl);
                     return targetUrl;
                 }
             }
 
             HttpSession session = request.getSession();
-            if(session != null && session.getAttribute("loginReferer") != null && !StringUtils.hasLength(targetUrl)) {
+            if(session != null && session.getAttribute("loginReferer") != null) {
                 targetUrl = session.getAttribute("loginReferer").toString();
                 session.removeAttribute("loginReferer");
-                LOGGER.debug("Redirect to URL = {}", targetUrl);
             }
 
-            if(!StringUtils.hasText(targetUrl)) {
+            if(StringUtils.isBlank(targetUrl)) {
                 targetUrl = this.getDefaultTargetUrl();
-                LOGGER.debug("Redirect to default URL = {}", targetUrl);
             }
 
+            LOGGER.debug("Redirect to URL = {}", targetUrl);
             return targetUrl;
         }
     }

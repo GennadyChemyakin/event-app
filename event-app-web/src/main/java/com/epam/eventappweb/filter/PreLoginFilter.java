@@ -20,24 +20,24 @@ public class PreLoginFilter extends GenericFilterBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreLoginFilter.class);
 
+    private static final String LOGIN_PAGE_URL =  "/event-app/login.html";
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        LOGGER.debug("doFilter started.");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String loginReferer;
         HttpSession session;
-        if ("/event-app/login.html".equals(request.getRequestURI().toString())) {
+        if (LOGIN_PAGE_URL.equals(request.getRequestURI().toString())) {
             loginReferer = request.getHeader("referer");
-            if (loginReferer!= null && !loginReferer.endsWith("/event-app/login.html")) {
+            if (loginReferer!= null && !loginReferer.endsWith(LOGIN_PAGE_URL)) {
                 session = request.getSession();
                 if (session != null) {
                     session.setAttribute("loginReferer", loginReferer);
-                    LOGGER.debug("doFilter finished. LoginReferer = {} added to session", loginReferer);
+                    LOGGER.debug("doFilter finished. Found request to login page. LoginReferer = {} added to session", loginReferer);
                 }
             }
         }
-        LOGGER.debug("doFilter finished.");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }
