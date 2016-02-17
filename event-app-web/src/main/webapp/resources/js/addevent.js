@@ -84,6 +84,8 @@
       //on error getting coordinates
       function errorGettingCoordinates(err) {
             console.log(err);
+            latitude = 0.0;
+            longitude = 0.0;
       };
 
         //button click handler
@@ -112,7 +114,7 @@
               name: name,
               description:  description,
               city:         city,
-              timeStamp:    date.substring(0,date.length-1),
+              eventTime:    date.substring(0,date.length-1),
               country:      country,
               gpsLatitude:  latitude,
               gpsLongitude: longitude,
