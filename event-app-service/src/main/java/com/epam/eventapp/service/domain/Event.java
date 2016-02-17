@@ -16,7 +16,8 @@ public class Event {
     private final String location;
     private final double gpsLatitude;
     private final double gpsLongitude;
-    private final LocalDateTime timeStamp;
+    private final LocalDateTime eventTime;
+    private final LocalDateTime creationTime;
 
     private Event(EventBuilder builder) {
         this.id = builder.id;
@@ -28,7 +29,8 @@ public class Event {
         this.location = builder.location;
         this.gpsLatitude = builder.gpsLatitude;
         this.gpsLongitude = builder.gpsLongitude;
-        this.timeStamp = builder.timeStamp;
+        this.eventTime = builder.eventTime;
+        this.creationTime = builder.creationTime;
     }
 
     public static EventBuilder builder(String name){
@@ -45,7 +47,8 @@ public class Event {
         private String location;
         private double gpsLatitude;
         private double gpsLongitude;
-        private LocalDateTime timeStamp;
+        private LocalDateTime eventTime;
+        private LocalDateTime creationTime;
 
         private EventBuilder(String name) {
             this.name = name;
@@ -91,8 +94,13 @@ public class Event {
             return this;
         }
 
-        public EventBuilder timeStamp(LocalDateTime timeStamp) {
-            this.timeStamp = timeStamp;
+        public EventBuilder eventTime(LocalDateTime eventTime) {
+            this.eventTime = eventTime;
+            return this;
+        }
+
+        public EventBuilder creationTime(LocalDateTime creationTime) {
+            this.creationTime = creationTime;
             return this;
         }
 
@@ -137,8 +145,12 @@ public class Event {
         return gpsLongitude;
     }
 
-    public LocalDateTime getTimeStamp() {
-        return timeStamp;
+    public LocalDateTime getEventTime() {
+        return eventTime;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
     }
 
     @Override
@@ -153,7 +165,8 @@ public class Event {
                 ", location='" + location + '\'' +
                 ", gpsLatitude=" + gpsLatitude +
                 ", gpsLongitude=" + gpsLongitude +
-                ", timeStamp=" + timeStamp +
+                ", eventTime=" + eventTime +
+                ", creationTime=" + creationTime +
                 '}';
     }
 }

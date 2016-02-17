@@ -1,5 +1,6 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
@@ -9,8 +10,8 @@ import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,12 +22,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.NestedServletException;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,9 +38,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 /**
- * test Class for EventDetailController
+ * test Class for EventController
  */
-public class EventDetailControllerTest {
+public class EventControllerTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -45,20 +49,19 @@ public class EventDetailControllerTest {
     private EventService eventServiceMock;
 
     @InjectMocks
-    private EventDetailController controller;
+    private EventController controller;
 
     private MockMvc mockMvc;
 
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        mockMvc = standaloneSetup(controller)
-                .build();
+        mockMvc = standaloneSetup(controller).build();
     }
 
     /**
-     * testing getEventDetail from EventDetailController
-     * Using mockMvc to assert the behaviour of controller.
+     * testing getEventDetail from EventController
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields
      *
      * @throws Exception
@@ -108,8 +111,8 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * Testing updateEvent from EventDetailController.
-     * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * Testing updateEvent from EventController.
+     * mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect 200 status code
      *
      * @throws Exception
@@ -166,23 +169,108 @@ public class EventDetailControllerTest {
     }
 
     /**
-     * Matcher for Events, checks if both events are instances of same class and have same id field
-     * @param id value to compare with
-     * @return Matcher
+     * Method for getting prepared list of Events
+     * @param firstEventName name of first Event
+     * @param secondEventName name of second Event
+     * @return list of expected Events
      */
-    private static Matcher<Event> equalToEvent(int id, String name, String city, String location) {
-        return org.hamcrest.Matchers.allOf(
-                is(instanceOf(Event.class)),
-                hasProperty("id", is(equalTo(id))),
-                hasProperty("name", is(equalTo(name))),
-                hasProperty("city", is(equalTo(city))),
-                hasProperty("location", is(equalTo(location)))
-        );
+    private static List<Event> getExpectedEventsList(String firstEventName, String secondEventName,
+                                                     LocalDateTime firstEventTime, LocalDateTime secondEventTime) {
+        final String username = "Vasya";
+        final String email = "vasya@vasya.com";
+        final User user = User.builder(username, email).build();
+        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).creationTime(firstEventTime).build();
+        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).creationTime(secondEventTime).build();
+        final List<Event> expectedEventsList = new ArrayList<>();
+        expectedEventsList.add(firstEvent);
+        expectedEventsList.add(secondEvent);
+        return expectedEventsList;
     }
 
-    public static RequestPostProcessor userHttpBasic(User user) {
-        return SecurityMockMvcRequestPostProcessors
-                .httpBasic(user.getUsername(), user.getPassword());
+    /**
+     * Testing getEventList from EventController in <BEFORE> queryMode.
+     * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * expect JSON with right fields.
+     * @throws Exception
+     */
+    @Test
+    public void shouldReturnEventsBeforeTimeAsJSON() throws Exception {
+        //given
+        final String firstEventName = "EPAM fanfest 1";
+        final String secondEventName = "EPAM fanfest 2";
+        final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
+        final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
+        final int numberOfNewEvents = 2;
+        final LocalDateTime after = LocalDateTime.now();
+        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final QueryMode queryMode = QueryMode.BEFORE;
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
+
+        when(eventServiceMock.getOrderedEvents(before, queryMode)).thenReturn(eventList);
+        when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
+                "&after=" + after + "&before=" + before));
+
+        //then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
+                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
+    }
+
+    /**
+     * Testing getEventList from EventController in <AFTER> queryMode.
+     * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * expect JSON with right fields.
+     * @throws Exception
+     */
+    @Test
+    public void shouldReturnEventsAfterTimeAsJSON() throws Exception {
+        //given
+        final String firstEventName = "EPAM fanfest 1";
+        final String secondEventName = "EPAM fanfest 2";
+        final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
+        final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
+        final int numberOfNewEvents = 2;
+        final LocalDateTime after = LocalDateTime.now();
+        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final QueryMode queryMode = QueryMode.AFTER;
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
+
+        when(eventServiceMock.getOrderedEvents(after, queryMode)).thenReturn(eventList);
+        when(eventServiceMock.getNumberOfNewEvents(firstEventTime)).thenReturn(numberOfNewEvents);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
+                "&after=" + after + "&before=" + before));
+
+        //then
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
+                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
+    }
+
+    /**
+     * Testing getEventList from EventDetailController.
+     * Passing as parameter string that doesn't correspond with existing enum value.
+     * Expect 400 status.
+     * @throws Exception
+     */
+    @Test
+    public void shoudReturn400inCaseWrongQueryModeSpecified() throws Exception {
+        //given
+        final LocalDateTime after = LocalDateTime.now();
+        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final String queryMode = "WRONG MODE";
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode +
+                "&after=" + after + "&before=" + before));
+        //then
+        resultActions.andExpect(status().isBadRequest());
     }
 
     /**
@@ -226,7 +314,19 @@ public class EventDetailControllerTest {
 
     }
 
-
-
+    /**
+     * Matcher for Events, checks if both events are instances of same class and have same id field
+     * @param id value to compare with
+     * @return Matcher
+     */
+    private static Matcher<Event> equalToEvent(int id, String name, String city, String location) {
+        return org.hamcrest.Matchers.allOf(
+                is(instanceOf(Event.class)),
+                hasProperty("id", is(equalTo(id))),
+                hasProperty("name", is(equalTo(name))),
+                hasProperty("city", is(equalTo(city))),
+                hasProperty("location", is(equalTo(location)))
+        );
+    }
 }
 

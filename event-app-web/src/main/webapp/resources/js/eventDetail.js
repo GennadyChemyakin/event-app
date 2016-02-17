@@ -10,9 +10,10 @@ $(document).ready(function () {
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
-        if (data.timeStamp != null) {
-            event.date = new Date(data.timeStamp[0], data.timeStamp[1] - 1, data.timeStamp[2],
-                data.timeStamp[3], data.timeStamp[4]);
+
+        if (data.eventTime != null) {
+            event.date = new Date(data.eventTime[0], data.eventTime[1] - 1, data.eventTime[2],
+                data.eventTime[3], data.eventTime[4]);
         }
         event.user = {};
         event.user.username = data.user.username;
@@ -52,7 +53,11 @@ $(document).ready(function () {
     $('#addCommentButton').click(function () {
         if (window.username) {
             var message = $('#commentArea').val();
-            var firstCommentDate = getCommentDateOrNow($("#commentISOTime" + $(".commentRow:last").attr("id")).text());
+            var firstCommentDateString = $("#commentISOTime" + $(".commentRow:last").attr("id")).text();
+            var firstCommentDate = getCommentDateOrNow(firstCommentDateString);
+            if (!firstCommentDateString) {
+                firstCommentDate = new Date(new Date(firstCommentDate).getTime() - 60).toISOString();
+            }
             if (message) {
                 var commentTime = getCommentDateOrNow();
                 commentTime = commentTime.slice(0, commentTime.length - 1);
@@ -159,7 +164,7 @@ function displayCommentary(comment, mode) {
                     "username": username
                 })
             }).then(function (data, statusText, xhr) {
-                if(xhr.status == 204){
+                if (xhr.status == 204) {
                     $("#" + id).slideUp();
                 }
             })
