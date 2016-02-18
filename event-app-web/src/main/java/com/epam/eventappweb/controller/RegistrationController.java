@@ -31,7 +31,7 @@ public class RegistrationController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST, consumes="application/json")
     public ResponseEntity<?>  createUser(@RequestBody UserVO userVO, HttpServletRequest request) throws ServletException {
-
+        LOGGER.info("createUser started. Parameter UserVO = {}", userVO);
         User user = User.builder(userVO.getUsername(), userVO.getEmail())
                 .password(new Md5PasswordEncoder().encodePassword(userVO.getPassword(),""))
                 .name(userVO.getName())
@@ -46,6 +46,8 @@ public class RegistrationController {
         userService.createUser(user);
 
         request.login(userVO.getUsername(), userVO.getPassword());
+
+        LOGGER.info("createUser finished");
 
         return new ResponseEntity<>(HttpStatus.CREATED);
 

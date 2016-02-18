@@ -5,7 +5,7 @@ $(document).ready(function () {
     }).then(function (data) {
 
         window.timezoneOffset = new Date().getTimezoneOffset();
-
+        window.author         = data.user.username;
         var event = {};
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
@@ -37,7 +37,6 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
-        $('#profile').attr("href","profile.html?name=" + event.user.username.trim());
 
     }).then(function () {
         $.ajax({
@@ -85,6 +84,10 @@ $(document).ready(function () {
         } else {
             $('#addCommentFailMessage').slideDown();
         }
+    });
+
+    $("#author_profile").click(function () {
+       window.location.href = "profile.html?name="+window.author;
     });
 
 });

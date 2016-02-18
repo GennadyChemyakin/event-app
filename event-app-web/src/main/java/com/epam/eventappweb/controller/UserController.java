@@ -46,7 +46,7 @@ public class UserController {
     @RequestMapping(value = "/user", method = RequestMethod.GET, produces = "application/json")
     public UserVO getUserByName(@RequestParam String name) {
 
-        LOGGER.debug("getUserByName started. Params userName: {}", name);
+        LOGGER.info("getUserByName started. Params userName: {}", name);
         User user = userService.getUserByUsername(name);
         UserVO userVO = UserVO.builder(user.getUsername(),user.getEmail())
                 .bio(user.getBio())
@@ -58,7 +58,7 @@ public class UserController {
                 .name(user.getName())
                 .surname(user.getSurname())
                 .build();
-        LOGGER.debug("getUserByName finished. Returns user VO: {}", userVO);
+        LOGGER.info("getUserByName finished. Returns user VO: {}", userVO);
 
         return userVO;
     }
