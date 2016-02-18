@@ -109,8 +109,10 @@ function showComments(data) {
     }
     if (data.remainingCommentsCount == 0) {
         $('#loadComments').hide();
+    } else if(data.remainingCommentsCount < 10) {
+        $('#loadComments').text("Load previous " + data.remainingCommentsCount + " comment(s)");
     } else {
-        $('#loadComments').text("Load previous 10 comments of " + comment.remainingCommentsCount);
+        $('#loadComments').text("Load previous 10 comments of " + data.remainingCommentsCount);
     }
 }
 
