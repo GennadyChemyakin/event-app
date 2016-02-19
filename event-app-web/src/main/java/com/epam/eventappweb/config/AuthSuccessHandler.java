@@ -33,26 +33,23 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
         LOGGER.debug("determineTargetUrl started.");
-        if (this.isAlwaysUseDefaultTargetUrl()) {
-            String defaultTargetUrl = this.getDefaultTargetUrl();
-            LOGGER.debug("determineTargetUrl finished. Redirect to default URL = {}", defaultTargetUrl);
-            return defaultTargetUrl;
+        String targetUrl;
+        String targetUrlAsParam = getTargetUrlAsParameter(request);
+        String targetUrlFromSession = getTargetUrlFromSession(request);
+        if (this.isAlwaysUseDefaultTargetUrl() || StringUtils.isBlank(targetUrlAsParam) && StringUtils.isBlank(targetUrlFromSession)) {
+            targetUrl = this.getDefaultTargetUrl();
+        } else if (StringUtils.isNotBlank(targetUrlAsParam)) {
+            targetUrl = targetUrlAsParam;
         } else {
-            String targetUrl;
-            targetUrl = getTargetUrlAsParameter(request);
-            if(StringUtils.isBlank(targetUrl)) {
-                targetUrl = getTargetUrlFromSession(request);
-                if(StringUtils.isBlank(targetUrl)) {
-                    targetUrl = this.getDefaultTargetUrl();
-                }
-            }
-            LOGGER.debug("determineTargetUrl finished. Redirect to URL = {}", targetUrl);
-            return targetUrl;
+            targetUrl = targetUrlFromSession;
         }
+        LOGGER.debug("determineTargetUrl finished. Redirect to URL = {}", targetUrl);
+        return targetUrl;
     }
 
     /**
      * method that searches targetUrl in request params
+     *
      * @param request
      * @return target url
      */
@@ -66,6 +63,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
     /**
      * method that searches session attribute loginReferer to use it as url for redirect
+     *
      * @param request
      * @return target url
      */
