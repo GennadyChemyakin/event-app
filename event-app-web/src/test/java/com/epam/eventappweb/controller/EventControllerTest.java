@@ -83,8 +83,7 @@ public class EventControllerTest {
         //then
         resultActions.andExpect(status().isOk()).
                 andExpect(jsonPath("$.id", is(0))).
-                andExpect(jsonPath("$.user.username", is("Ivan"))).
-                andExpect(jsonPath("$.user.email", is("ivan@gmail.com"))).
+                andExpect(jsonPath("$.creator", is("Ivan"))).
                 andExpect(jsonPath("$.name", is("Party")));
     }
 

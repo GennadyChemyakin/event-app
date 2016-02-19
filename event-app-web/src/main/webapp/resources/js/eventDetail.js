@@ -16,9 +16,9 @@ $(document).ready(function () {
                 data.eventTime[3], data.eventTime[4]);
         }
         event.user = {};
-        event.user.username = data.user.username;
-        event.user.name = data.user.name != null ? data.user.name : "";
-        event.user.surname = data.user.surname != null ? data.user.surname : "";
+        event.user.username = data.creator;
+        event.user.name = data.creatorName != null ? data.creatorName : "";
+        event.user.surname = data.creatorSurname != null ? data.creatorSurname : "";
         event.country = data.country != null ? data.country : "";
         event.city = data.city != null ? data.city : "";
         event.location = data.location != null ? data.location : "";
