@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +26,10 @@ public class RegistrationController {
     @Autowired
     private UserService userService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/registration", method = RequestMethod.POST, consumes="application/json")
-    public ResponseEntity<?>  createUser(@RequestBody UserVO userVO, HttpServletRequest request) throws ServletException {
-
+    public void createUser(@RequestBody UserVO userVO, HttpServletRequest request) throws ServletException {
+        LOGGER.info("createUser started. Param: userVO = {};", userVO);
         User user = User.builder(userVO.getUsername(), userVO.getEmail())
                 .password(new Md5PasswordEncoder().encodePassword(userVO.getPassword(),""))
                 .name(userVO.getName())
@@ -46,8 +44,7 @@ public class RegistrationController {
         userService.createUser(user);
 
         request.login(userVO.getUsername(), userVO.getPassword());
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        LOGGER.info("createUser finished.");
 
     }
 

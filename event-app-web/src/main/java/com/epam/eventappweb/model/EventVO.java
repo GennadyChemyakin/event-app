@@ -22,6 +22,8 @@ public final class EventVO {
 
     private final String name;
     private final String creator;
+    private final String creatorName;
+    private final String creatorSurname;
     private final String description;
     private final String country;
     private final String city;
@@ -32,19 +34,21 @@ public final class EventVO {
     private final int id;
 
     private EventVO(EventModelBuilder builder) {
-        this.name           = builder.name;
-        this.creator        = builder.creator;
-        this.description    = builder.description;
-        this.country        = builder.country;
-        this.city           = builder.city;
-        this.location       = builder.location;
-        this.gpsLatitude    = builder.gpsLatitude;
-        this.gpsLongitude   = builder.gpsLongitude;
-        this.eventTime      = builder.eventTime;
-        this.id             = builder.id;
+        this.name = builder.name;
+        this.creator = builder.creator;
+        this.creatorName = builder.creatorName;
+        this.creatorSurname = builder.creatorSurname;
+        this.description = builder.description;
+        this.country = builder.country;
+        this.city = builder.city;
+        this.location = builder.location;
+        this.gpsLatitude = builder.gpsLatitude;
+        this.gpsLongitude = builder.gpsLongitude;
+        this.eventTime = builder.eventTime;
+        this.id = builder.id;
     }
 
-    public static EventModelBuilder builder(String name){
+    public static EventModelBuilder builder(String name) {
         return new EventModelBuilder(name);
     }
 
@@ -53,6 +57,8 @@ public final class EventVO {
 
         private String name;
         private String creator;
+        private String creatorName;
+        private String creatorSurname;
         private String description;
         private String country;
         private String city;
@@ -68,6 +74,16 @@ public final class EventVO {
 
         public EventModelBuilder creator(String creator) {
             this.creator = creator;
+            return this;
+        }
+
+        public EventModelBuilder creatorName(String creatorName) {
+            this.creatorName = creatorName;
+            return this;
+        }
+
+        public EventModelBuilder creatorSurname(String creatorSurname) {
+            this.creatorSurname = creatorSurname;
             return this;
         }
 
@@ -120,6 +136,14 @@ public final class EventVO {
         return creator;
     }
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public String getCreatorSurname() {
+        return creatorSurname;
+    }
+
     public String getName() {
         return name;
     }
@@ -152,12 +176,16 @@ public final class EventVO {
         return eventTime;
     }
 
-    public int getId () {return id;}
+    public int getId() {
+        return id;
+    }
 
     @Override
     public String toString() {
         return "EventVO{" +
-                "creator=" + creator +
+                "creator=" + creator + '\'' +
+                ", creatorName=" + creatorName + '\'' +
+                ", creatorSurname=" + creatorSurname + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", country='" + country + '\'' +

@@ -198,7 +198,7 @@ public class CommentControllerTest {
                 content(objectMapper.writeValueAsString(newCommentVO)));
 
         //then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isCreated());
     }
 
     /**

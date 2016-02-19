@@ -35,23 +35,32 @@ public class EventController {
     private EventService eventService;
 
     @RequestMapping(value = "/event/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Event> getEventDetail(@PathVariable("id") int eventId) {
+    public EventVO getEventDetail(@PathVariable("id") int eventId) {
         LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
-        Optional<Event> event = eventService.findById(eventId);
-        ResponseEntity<Event> resultResponseEntity;
-        if (event.isPresent()) {
-            resultResponseEntity = new ResponseEntity<>(event.get(), HttpStatus.OK);
-        } else
+        Optional<Event> eventOptional = eventService.findById(eventId);
+        if (!eventOptional.isPresent()) {
             throw new EventNotFoundException("Event Not Found by ID = " + eventId);
-        LOGGER.info("getEventDetail finished. Result:"
-                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), event);
-        return resultResponseEntity;
+        }
+        Event event = eventOptional.get();
+        EventVO eventVO = EventVO.builder(event.getName())
+                .city(event.getCity())
+                .country(event.getCountry())
+                .description(event.getDescription())
+                .id(event.getId())
+                .creator(event.getUser().getUsername())
+                .creatorName(event.getUser().getName())
+                .creatorSurname(event.getUser().getSurname())
+                .eventTime(event.getEventTime())
+                .location(event.getLocation())
+                .build();
+        LOGGER.info("getEventDetail finished. Result: {}", eventVO);
+        return eventVO;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/event/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") int eventId, @RequestBody EventVO eventVO) {
+    public void updateEvent(@PathVariable("id") int eventId, @RequestBody EventVO eventVO) {
         LOGGER.info("updateEvent started. Param: id = {}; event = {} ", eventId, eventVO);
-        ResponseEntity<Event> resultResponseEntity;
 
         Event event = Event.builder(eventVO.getName()).
                 id(eventId).
@@ -64,21 +73,18 @@ public class EventController {
                 eventTime(eventVO.getEventTime()).build();
 
         int updatedEntries = eventService.updateEvent(event);
-        if (updatedEntries == 1) {
-            resultResponseEntity = new ResponseEntity<>(HttpStatus.OK);
-        } else
-            throw new EventNotUpdatedException("Event with id = " + eventId + " not updated with new fields value:" + eventVO);
-
-        LOGGER.info("updateEvent finished. Result: Status code: {}", resultResponseEntity.getStatusCode());
-        return resultResponseEntity;
+        if (updatedEntries != 1) {
+            throw new EventNotUpdatedException("Event with id = " + eventId + " not updated with new fields value: " + eventVO);
+        }
+        LOGGER.info("updateEvent finished.");
     }
 
     @RequestMapping(value = "/event/", method = RequestMethod.GET)
-    public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") QueryMode queryMode,
+    public EventPackVO getEventList(@RequestParam("queryMode") QueryMode queryMode,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("after") LocalDateTime after,
+                                                    @RequestParam("after") LocalDateTime after,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("before") LocalDateTime before) {
+                                                    @RequestParam("before") LocalDateTime before) {
         LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
         List<Event> eventList;
         EventPackVO eventPackVO;
@@ -98,8 +104,7 @@ public class EventController {
         }
         eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(effectiveDate));
 
-        ResponseEntity<EventPackVO> resultResponseEntity;
-        for(Event event: eventList) {
+        for (Event event : eventList) {
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getId()).
                     name(event.getName()).
                     creator(event.getUser().getUsername()).
@@ -114,14 +119,13 @@ public class EventController {
             eventPackVO.addEventPreviewVO(eventPreviewVO);
         }
 
-        resultResponseEntity = new ResponseEntity<>(eventPackVO, HttpStatus.OK);
         LOGGER.info("getEventList finished. Resuls: {}", eventPackVO);
-        return resultResponseEntity;
+        return eventPackVO;
     }
 
-    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes="application/json")
+    @RequestMapping(value = "/event", method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventVO addEvent(@RequestBody EventVO eventVO,Principal principal) {
+    public EventVO addEvent(@RequestBody EventVO eventVO, Principal principal) {
         LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 
         Event event = Event.builder(eventVO.getName()).
@@ -134,7 +138,7 @@ public class EventController {
                 eventTime(eventVO.getEventTime()).
                 build();
 
-        Event newEvent = eventService.createEvent(event,principal.getName());
+        Event newEvent = eventService.createEvent(event, principal.getName());
 
         EventVO newEventVO = EventVO.builder(newEvent.getName())
                 .city(newEvent.getCity())
