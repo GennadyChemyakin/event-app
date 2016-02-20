@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div>
-                <button id="loadComments" type="button" class="btn btn-primary btn-block" aria-haspopup="true"
+                <button id="loadOldComments" type="button" class="btn btn-primary btn-block" aria-haspopup="true"
                         aria-expanded="true">Load previous comments
                 </button>
             </div>
@@ -34,6 +34,12 @@
         <div class="container-fluid" id="commentPanel">
         </div>
         <div class="container-fluid" id="addCommentPanel">
+            <div>
+                <button id="loadNewComments" type="button" class="btn btn-primary btn-block" aria-haspopup="true"
+                        aria-expanded="true">Load new comments
+                </button>
+            </div>
+            <br>
             <textarea class="form-control" rows="3" id="commentArea"></textarea>
             <div class="alert alert-danger" id="addCommentFailMessage" role="alert" style="display: none;">You must be
                 logged!

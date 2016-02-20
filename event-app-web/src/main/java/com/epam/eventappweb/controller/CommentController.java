@@ -3,6 +3,7 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.CommentPackVO;
@@ -131,5 +132,18 @@ public class CommentController {
         commentService.deleteComment(comment);
         LOGGER.info("deleteCommentary finished.");
     }
+
+    @RequestMapping(value = "/comment/count", method = RequestMethod.GET)
+    public int countCommentsAddedBeforeOrAfterDate(@RequestParam("queryMode") QueryMode queryMode,
+                                                   @RequestParam("eventId") int eventId,
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       @RequestParam("commentTime") LocalDateTime commentTime) {
+        LOGGER.info("countCommentsAddedBeforeOrAfterDate started. Param: queryMode = {}, eventId = {}, commentTime = {}", queryMode, eventId, commentTime);
+        int count = commentService.countCommentsAddedBeforeOrAfterDate(eventId, commentTime, queryMode);
+        LOGGER.info("countCommentsAddedBeforeOrAfterDate finished. Result: {}", count);
+        return count;
+
+    }
+
 
 }
