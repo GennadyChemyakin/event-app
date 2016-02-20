@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -76,27 +75,10 @@ public class EventController {
     @RequestMapping(value = "/event/", method = RequestMethod.GET)
     public ResponseEntity<EventPackVO> getEventList(@RequestParam("queryMode") QueryMode queryMode,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("after") LocalDateTime after,
-                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("before") LocalDateTime before) {
-        LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
-        List<Event> eventList;
-        EventPackVO eventPackVO;
-        LocalDateTime effectiveDate;
-
-        switch (queryMode) {
-            case BEFORE:
-                eventList = eventService.getOrderedEvents(before, queryMode);
-                effectiveDate = after;
-                break;
-            case AFTER:
-                eventList = eventService.getOrderedEvents(after, queryMode);
-                effectiveDate = eventList.isEmpty() ? after : eventList.get(0).getCreationTime();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported query mode");
-        }
-        eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(effectiveDate));
+                                                        @RequestParam("time") LocalDateTime effectiveTime) {
+        LOGGER.info("getEventList started. Param: effectiveTime = {},queryMode = {} ", effectiveTime, queryMode);
+        EventPackVO eventPackVO = new EventPackVO();
+        List<Event> eventList =  eventService.getOrderedEvents(effectiveTime, queryMode);
 
         ResponseEntity<EventPackVO> resultResponseEntity;
         for(Event event: eventList) {
@@ -121,7 +103,7 @@ public class EventController {
 
     @RequestMapping(value = "/event", method = RequestMethod.POST, consumes="application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventVO addEvent(@RequestBody EventVO eventVO,Principal principal) {
+    public EventVO addEvent(@RequestBody EventVO eventVO, Principal principal) {
         LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 
         Event event = Event.builder(eventVO.getName()).
@@ -149,6 +131,15 @@ public class EventController {
 
         LOGGER.info("addEvent finished. eventVO = {}", newEventVO);
         return newEventVO;
+    }
 
+    @RequestMapping(value = "/event/count", method =  RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public int countNumberOfNewEvents(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                          @RequestParam("after") LocalDateTime after) {
+        LOGGER.info("countNumberOfNewEvents started. Param: after = {} ", after);
+        int numberOfNewEvents = eventService.getNumberOfNewEvents(after);
+        LOGGER.info("countNumberOfNewEvents finished. numberOfNewEvents = {}", numberOfNewEvents);
+        return numberOfNewEvents;
     }
 }

@@ -8,19 +8,14 @@ import java.util.List;
  */
 public final class EventPackVO {
     private final List<EventPreviewVO> eventPreviewVOList;
-    private final int numberOfNewEvents;
 
-    public EventPackVO(int numberOfNewEvents) {
+    public EventPackVO() {
         this.eventPreviewVOList = new ArrayList<>();
-        this.numberOfNewEvents = numberOfNewEvents;
+
     }
 
     public List<EventPreviewVO> getEventPreviewVOList() {
         return eventPreviewVOList;
-    }
-
-    public int getNumberOfNewEvents() {
-        return numberOfNewEvents;
     }
 
     public void addEventPreviewVO(EventPreviewVO eventPreviewVO) {
@@ -30,7 +25,6 @@ public final class EventPackVO {
     public String toString() {
         return "EventPackVO{" +
                 "eventPreviewVOList=" + eventPreviewVOList +
-                ", numberOfNewEvents=" + numberOfNewEvents +
                 '}';
     }
 }
