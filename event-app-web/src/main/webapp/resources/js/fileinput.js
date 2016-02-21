@@ -1132,7 +1132,9 @@
                         var errMsg = self.parseError(jqXHR, errorThrown);
                         params.jqXHR = jqXHR;
                         params.response = {};
-                        self.showError(errMsg, params, 'filedeleteerror');
+                        $("#upload_msg").text(errMsg);
+                        $("#upload_msg").show();
+//                        self.showError(errMsg, params, 'filedeleteerror');
                         $frame.removeClass('file-uploading');
                         resetProgress();
                     }

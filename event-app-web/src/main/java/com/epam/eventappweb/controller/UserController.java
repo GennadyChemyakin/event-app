@@ -3,18 +3,22 @@ package com.epam.eventappweb.controller;
 import com.epam.eventappweb.model.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.security.Principal;
+import java.util.Iterator;
 
 
 @RestController
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
 
     /**
      * method for getting info about logged user
@@ -32,4 +36,41 @@ public class UserController {
         LOGGER.info("getLoggedUserDetails finished. Result: userVO = {} ", userVO);
         return userVO;
     }
+
+
+    @RequestMapping(value="/upload", method=RequestMethod.POST)
+    public HttpStatus handleImageUpload(MultipartHttpServletRequest request){
+
+        LOGGER.info("handleImageUpload started.");
+
+        Iterator<String> itr = request.getFileNames();
+        String filename = "";
+        MultipartFile file = null;
+        if(itr.hasNext()) {
+            String uploadedFile = itr.next();
+            file = request.getFile(uploadedFile);
+            filename = file.getOriginalFilename();
+        }
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                byte[] bytes = file.getBytes();
+                   BufferedOutputStream stream =
+                        new BufferedOutputStream(new FileOutputStream(new File(filename)));
+                stream.write(bytes);
+                stream.close();
+                LOGGER.info("handleImageUpload finished uploading file with name- {}",filename);
+                return HttpStatus.CREATED;
+            } catch (Exception e) {
+                LOGGER.info("handleImageUpload finished. Failed to read an image");
+                return HttpStatus.NOT_ACCEPTABLE;
+            }
+        } else {
+            LOGGER.info("handleImageUpload finished. Failed to upload an image");
+            return HttpStatus.NO_CONTENT;
+        }
+
+    }
+
+
 }
