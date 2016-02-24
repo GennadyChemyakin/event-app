@@ -1,36 +1,38 @@
 $(document).ready(function () {
         window.timezoneOffset = new Date().getTimezoneOffset();
         getEventsFromServer(true);
-        //Handle button for getting new events
+        //Getting new events button handler
         $('#loadNewEvents').click(function() { getEventsFromServer(false); });
 });
 
 //Function for requesting events from server
 //isBefore - tells whether the method should get events before the bottom event on page of after the top event on page
 function getEventsFromServer(isBefore) {
-    //date for top event on page
-    var lastEventDate = getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
-    //date for bottom event on page
-    var firstEventDate = getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
-    var url = "/event-app/event/?queryMode=" + (isBefore ? "BEFORE" : "AFTER") + "&after=" + firstEventDate + "&before=" + lastEventDate;
+    var url = "/event-app/event/?queryMode=" + (isBefore ? "BEFORE&time=" + getLastDate() : "AFTER&time=" + getFirstDate());
     $.ajax({
                 type: "GET",
                 url: url
             }).then(function(data) {
                 //Showing existing events on page
                 if(isBefore) {
-                    for(var i = 0; i < data.eventPreviewVOList.length; i++) {
-                        showEvents(data.eventPreviewVOList[i], isBefore, i);
+                    for(var i = 0; i < data.length; i++) {
+                        showEvents(data[i], isBefore, i);
                     }
                 }
                 //Showing new events. Since events are sorted in DESC order we need to iterate through them in reverse
                 else {
-                    for(var i = data.eventPreviewVOList.length - 1; i >=0 ; i--) {
-                        showEvents(data.eventPreviewVOList[i], isBefore, i);
+                    for(var i = data.length - 1; i >=0 ; i--) {
+                        showEvents(data[i], isBefore, i);
                     }
                 }
-                processNewEventsButton(data.numberOfNewEvents);
             });
+    //getting number of new events, timeout 100ms for loading events
+    setTimeout(function() {
+        $.ajax({
+                    type: "GET",
+                    url: "/event-app/event/count?after=" + getFirstDate()
+                }).then(processNewEventsButton);
+    }, 100);
 }
 
 //function for hiding or showing button for new events with message
@@ -163,10 +165,19 @@ function getEventDate(dateString) {
     return date;
 }
 
+//Returns creation time for the top event on the page
+function getLastDate() {
+    return getEventDate($("#createTime" + $(".eventRow:last").attr("id")).text());
+}
+
+//Returns creation time for the bottom event on the page
+function getFirstDate() {
+    return getEventDate($("#createTime" + $(".eventRow:first").attr("id")).text());
+}
+
 
 // we bind the scroll event, with the 'flyout' namespace
 // so we can unbind easily
-// TODO:enable autoscroll when page height is < than whole page
 $(window).bind('scroll.flyout', (function check() {
 
     // this function is defined only once

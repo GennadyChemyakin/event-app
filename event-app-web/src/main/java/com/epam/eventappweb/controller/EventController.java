@@ -5,7 +5,6 @@ import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
-import com.epam.eventappweb.model.EventPackVO;
 import com.epam.eventappweb.model.EventPreviewVO;
 import com.epam.eventappweb.model.EventVO;
 import org.slf4j.Logger;
@@ -17,8 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,30 +79,12 @@ public class EventController {
     }
 
     @RequestMapping(value = "/event/", method = RequestMethod.GET)
-    public EventPackVO getEventList(@RequestParam("queryMode") QueryMode queryMode,
+    public List<EventPreviewVO> getEventList(@RequestParam("queryMode") QueryMode queryMode,
                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    @RequestParam("after") LocalDateTime after,
-                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    @RequestParam("before") LocalDateTime before) {
-        LOGGER.info("getEventList started. Param: after = {}, before = {}, queryMode = {} ", after, before, queryMode);
-        List<Event> eventList;
-        EventPackVO eventPackVO;
-        LocalDateTime effectiveDate;
-
-        switch (queryMode) {
-            case BEFORE:
-                eventList = eventService.getOrderedEvents(before, queryMode);
-                effectiveDate = after;
-                break;
-            case AFTER:
-                eventList = eventService.getOrderedEvents(after, queryMode);
-                effectiveDate = eventList.isEmpty() ? after : eventList.get(0).getCreationTime();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported query mode");
-        }
-        eventPackVO = new EventPackVO(eventService.getNumberOfNewEvents(effectiveDate));
-
+                                                        @RequestParam("time") LocalDateTime effectiveTime) {
+        LOGGER.info("getEventList started. Param: effectiveTime = {},queryMode = {} ", effectiveTime, queryMode);
+        List<EventPreviewVO> eventPreviewVOList = new LinkedList<>();
+        List<Event> eventList =  eventService.getOrderedEvents(effectiveTime, queryMode);
         for (Event event : eventList) {
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getId()).
                     name(event.getName()).
@@ -116,11 +97,10 @@ public class EventController {
                     picture(new byte[0]).
                     eventTime(event.getEventTime()).
                     creationTime(event.getCreationTime()).build();
-            eventPackVO.addEventPreviewVO(eventPreviewVO);
+            eventPreviewVOList.add(eventPreviewVO);
         }
-
-        LOGGER.info("getEventList finished. Resuls: {}", eventPackVO);
-        return eventPackVO;
+        LOGGER.info("getEventList finished. Resuls: {}", eventPreviewVOList);
+        return eventPreviewVOList;
     }
 
     @RequestMapping(value = "/event", method = RequestMethod.POST, consumes = "application/json")
@@ -153,6 +133,15 @@ public class EventController {
 
         LOGGER.info("addEvent finished. eventVO = {}", newEventVO);
         return newEventVO;
+    }
 
+    @RequestMapping(value = "/event/count", method =  RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public int countNumberOfNewEvents(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                          @RequestParam("after") LocalDateTime after) {
+        LOGGER.info("countNumberOfNewEvents started. Param: after = {} ", after);
+        int numberOfNewEvents = eventService.getNumberOfNewEvents(after);
+        LOGGER.info("countNumberOfNewEvents finished. numberOfNewEvents = {}", numberOfNewEvents);
+        return numberOfNewEvents;
     }
 }
