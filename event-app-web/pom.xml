@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${version.stringUtils}</version>
+            <version>${version.apache-commons}</version>
         </dependency>
     </dependencies>
 
