@@ -124,6 +124,13 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${version.jackson.jsr310}</version>
         </dependency>
+
+        <!--StringUtils-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${version.apache-commons}</version>
+        </dependency>
     </dependencies>
 
     <build>
