@@ -24,8 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
@@ -213,8 +211,8 @@ public class EventControllerTest {
 
         //then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
-                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)));
+                .andExpect(jsonPath("$.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.[1].name", Matchers.is(secondEventName)));
     }
 
     /**
@@ -242,8 +240,8 @@ public class EventControllerTest {
 
         //then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
-                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)));
+                .andExpect(jsonPath("$.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.[1].name", Matchers.is(secondEventName)));
     }
 
     /**

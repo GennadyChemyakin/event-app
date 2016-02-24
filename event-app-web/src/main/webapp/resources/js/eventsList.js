@@ -15,14 +15,14 @@ function getEventsFromServer(isBefore) {
             }).then(function(data) {
                 //Showing existing events on page
                 if(isBefore) {
-                    for(var i = 0; i < data.eventPreviewVOList.length; i++) {
-                        showEvents(data.eventPreviewVOList[i], isBefore, i);
+                    for(var i = 0; i < data.length; i++) {
+                        showEvents(data[i], isBefore, i);
                     }
                 }
                 //Showing new events. Since events are sorted in DESC order we need to iterate through them in reverse
                 else {
-                    for(var i = data.eventPreviewVOList.length - 1; i >=0 ; i--) {
-                        showEvents(data.eventPreviewVOList[i], isBefore, i);
+                    for(var i = data.length - 1; i >=0 ; i--) {
+                        showEvents(data[i], isBefore, i);
                     }
                 }
             });
