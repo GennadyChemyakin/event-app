@@ -99,7 +99,7 @@ public class UserControllerTest {
                 .param("name",userName));
 
         //then
-        resultActions.andExpect(status().isOk()).andDo(print())
+        resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(userName))
                 .andExpect(jsonPath("$.email").value(userEmail))
                 .andExpect(jsonPath("$.country").value(country));

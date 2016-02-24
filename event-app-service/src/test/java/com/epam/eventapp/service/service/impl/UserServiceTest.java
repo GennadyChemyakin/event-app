@@ -128,12 +128,11 @@ public class UserServiceTest {
         Assert.assertEquals(user.getEmail(), email);
     }
 
-    @Test(expected = UserNotFoundException.class)
-    public void ShouldThrowUserNotFoundException() {
+    @Test(expected = UsernameNotFoundException.class)
+    public void shouldThrowUserNotFoundException() {
         //given
         final String username  = "wrong username";
-        final String email     = "email";
-        User expectedUser      = User.builder(username, email).build();
+        User expectedUser      = User.builder().username(username).build();
         when(userDAOMock.getUserByUsername(username)).thenThrow(UsernameNotFoundException.class);
 
         //when
