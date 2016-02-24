@@ -99,7 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
         AuthSuccessHandler authSuccessHandler = new AuthSuccessHandler();
-        authSuccessHandler.setDefaultTargetUrl("/home.html");
+        authSuccessHandler.setDefaultTargetUrl("/events.html");
         return authSuccessHandler;
     }
 

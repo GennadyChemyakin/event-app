@@ -31,7 +31,7 @@
         <version.jayway.jsonpath>0.8.1</version.jayway.jsonpath>
         <version.h2>1.4.190</version.h2>
         <version.jackson>2.7.1</version.jackson>
-        <version.stringUtils>3.0</version.stringUtils>
+        <version.apache-commons>3.0</version.apache-commons>
     </properties>
 
     <modules>
