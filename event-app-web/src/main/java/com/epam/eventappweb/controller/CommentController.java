@@ -3,6 +3,7 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.CommentPackVO;
@@ -100,7 +101,7 @@ public class CommentController {
         List<CommentVO> newCommentsVO = newComments.stream().map(comment -> CommentVO.builder().id(comment.getId()).eventId(comment.getEventId()).
                 username(comment.getUser().getUsername()).message(comment.getMessage()).
                 commentTime(comment.getCommentTime()).userPhoto(comment.getUser().getPhoto()).build()).collect(Collectors.toList());
-        LOGGER.info("showNewComments finished. Result:", newCommentsVO);
+        LOGGER.info("showNewComments finished. Result: {}", newCommentsVO);
         return newCommentsVO;
     }
 
@@ -120,5 +121,18 @@ public class CommentController {
         commentService.deleteComment(comment);
         LOGGER.info("deleteCommentary finished.");
     }
+
+    @RequestMapping(value = "/comment/count", method = RequestMethod.GET)
+    public int countCommentsAddedBeforeOrAfterDate(@RequestParam("queryMode") QueryMode queryMode,
+                                                   @RequestParam("eventId") int eventId,
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       @RequestParam("commentTime") LocalDateTime commentTime) {
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate started. Param: queryMode = {}, eventId = {}, commentTime = {}", queryMode, eventId, commentTime);
+        int count = commentService.countCommentsAddedBeforeOrAfterDate(eventId, commentTime, queryMode);
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate finished. Result: {}", count);
+        return count;
+
+    }
+
 
 }

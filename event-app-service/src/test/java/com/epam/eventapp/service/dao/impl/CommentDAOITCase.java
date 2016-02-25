@@ -6,6 +6,7 @@ import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
+import com.epam.eventapp.service.model.QueryMode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,7 +76,7 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
     }
 
     /**
-     * testing countOfCommentsAddedBeforeDate method from CommentDAOImpl.
+     * testing countCommentsAddedBeforeOrAfterDate method from CommentDAOImpl.
      * counting comments that were added before specified time
      * checking that amount is equals to known amount of comments
      */
@@ -87,8 +88,8 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
         final int amount = 3;
 
         //when
-        int remainingCommentsCount = commentDAO.countOfCommentsAddedBeforeDate(id,
-                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        int remainingCommentsCount = commentDAO.countCommentsAddedBeforeOrAfterDate(id,
+                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), QueryMode.BEFORE);
 
         //then
         Assert.assertEquals(amount, remainingCommentsCount);
@@ -195,5 +196,24 @@ public class CommentDAOITCase extends AbstractTransactionalJUnit4SpringContextTe
 
         //then
         Assert.fail("ObjectNotDeletedException not thrown");
+    }
+
+    /**
+     * testing countCommentsAddedBeforeOrAfterDate method from CommentDAOImpl.
+     * counting comments that were added after specified time
+     * checking that amount is equals to known amount of comments
+     */
+    public void shouldReturnAmountOfCommentAddedAfterDate() {
+        //given
+        final int id = 0;
+        final String commentTime = "2016-01-19 16:00:00";
+        final int amount = 2;
+
+        //when
+        int remainingCommentsCount = commentDAO.countCommentsAddedBeforeOrAfterDate(id,
+                LocalDateTime.parse(commentTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), QueryMode.AFTER);
+
+        //then
+        Assert.assertEquals(amount, remainingCommentsCount);
     }
 }

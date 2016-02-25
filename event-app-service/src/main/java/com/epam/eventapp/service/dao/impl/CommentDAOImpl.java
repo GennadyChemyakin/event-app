@@ -5,6 +5,7 @@ import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.CommentaryNotAddedException;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
+import com.epam.eventapp.service.model.QueryMode;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -27,8 +28,11 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
             "where c.event_id=:eventId and c.comment_time < :before ORDER BY c.comment_time DESC) comment_alias " +
             "where rownum <= :amount";
 
-    private final static String GET_COUNT_OF_REMAINING_COMMENTS = "select count(*) from commentary c where c.comment_time" +
-            " < :before and c.event_id=:eventId";
+    private final static String GET_COUNT_OF_COMMENTS = "select count(*) from commentary";
+
+    private final static String ADDED_BEFORE_DATE = " where comment_time < :commentTime and event_id=:eventId";
+
+    private final static String ADDED_AFTER_DATE = " where comment_time > :commentTime and event_id=:eventId";
 
     private final static String ADD_COMMENTARY = "insert into COMMENTARY (id, event_id, sec_user_id, comment_time, message)" +
             " VALUES(commentary_id_seq.nextval, :eventId, :userId, :commentTime, :message)";
@@ -65,11 +69,19 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
     }
 
     @Override
-    public int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime before) {
+    public int countCommentsAddedBeforeOrAfterDate(int eventId, LocalDateTime commentTime, QueryMode queryMode) {
         MapSqlParameterSource params = new MapSqlParameterSource();
+        String query;
+        if (queryMode.equals(QueryMode.BEFORE)) {
+            query = GET_COUNT_OF_COMMENTS + ADDED_BEFORE_DATE;
+        } else if (queryMode.equals(QueryMode.AFTER)) {
+            query = GET_COUNT_OF_COMMENTS + ADDED_AFTER_DATE;
+        } else {
+            throw new IllegalArgumentException("Unsupported query mode " + queryMode);
+        }
         params.addValue("eventId", eventId);
-        params.addValue("before", Timestamp.valueOf(before));
-        return getNamedParameterJdbcTemplate().queryForObject(GET_COUNT_OF_REMAINING_COMMENTS, params, Integer.class);
+        params.addValue("commentTime", Timestamp.valueOf(commentTime));
+        return getNamedParameterJdbcTemplate().queryForObject(query, params, Integer.class);
     }
 
     @Override

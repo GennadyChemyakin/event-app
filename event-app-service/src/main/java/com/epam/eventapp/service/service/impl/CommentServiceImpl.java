@@ -3,12 +3,11 @@ package com.epam.eventapp.service.service.impl;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.service.CommentService;
-import com.epam.eventapp.service.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +35,8 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentDAO.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, before, amount);
         int commentListSize = commentList.size();
         if (commentListSize > 0) {
-            int remainingCommentsCount = commentDAO.countOfCommentsAddedBeforeDate(eventId,
-                    commentList.get(commentListSize - 1).getCommentTime());
+            int remainingCommentsCount = commentDAO.countCommentsAddedBeforeOrAfterDate(eventId,
+                    commentList.get(commentListSize - 1).getCommentTime(), QueryMode.BEFORE);
 
             commentPack = new CommentPack(commentList, remainingCommentsCount);
         } else {
@@ -70,5 +69,14 @@ public class CommentServiceImpl implements CommentService {
         LOGGER.debug("deleteComment started. Params: comment = {}", comment);
         commentDAO.deleteCommentById(comment.getId());
         LOGGER.debug("deleteComment finished.");
+    }
+
+    @Override
+    public int countCommentsAddedBeforeOrAfterDate(int eventId, LocalDateTime commentTime, QueryMode queryMode) {
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate started. Params: eventId = {}, commentTime = {}, queryMode = {}",
+                eventId, commentTime, queryMode);
+        int count = commentDAO.countCommentsAddedBeforeOrAfterDate(eventId, commentTime, queryMode);
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate finished. Result: {}", count);
+        return count;
     }
 }

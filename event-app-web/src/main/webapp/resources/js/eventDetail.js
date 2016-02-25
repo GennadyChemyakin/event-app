@@ -37,27 +37,32 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
+
     }).then(function () {
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + getCommentDateOrNow()
-        }).then(showComments);
+        }).then(showComments).then(function(){
+            setInterval(lookingForNewComments, 60000);
+        });
     });
-    $('#loadComments').click(function () {
+
+    $('#loadOldComments').click(function () {
         var lastCommentDate = getCommentDateOrNow($("#commentISOTime" + $(".commentRow:first").attr("id")).text());
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + lastCommentDate
         }).then(showComments)
     });
+
+    $('#loadNewComments').click(function () {
+        loadNewComments();
+        $('#loadNewComments').css("display", "none");
+    });
+
     $('#addCommentButton').click(function () {
         if (window.username) {
             var message = $('#commentArea').val();
-            var firstCommentDateString = $("#commentISOTime" + $(".commentRow:last").attr("id")).text();
-            var firstCommentDate = getCommentDateOrNow(firstCommentDateString);
-            if (!firstCommentDateString) {
-                firstCommentDate = new Date(new Date(firstCommentDate).getTime() - 60).toISOString();
-            }
             if (message) {
                 var commentTime = getCommentDateOrNow();
                 commentTime = commentTime.slice(0, commentTime.length - 1);
@@ -70,14 +75,8 @@ $(document).ready(function () {
                         "message": message,
                         "commentTime": commentTime
                     })
-                }).then(function () {
-                    $.ajax({
-                        type: "GET",
-                        url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + firstCommentDate
-                    }).then(function (data) {
-                        showNewComments(data);
-                        $('#commentArea').val("");
-                    })
+                }).then(loadNewComments).then(function () {
+                    $('#commentArea').val("");
                 });
             }
         } else {
@@ -87,7 +86,50 @@ $(document).ready(function () {
 
 });
 
-//return local date made from commentDateString or now if commentDateString == null
+//function return comment time of the newest commentary on the page
+function getNewestCommentTimeString() {
+    var firstCommentDateString = $("#commentISOTime" + $(".commentRow:last").attr("id")).text();
+    //console.log(firstCommentDateString);
+    //console.log("#commentISOTime" + $(".commentRow:last").attr("id"));
+    var firstCommentDate = getCommentDateOrNow(firstCommentDateString);
+    if (!firstCommentDateString) {
+        //if there are not any comments on the page we take past time by 1 second to prevent situation
+        // when we want to add new commentary with commentTime = now its commentTime match time witch we use as
+        // after parameter in loadNewComments function and that's why we can't get this new commentary
+        firstCommentDate = new Date(new Date(firstCommentDate).getTime() - 1000).toISOString();
+    }
+    return firstCommentDate;
+}
+
+//function to load list of comments that were added after the newest comment that displayed on page
+function loadNewComments() {
+    $.ajax({
+        type: "GET",
+        url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + getNewestCommentTimeString()
+    }).then(showNewComments);
+}
+
+//function that looking every minute for count of new comments and display theirs amount on loadNewComments button
+//if amount of new comments 4 or more - loads list of new comments
+function lookingForNewComments() {
+    $.ajax({
+        type: "GET",
+        url: "/event-app/comment/count?eventId=" + urlParam("id") + "&commentTime=" + getNewestCommentTimeString() + "&queryMode=AFTER"
+    }).then(function (data) {
+        if (data == 0) {
+            $('#loadNewComments').css("display", "none");
+        } else if (data > 0 && data < 4) {
+            $('#loadNewComments').css("display", "block");
+            $('#loadNewComments').text("Added " + data + " new comment(s)");
+        } else {
+            loadNewComments();
+        }
+    })
+
+}
+
+
+//return local date made from commentDateString or now if commentDateString is empty
 function getCommentDateOrNow(commentDateString) {
     var commentDate;
     if (commentDateString) {
@@ -108,17 +150,17 @@ function showComments(data) {
         displayCommentary(comment, 1);
     }
     if (data.remainingCommentsCount == 0) {
-        $('#loadComments').hide();
-    } else if(data.remainingCommentsCount < 10) {
-        $('#loadComments').text("Load previous " + data.remainingCommentsCount + " comment(s)");
+        $('#loadOldComments').hide();
+    } else if (data.remainingCommentsCount < 10) {
+        $('#loadOldComments').text("Load previous " + data.remainingCommentsCount + " comment(s)");
     } else {
-        $('#loadComments').text("Load previous 10 comments of " + data.remainingCommentsCount);
+        $('#loadOldComments').text("Load previous 10 comments of " + data.remainingCommentsCount);
     }
 }
 
 //function for displaying list of new comments
 function showNewComments(data) {
-    for (var i = 0; i < data.length; i++) {
+    for (var i = data.length - 1; i >= 0; i--) {
         var comment = buildComment(data[i]);
         displayCommentary(comment, 0);
     }

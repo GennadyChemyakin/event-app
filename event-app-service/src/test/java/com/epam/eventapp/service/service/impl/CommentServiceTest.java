@@ -5,6 +5,7 @@ import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.service.CommentService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,8 +58,8 @@ public class CommentServiceTest {
 
         when(commentDAOMock.getCommentsListOfFixedSizeByEventIdBeforeDate(id, commentDateTime,
                 commentsAmount)).thenReturn(expectedCommentList);
-        when(commentDAOMock.countOfCommentsAddedBeforeDate(id, expectedCommentList.get(expectedCommentList.size() - 1).
-                getCommentTime())).thenReturn(remainingComments);
+        when(commentDAOMock.countCommentsAddedBeforeOrAfterDate(id, expectedCommentList.get(expectedCommentList.size() - 1).
+                getCommentTime(), QueryMode.BEFORE)).thenReturn(remainingComments);
 
 
         //when
@@ -216,5 +217,27 @@ public class CommentServiceTest {
 
         //then
         Assert.fail("ObjectNotDeletedException not thrown");
+    }
+
+    /**
+     * testing countCommentsAddedBeforeOrAfterDate method from CommentServiceImpl.
+     * counting comments that were added after specified time
+     * checking that amount is equals to known amount of comments
+     */
+    @Test
+    public void shouldReturnAmountOfCommentAddedAfterDate() {
+        //given
+        final int id = 0;
+        final String commentTime = "2016-01-19 16:00:00";
+        final int commentsAmount = 2;
+        final LocalDateTime commentDateTime = LocalDateTime.parse(commentTime,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        when(commentDAOMock.countCommentsAddedBeforeOrAfterDate(id, commentDateTime, QueryMode.AFTER)).thenReturn(commentsAmount);
+
+        //when
+        int count = sut.countCommentsAddedBeforeOrAfterDate(id, commentDateTime, QueryMode.AFTER);
+
+        //then
+        Assert.assertEquals(commentsAmount, count);
     }
 }

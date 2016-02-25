@@ -4,6 +4,7 @@ import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.CommentVO;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -270,5 +272,30 @@ public class CommentControllerTest {
 
         //then
         Assert.fail("ObjectNotDeletedException not thrown");
+    }
+
+    /**
+     * testing countCommentsAddedBeforeOrAfterDate from CommentController
+     * expect status 200 and amount of comments that were added after specified date
+     * @throws Exception
+     */
+    @Test
+    public void shouldReturnAmountOfCommentsAddedAfterDate() throws Exception {
+        //given
+        final int id = 0;
+        final String commentTimeString = "2016-01-23 15:00:10";
+        final LocalDateTime commentTime = LocalDateTime.parse(commentTimeString,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        final int commentsAmount = 2;
+        QueryMode queryMode = QueryMode.AFTER;
+        when(commentServiceMock.countCommentsAddedBeforeOrAfterDate(id, commentTime, queryMode)).thenReturn(commentsAmount);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/comment/count?queryMode=" + queryMode.name() + "&eventId=" + id +
+                "&commentTime=" + commentTime));
+
+        //then
+        resultActions.andExpect(status().isOk());
+        Assert.assertEquals(String.valueOf(commentsAmount), resultActions.andReturn().getResponse().getContentAsString());
     }
 }
