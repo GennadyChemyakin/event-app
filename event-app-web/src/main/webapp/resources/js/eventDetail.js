@@ -37,12 +37,15 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
+
     }).then(function () {
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + getCommentDateOrNow()
-        }).then(showComments);
-    }).then(lookingForNewComments);
+        }).then(showComments).then(function(){
+            setInterval(lookingForNewComments, 60000);
+        });
+    });
 
     $('#loadOldComments').click(function () {
         var lastCommentDate = getCommentDateOrNow($("#commentISOTime" + $(".commentRow:first").attr("id")).text());
@@ -86,12 +89,14 @@ $(document).ready(function () {
 //function return comment time of the newest commentary on the page
 function getNewestCommentTimeString() {
     var firstCommentDateString = $("#commentISOTime" + $(".commentRow:last").attr("id")).text();
+    //console.log(firstCommentDateString);
+    //console.log("#commentISOTime" + $(".commentRow:last").attr("id"));
     var firstCommentDate = getCommentDateOrNow(firstCommentDateString);
     if (!firstCommentDateString) {
-        //if there are not any comments on the page we take past time by 1 minute to prevent situation
+        //if there are not any comments on the page we take past time by 1 second to prevent situation
         // when we want to add new commentary with commentTime = now its commentTime match time witch we use as
         // after parameter in loadNewComments function and that's why we can't get this new commentary
-        firstCommentDate = new Date(new Date(firstCommentDate).getTime() - 60).toISOString();
+        firstCommentDate = new Date(new Date(firstCommentDate).getTime() - 1000).toISOString();
     }
     return firstCommentDate;
 }
@@ -101,9 +106,7 @@ function loadNewComments() {
     $.ajax({
         type: "GET",
         url: "/event-app/comment/new?eventId=" + urlParam("id") + "&after=" + getNewestCommentTimeString()
-    }).then(function (data) {
-        showNewComments(data);
-    })
+    }).then(showNewComments);
 }
 
 //function that looking every minute for count of new comments and display theirs amount on loadNewComments button
@@ -121,8 +124,8 @@ function lookingForNewComments() {
         } else {
             loadNewComments();
         }
-        setTimeout(lookingForNewComments, 60000);
     })
+
 }
 
 
@@ -157,7 +160,7 @@ function showComments(data) {
 
 //function for displaying list of new comments
 function showNewComments(data) {
-    for (var i = 0; i < data.length; i++) {
+    for (var i = data.length - 1; i >= 0; i--) {
         var comment = buildComment(data[i]);
         displayCommentary(comment, 0);
     }

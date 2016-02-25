@@ -112,7 +112,7 @@ public class CommentController {
         List<CommentVO> newCommentsVO = newComments.stream().map(comment -> CommentVO.builder().id(comment.getId()).eventId(comment.getEventId()).
                 username(comment.getUser().getUsername()).message(comment.getMessage()).
                 commentTime(comment.getCommentTime()).userPhoto(comment.getUser().getPhoto()).build()).collect(Collectors.toList());
-        LOGGER.info("showNewComments finished. Result:", newCommentsVO);
+        LOGGER.info("showNewComments finished. Result: {}", newCommentsVO);
         return newCommentsVO;
     }
 
@@ -138,9 +138,9 @@ public class CommentController {
                                                    @RequestParam("eventId") int eventId,
                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                        @RequestParam("commentTime") LocalDateTime commentTime) {
-        LOGGER.info("countCommentsAddedBeforeOrAfterDate started. Param: queryMode = {}, eventId = {}, commentTime = {}", queryMode, eventId, commentTime);
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate started. Param: queryMode = {}, eventId = {}, commentTime = {}", queryMode, eventId, commentTime);
         int count = commentService.countCommentsAddedBeforeOrAfterDate(eventId, commentTime, queryMode);
-        LOGGER.info("countCommentsAddedBeforeOrAfterDate finished. Result: {}", count);
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate finished. Result: {}", count);
         return count;
 
     }
