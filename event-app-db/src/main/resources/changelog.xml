@@ -29,4 +29,8 @@
 		<sqlFile relativeToChangelogFile="true" path="sql/6.added.creation.time.to.event.sql"/>
 	</changeSet>
 
+	<changeSet id="7" author="Denys_Iakibchuk">
+		<sqlFile relativeToChangelogFile="true" path="sql/7.modified.columns.types.for.photo.links.saving.sql"/>
+	</changeSet>
+
 </databaseChangeLog>

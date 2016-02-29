@@ -15,7 +15,7 @@ public final class UserVO {
     private final String name;
     private final String surname;
     private final String gender;
-    private final byte[] photo;
+    private final String photo;
     private final String country;
     private final String city;
     private final String bio;
@@ -50,7 +50,7 @@ public final class UserVO {
         private String name;
         private String surname;
         private String gender;
-        private byte[] photo;
+        private String photo;
         private String country;
         private String city;
         private String bio;
@@ -104,7 +104,7 @@ public final class UserVO {
             return this;
         }
 
-        public Builder photo(byte[] photo){
+        public Builder photo(String photo){
             this.photo = photo;
             return this;
         }
@@ -138,7 +138,7 @@ public final class UserVO {
 
     public String getGender() { return gender; }
 
-    public byte[] getPhoto() { return photo;  }
+    public String getPhoto() { return photo;  }
 
     public String getCountry() { return country; }
 
@@ -156,7 +156,7 @@ public final class UserVO {
                 ", gender='" + gender + '\'' +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
-                ", photo='" + (photo == null ? false : photo.length != 0) + '\'' +
+                ", photo='" + photo + '\'' +
                 '}';
     }
 

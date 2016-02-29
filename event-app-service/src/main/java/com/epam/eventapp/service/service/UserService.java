@@ -20,4 +20,11 @@ public interface UserService {
      */
     User getUserByUsername(String username);
 
+    /**
+     * Method for updating user photo
+     * @param userName identifier of user
+     * @param photo photo link
+     */
+    void updateUserPhotoByUsername(String userName, String photo);
+
 }

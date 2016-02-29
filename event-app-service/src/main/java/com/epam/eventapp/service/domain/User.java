@@ -13,7 +13,7 @@ public class User {
     private final String name;
     private final String surname;
     private final String gender;
-    private final byte[] photo;
+    private final String photo;
     private final String country;
     private final String city;
     private final String bio;
@@ -49,7 +49,7 @@ public class User {
         private String name;
         private String surname;
         private String gender;
-        private byte[] photo;
+        private String photo;
         private String country;
         private String city;
         private String bio;
@@ -97,7 +97,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder photo(byte[] photo){
+        public UserBuilder photo(String photo){
             this.photo = photo;
             return this;
         }
@@ -151,7 +151,7 @@ public class User {
         return gender;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
@@ -180,6 +180,7 @@ public class User {
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", bio='" + bio + '\'' +
+                ", photo='" + photo + '\'' +
                 '}';
     }
 }

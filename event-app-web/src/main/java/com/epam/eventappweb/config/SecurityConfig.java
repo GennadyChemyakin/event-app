@@ -80,6 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/header.html").permitAll()
                 .antMatchers("/user/current").permitAll()
                 .antMatchers("/detail.html").permitAll()
+                .antMatchers(HttpMethod.GET,"/images/users/*").permitAll()
                 .antMatchers("/events.html").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
     }

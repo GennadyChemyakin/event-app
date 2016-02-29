@@ -2,6 +2,7 @@ package com.epam.eventapp.service.dao.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.exceptions.UserDetailsNotUpdatedException;
 import com.epam.eventapp.service.exceptions.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,9 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
     private static final String СOUNT_USER_BY_USERNAME = "SELECT count(*) FROM SEC_USER WHERE username = :username";
 
     private static final String СOUNT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
+
+    private final String UPDATE_USER_PHOTO_BY_USERNAME = "UPDATE SEC_USER SET photo = :photo where username = :username";
+
 
     @Override
     @Transactional
@@ -81,7 +85,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("username", username), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
-            LOGGER.error("DataAccessException in isUserNameRegistered. msg = {}",ex.getMessage());
+            LOGGER.error("DataAccessException in isUserNameRegistered. ", ex);
             return false;
         }
 
@@ -94,7 +98,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("email", email), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
-            LOGGER.error("DataAccessException in isEmailRegistered. msg = {}",ex.getMessage());
+            LOGGER.error("DataAccessException in isEmailRegistered. ", ex);
             return false;
         }
     }
@@ -111,10 +115,27 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                             name(resultSet.getString("name")).
                             surname(resultSet.getString("surname")).
                             gender(resultSet.getString("gender")).
-                            photo(resultSet.getBytes("photo")).build()));
+                            photo(resultSet.getString("photo")).build()));
             return user;
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotFoundException("can't find user by username = " + username);
         }
+    }
+
+    @Override
+    public void updateUserPhoto(String userName, String photo) {
+
+        try {
+
+            getNamedParameterJdbcTemplate().update(UPDATE_USER_PHOTO_BY_USERNAME, new MapSqlParameterSource()
+                    .addValue("username", userName)
+                    .addValue("photo",    photo)
+            );
+
+        } catch(DataAccessException ex) {
+            String msg = String.format("can't update photo link %s with user by username %s", photo, userName);
+            throw new UserDetailsNotUpdatedException(msg);
+        }
+
     }
 }

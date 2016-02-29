@@ -37,12 +37,16 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
+
+        $("#image").attr("src", "/event-app/images/events/" + urlParam("id"));
+        $("#user_photo").attr("src", "/event-app/images/users/" + data.user.username);
     }).then(function () {
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + getCommentDateOrNow()
         }).then(showComments);
     });
+
     $('#loadComments').click(function () {
         var lastCommentDate = getCommentDateOrNow($("#commentISOTime" + $(".commentRow:first").attr("id")).text());
         $.ajax({

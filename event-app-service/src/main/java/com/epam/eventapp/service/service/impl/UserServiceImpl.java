@@ -52,4 +52,11 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public void updateUserPhotoByUsername(String userName, String photo) {
+        LOGGER.debug("updateUserPhotoByUsername started: Params username = {}, photo = {}", userName, photo);
+        userDao.updateUserPhoto(userName,photo);
+        LOGGER.debug("updateUserPhotoByUsername finished");
+    }
+
 }

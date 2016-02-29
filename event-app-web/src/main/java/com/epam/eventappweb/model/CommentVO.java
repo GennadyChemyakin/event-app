@@ -14,7 +14,7 @@ public final class CommentVO {
     private final int id;
     private final int eventId;
     private final String username;
-    private final byte[] userPhoto;
+    private final String userPhoto;
     private final String message;
     private final LocalDateTime commentTime;
 
@@ -36,7 +36,7 @@ public final class CommentVO {
         private int id;
         private int eventId;
         private String username;
-        private byte[] userPhoto;
+        private String userPhoto;
         private String message;
         private LocalDateTime commentTime;
 
@@ -55,7 +55,7 @@ public final class CommentVO {
             return this;
         }
 
-        public CommentVOBuilder userPhoto(byte[] userPhoto){
+        public CommentVOBuilder userPhoto(String userPhoto){
             this.userPhoto = userPhoto;
             return this;
         }
@@ -87,7 +87,7 @@ public final class CommentVO {
         return username;
     }
 
-    public byte[] getUserPhoto() {
+    public String getUserPhoto() {
         return userPhoto;
     }
 

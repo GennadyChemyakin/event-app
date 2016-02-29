@@ -37,4 +37,11 @@ public interface UserDAO {
      * @return
      */
     User getUserByUsername(String username);
+
+    /**
+     * Method for updating user photo
+     * @param photo - URL to the photo
+     * @param userName - id of the user
+     */
+    void updateUserPhoto(String userName, String photo);
 }
