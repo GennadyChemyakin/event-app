@@ -37,14 +37,24 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
-
     }).then(function () {
         $.ajax({
             type: "GET",
             url: "/event-app/comment?eventId=" + urlParam("id") + "&before=" + getCommentDateOrNow()
-        }).then(showComments).then(function(){
+        }).then(showComments).then(function () {
             setInterval(lookingForNewComments, 60000);
         });
+    }).then(function () {
+        $.ajax({
+            type: "GET",
+            url: "/event-app/user/current"
+        }).then(function (data) {
+            if (data.username && data.username == $('#username').text()) {
+                $("#editEventButton").css("color", "white");
+            } else {
+                $("#editEventButton").css("color", "transparent");
+            }
+        })
     });
 
     $('#loadOldComments').click(function () {
@@ -81,6 +91,11 @@ $(document).ready(function () {
             }
         } else {
             $('#addCommentFailMessage').slideDown();
+        }
+    });
+    $('#editEventButton').click(function () {
+        if (window.username == $('#username').text()) {
+            window.location.href = "/event-app/edit.html?id=" + urlParam("id");
         }
     });
 
