@@ -4,16 +4,13 @@ $(document).ready(function () {
         url: "/event-app/event/" + urlParam("id")
     }).then(function (data) {
 
-        window.timezoneOffset = new Date().getTimezoneOffset();
-
         var event = {};
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
 
         if (data.eventTime != null) {
-            event.date = new Date(data.eventTime[0], data.eventTime[1] - 1, data.eventTime[2],
-                data.eventTime[3], data.eventTime[4]);
+            event.date = convertToLocalTime(data.eventTime);
         }
         event.user = {};
         event.user.username = data.creator;
@@ -104,8 +101,6 @@ $(document).ready(function () {
 //function return comment time of the newest commentary on the page
 function getNewestCommentTimeString() {
     var firstCommentDateString = $("#commentISOTime" + $(".commentRow:last").attr("id")).text();
-    //console.log(firstCommentDateString);
-    //console.log("#commentISOTime" + $(".commentRow:last").attr("id"));
     var firstCommentDate = getCommentDateOrNow(firstCommentDateString);
     if (!firstCommentDateString) {
         //if there are not any comments on the page we take past time by 1 second to prevent situation
@@ -149,11 +144,10 @@ function getCommentDateOrNow(commentDateString) {
     var commentDate;
     if (commentDateString) {
         commentDate = new Date(commentDateString);
-        //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        commentDate = new Date(commentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+        commentDate = new Date(commentDate.getTime()).toISOString();
     } else {
         commentDate = new Date();
-        commentDate = new Date(commentDate.getTime() - window.timezoneOffset * 60000).toISOString();
+        commentDate = new Date(commentDate.getTime()).toISOString();
     }
     return commentDate;
 }
@@ -240,14 +234,7 @@ function buildComment(data) {
     comment.username = data.username;
     comment.date = null;
     if (data.commentTime != null) {
-        var year = data.commentTime[0];
-        var month = data.commentTime[1];
-        var day = data.commentTime[2];
-        var hour = data.commentTime[3] ? data.commentTime[3] : 0;
-        var minutes = data.commentTime[4] ? data.commentTime[4] : 0;
-        var seconds = data.commentTime[5] ? data.commentTime[5] : 0;
-        var nano = data.commentTime[6] ? data.commentTime[6] : 0;
-        comment.date = new Date(year, month - 1, day, hour, minutes, seconds, nano / 1000000);
+        comment.date = convertToLocalTime(data.commentTime);
     }
     return comment;
 }
