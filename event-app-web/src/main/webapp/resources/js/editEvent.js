@@ -10,8 +10,7 @@ $(document).ready(function () {
         event.eventTime = null;
 
         if (data.eventTime != null) {
-            event.eventTime = new Date(data.eventTime[0], data.eventTime[1] - 1, data.eventTime[2],
-                data.eventTime[3], data.eventTime[4]);
+            event.eventTime = convertToLocalTime(data.eventTime);
         }
         event.country = data.country != null ? data.country : "";
         event.city = data.city != null ? data.city : "";
@@ -44,7 +43,7 @@ $(document).ready(function () {
 
     $('#editEventButton').click(function () {
         if ($('#eventName').val() && window.username) {
-            var dateString = getDateStringISOWithOffset($('#picker').val());
+            var dateString = new Date($('#picker').val()).toISOString();
             dateString = dateString.slice(0, dateString.length - 1);
             var eventJson = JSON.stringify({
                 "name": $('#eventName').val(),
@@ -111,16 +110,4 @@ function urlParam(name) {
     else {
         return results[1];
     }
-}
-
-//TODO  change all sending time to UTC in EA-38
-function getDateStringISOWithOffset(commentDateString) {
-    var timezoneOffset = new Date().getTimezoneOffset();
-    var commentDate;
-    if (commentDateString) {
-        commentDate = new Date(commentDateString);
-        //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        commentDate = new Date(commentDate.getTime() - timezoneOffset * 60000).toISOString();
-    }
-    return commentDate;
 }
