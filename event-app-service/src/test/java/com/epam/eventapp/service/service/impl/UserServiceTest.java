@@ -122,4 +122,25 @@ public class UserServiceTest {
         Assert.assertEquals(user.getEmail(), email);
     }
 
+    /**
+     * Test for checking userService will return number of updated
+     * rows in user table.
+     */
+    @Test
+    public void shouldUpdateUserPhoto() {
+
+        //given
+        final String username = "username";
+        final String photoLink = "\\\\EPRUPETW0518\\images\\users\\username";
+        when(userDAOMock.updateUserPhoto(username,photoLink)).thenReturn(1);
+
+        //when
+        int rowsUpdated = userService.updateUserPhotoByUsername(username,photoLink);
+
+        //then
+        // no exception is thrown
+
+    }
+
+
 }

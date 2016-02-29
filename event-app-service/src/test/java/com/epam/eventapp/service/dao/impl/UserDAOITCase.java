@@ -76,4 +76,22 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
         Assert.fail("UserNotFoundException not thrown");
     }
 
+    /**
+     * Test for checking that photo link will be updated
+     */
+    @Test
+    public void shouldUpdateUserPhoto(){
+
+        //given
+        final String username = "username";
+        final String photoLink = "\\\\EPRUPETW0518\\images\\users\\username";
+
+        //when
+        int rowsUpdated = userDAO.updateUserPhoto(username, photoLink);
+
+        //then
+        Assert.assertEquals(1,rowsUpdated);
+
+    }
+
 }

@@ -14,9 +14,6 @@ $(document).ready(function () {
 
     $("#file-4").attr("data-upload-url", "images/users/" + window.username.id);
 
-
-
     $("#user_photo").attr("src", "/event-app/images/users/" + window.username.id);
-
 
 });

@@ -70,7 +70,7 @@ public class UserController {
             file = request.getFile(uploadedFile);
             filename = file.getOriginalFilename();
         }
-
+LOGGER.info("Filename - " + filename);
         if (file != null && !file.isEmpty()) {
 
             try {

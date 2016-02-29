@@ -123,19 +123,11 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
     }
 
     @Override
-    public void updateUserPhoto(String userName, String photo) {
+    public int updateUserPhoto(String userName, String photo) {
 
-        try {
-
-            getNamedParameterJdbcTemplate().update(UPDATE_USER_PHOTO_BY_USERNAME, new MapSqlParameterSource()
+           return getNamedParameterJdbcTemplate().update(UPDATE_USER_PHOTO_BY_USERNAME, new MapSqlParameterSource()
                     .addValue("username", userName)
                     .addValue("photo",    photo)
             );
-
-        } catch(DataAccessException ex) {
-            String msg = String.format("can't update photo link %s with user by username %s", photo, userName);
-            throw new UserDetailsNotUpdatedException(msg);
-        }
-
     }
 }
