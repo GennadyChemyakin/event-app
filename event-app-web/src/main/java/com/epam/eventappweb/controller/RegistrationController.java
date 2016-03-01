@@ -26,7 +26,13 @@ public class RegistrationController {
     @Autowired
     private UserService userService;
 
-    @ResponseStatus(HttpStatus.CREATED)
+    /**
+     * Method for registering new user in the db. Returns status 204 on success.
+     * @param userVO user model
+     * @param request
+     * @throws ServletException
+     */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/registration", method = RequestMethod.POST, consumes="application/json")
     public void createUser(@RequestBody UserVO userVO, HttpServletRequest request) throws ServletException {
         LOGGER.info("createUser started. Param: userVO = {};", userVO);

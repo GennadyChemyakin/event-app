@@ -69,9 +69,9 @@ public class CommentController {
      *
      * @param commentVO new commentary
      * @param principal principle of logged user
-     * @return status code 201 in case of success
+     * @return status code 204 in case of success
      */
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public void addComment(@RequestBody CommentVO commentVO, Principal principal) {
 

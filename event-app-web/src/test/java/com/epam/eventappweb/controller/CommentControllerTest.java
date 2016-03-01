@@ -169,7 +169,7 @@ public class CommentControllerTest {
 
     /**
      * testing addComment from CommentController
-     * expect status code 200
+     * expect status code 204
      *
      * @throws Exception
      */
@@ -200,7 +200,7 @@ public class CommentControllerTest {
                 content(objectMapper.writeValueAsString(newCommentVO)));
 
         //then
-        resultActions.andExpect(status().isCreated());
+        resultActions.andExpect(status().isNoContent());
     }
 
     /**
