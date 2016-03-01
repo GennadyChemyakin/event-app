@@ -38,7 +38,7 @@ $(document).ready(function () {
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
 
-        $("#image").attr("src", "/event-app/images/events/" + urlParam("id"));
+//        $("#image").attr("src", "/event-app/images/events/" + urlParam("id"));
         $("#user_photo").attr("src", "/event-app/images/users/" + data.user.username);
     }).then(function () {
         $.ajax({
@@ -151,10 +151,12 @@ function displayCommentary(comment, mode) {
     $("#" + comment.id).find("span.commentISOTime").attr("id", 'commentISOTime' + comment.id);
     $("#" + comment.id).find("span.commentMessage").attr("id", 'commentMessage' + comment.id);
     $("#" + comment.id).find("a.deleteCommentButton").attr("id", 'deleteCommentButton' + comment.id);
+    $("#" + comment.id).find("img.user-photo").attr("id", 'user_photo' + comment.id);
     $("#" + 'commentUsername' + comment.id).text(comment.username);
     $("#" + 'commentTime' + comment.id).text(comment.date.toLocaleString());
     $("#" + 'commentISOTime' + comment.id).text(comment.date.toISOString());
     $("#" + 'commentMessage' + comment.id).text(comment.message);
+    $("#" +  'user_photo' + comment.id).attr('src', '/event-app/images/users/' + comment.username);
     if (window.username == $('#username').text() || window.username == comment.username) {
         $("#deleteCommentButton" + comment.id).css("color", "black");
         $("#deleteCommentButton" + comment.id).bind("click", function () {

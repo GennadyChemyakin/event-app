@@ -9,7 +9,7 @@ import javax.servlet.ServletRegistration;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-    private static final String LOCATION = "D:/temp/";
+    private static final String TEMP_FILES = "\temp";
 
     private static final long MAX_FILE_SIZE = 5242880;
 
@@ -39,7 +39,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     }
 
     private MultipartConfigElement getMultipartConfigElement() {
-        MultipartConfigElement multipartConfigElement = new MultipartConfigElement( LOCATION, MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement( TEMP_FILES, MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
         return multipartConfigElement;
     }
 

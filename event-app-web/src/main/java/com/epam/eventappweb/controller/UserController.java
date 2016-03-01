@@ -58,7 +58,7 @@ public class UserController {
     public void handleImageUpload(@PathVariable String userName,
                                         MultipartHttpServletRequest request){
 
-        LOGGER.info("handleImageUpload started.");
+        LOGGER.info("handleImageUpload started. Request - {}", request);
 
         Path path = Paths.get(DIRECTORY).resolve(userName);
 
