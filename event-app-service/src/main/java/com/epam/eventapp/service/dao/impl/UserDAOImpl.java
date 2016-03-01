@@ -80,7 +80,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("username", username), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
-            LOGGER.error("User is already registered with name = {}",username, ex);
+            LOGGER.error("User is already registered.", ex);
             return false;
         }
 
@@ -93,7 +93,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("email", email), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
-            LOGGER.error("Email: {} is already registered", email, ex);
+            LOGGER.error("Email is already registered", ex);
             return false;
         }
     }
