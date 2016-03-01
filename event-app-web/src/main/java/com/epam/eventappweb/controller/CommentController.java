@@ -60,7 +60,7 @@ public class CommentController {
                 userPhoto(comment.getUser().getPhoto()).commentTime(comment.getCommentTime()).build()).collect(Collectors.toList());
 
         commentPackVO = new CommentPackVO(commentViews, commentPack.getRemainingCommentsCount());
-        LOGGER.info("getCommentList finished. Result: ", commentPackVO);
+        LOGGER.info("getCommentList finished. Result: {}", commentPackVO);
         return commentPackVO;
     }
 

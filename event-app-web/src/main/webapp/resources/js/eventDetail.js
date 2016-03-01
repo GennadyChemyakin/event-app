@@ -5,7 +5,6 @@ $(document).ready(function () {
     }).then(function (data) {
 
         window.timezoneOffset = new Date().getTimezoneOffset();
-
         var event = {};
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
@@ -37,7 +36,7 @@ $(document).ready(function () {
         //user
         $('#username').text(event.user.username.trim());
         $('#name').text((event.user.name + " " + event.user.surname).trim());
-
+        $('#author_profile').attr('href', '/event-app/profile.html?username=' +  event.user.username);
     }).then(function () {
         $.ajax({
             type: "GET",

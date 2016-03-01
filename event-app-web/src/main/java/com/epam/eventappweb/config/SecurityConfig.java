@@ -86,10 +86,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/event/*").permitAll()
                 .antMatchers(HttpMethod.GET,"/comment*").permitAll()
                 .antMatchers(HttpMethod.GET,"/comment/*").permitAll()
+                .antMatchers(HttpMethod.GET,"/user*").permitAll()
                 .antMatchers("/header.html").permitAll()
                 .antMatchers("/user/current").permitAll()
                 .antMatchers("/detail.html").permitAll()
                 .antMatchers("/events.html").permitAll()
+                .antMatchers("/profile.html").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
 
         http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class);

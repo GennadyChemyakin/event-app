@@ -2,6 +2,8 @@ package com.epam.eventapp.service.service;
 
 import com.epam.eventapp.service.domain.User;
 
+import java.util.Optional;
+
 /**
  * User service
  */
@@ -19,5 +21,6 @@ public interface UserService {
      * @return user object if we found user by username
      */
     User getUserByUsername(String username);
+
 
 }

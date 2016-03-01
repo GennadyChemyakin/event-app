@@ -3,6 +3,8 @@ package com.epam.eventapp.service.dao;
 import com.epam.eventapp.service.domain.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * interface for user DAO
  * methods for checking that fields username and email are unique in db
@@ -26,7 +28,7 @@ public interface UserDAO {
 
     /**
      * Method for checking that Email is in database.
-     * @Param username - string with user email
+     * @Param email - string with user email
      * @return returns true if email is already in the database
      */
     boolean isEmailRegistered(String email);
@@ -37,4 +39,5 @@ public interface UserDAO {
      * @return
      */
     User getUserByUsername(String username);
+
 }

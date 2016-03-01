@@ -14,7 +14,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 
 /**
@@ -30,15 +29,15 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
             "country, city, bio) VALUES(SEC_USER_ID_SEQ.nextval, :username, :password, :email, :name, :surname, :gender, :photo," +
             ":country, :city, :bio)";
 
-    private final String GET_USER_BY_USERNAME = "select id, username, email, name, surname," +
-            "country, city, bio, gender, photo from sec_user where username = :username";
-
     private static final String ADD_ROLE_TO_NEW_USER = "INSERT INTO SEC_USER_AUTHORITY (SEC_USER_ID,AUTHORITY_ID) VALUES (:id,"
             + "(SELECT ID FROM AUTHORITY WHERE AUTHORITY = 'ROLE_USER'))";
 
     private static final String СOUNT_USER_BY_USERNAME = "SELECT count(*) FROM SEC_USER WHERE username = :username";
 
     private static final String СOUNT_USER_BY_EMAIL = "SELECT count(*) FROM SEC_USER WHERE email = :email";
+
+    private static final String GET_USER_BY_USERNAME = "SELECT id, username, email, name, surname, gender, photo, country, city, bio " +
+            "FROM SEC_USER WHERE username = :username";
 
     @Override
     @Transactional
@@ -81,7 +80,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("username", username), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
-            LOGGER.error("DataAccessException in isUserNameRegistered. msg = {}",ex.getMessage());
+            LOGGER.error("User is already registered.", ex);
             return false;
         }
 
@@ -94,7 +93,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .addValue("email", email), Integer.class);
             return cnt > 0;
         } catch (DataAccessException ex) {
-            LOGGER.error("DataAccessException in isEmailRegistered. msg = {}",ex.getMessage());
+            LOGGER.error("Email is already registered", ex);
             return false;
         }
     }
@@ -117,4 +116,5 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
             throw new UserNotFoundException("can't find user by username = " + username);
         }
     }
+
 }

@@ -5,6 +5,7 @@ import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.exceptions.EmailAlreadyExistsException;
 import com.epam.eventapp.service.exceptions.UserNameAlreadyExistsException;
 import com.epam.eventapp.service.exceptions.UserNotCreatedException;
+import com.epam.eventapp.service.exceptions.UserNotFoundException;
 import com.epam.eventapp.service.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,8 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.mockito.Mockito.when;
+
 
 
 /**
@@ -85,6 +88,9 @@ public class UserServiceTest {
 
     }
 
+    /**
+     * Method tests if email already in the database
+     */
     @Test(expected = EmailAlreadyExistsException.class)
     public void shouldThrowEmailExistsInTheDatabase() {
         //given
@@ -120,6 +126,21 @@ public class UserServiceTest {
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getUsername(), username);
         Assert.assertEquals(user.getEmail(), email);
+    }
+
+    @Test(expected = UsernameNotFoundException.class)
+    public void shouldThrowUserNotFoundException() {
+        //given
+        final String username  = "wrong username";
+        User expectedUser      = User.builder().username(username).build();
+        when(userDAOMock.getUserByUsername(username)).thenThrow(UsernameNotFoundException.class);
+
+        //when
+        User user = userService.getUserByUsername(username);
+
+        //then
+        Assert.fail("UserNotFoundException should be thrown");
+
     }
 
 }

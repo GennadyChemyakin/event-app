@@ -298,4 +298,5 @@ public class CommentControllerTest {
         resultActions.andExpect(status().isOk());
         Assert.assertEquals(String.valueOf(commentsAmount), resultActions.andReturn().getResponse().getContentAsString());
     }
+
 }
