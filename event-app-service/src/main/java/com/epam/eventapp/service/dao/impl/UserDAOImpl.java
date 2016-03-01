@@ -2,11 +2,11 @@ package com.epam.eventapp.service.dao.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.UserNotFoundException;
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -69,7 +69,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
 
           } catch(DataAccessException ex) {
               final String msg = String.format("Failed to connect to database and create user: %s ", user);
-              throw new UserNotCreatedException(msg);
+              throw new ObjectNotCreatedException(msg);
           }
 
     }
@@ -114,7 +114,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                             photo(resultSet.getBytes("photo")).build()));
             return user;
         } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException("can't find user by username = " + username);
+            throw new ObjectNotFoundException("can't find user by username = " + username);
         }
     }
 }

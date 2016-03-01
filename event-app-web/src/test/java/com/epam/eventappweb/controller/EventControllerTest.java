@@ -1,11 +1,11 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
 import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.service.EventService;
-import com.epam.eventappweb.exceptions.EventNotFoundException;
-import com.epam.eventappweb.exceptions.EventNotUpdatedException;
+import com.epam.eventappweb.exceptions.ObjectNotUpdatedException;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -89,7 +89,7 @@ public class EventControllerTest {
     /**
      * testing getEventDetail from EventDetailController
      * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
-     * expect EventNotFoundException thrown
+     * expect ObjectNotFoundException thrown
      *
      * @throws Exception
      */
@@ -102,7 +102,7 @@ public class EventControllerTest {
 
         //when
         thrown.expect(NestedServletException.class);
-        thrown.expectCause(org.hamcrest.Matchers.isA(EventNotFoundException.class));
+        thrown.expectCause(org.hamcrest.Matchers.isA(ObjectNotFoundException.class));
         mockMvc.perform(get("/event/" + id));
 
         //then
@@ -141,7 +141,7 @@ public class EventControllerTest {
     /**
      * Testing updateEvent from EventDetailController.
      * mock eventDAO then inject it to controller. Using mockMvc to assert the behaviour of controller.
-     * expect EventNotFoundException thrown
+     * expect ObjectNotFoundException thrown
      */
     @Test
     public void shouldThrowExceptionInCaseWrongEventIdSpecified() throws Exception {
@@ -158,13 +158,13 @@ public class EventControllerTest {
 
         //when
         thrown.expect(NestedServletException.class);
-        thrown.expectCause(org.hamcrest.Matchers.isA(EventNotUpdatedException.class));
+        thrown.expectCause(org.hamcrest.Matchers.isA(ObjectNotUpdatedException.class));
         mockMvc.perform(put("/event/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
 
         //then
-        Assert.fail("EventNotUpdatedException not thrown");
+        Assert.fail("ObjectNotUpdatedException not thrown");
     }
 
     /**
@@ -251,7 +251,7 @@ public class EventControllerTest {
      * @throws Exception
      */
     @Test
-    public void shoudReturn400inCaseWrongQueryModeSpecified() throws Exception {
+    public void shouldReturn400inCaseWrongQueryModeSpecified() throws Exception {
         //given
         final LocalDateTime effectiveTime = LocalDateTime.now();
         final String queryMode = "WRONG MODE";

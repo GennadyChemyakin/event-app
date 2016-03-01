@@ -1,16 +1,15 @@
 package com.epam.eventapp.service.dao.impl;
 
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
 import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.EventNotCreatedException;
 import org.hamcrest.core.Every;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -126,10 +125,10 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
     /**
      * Testing addEvent from EventDAOImpl.
      * Passing the username which is not expected in database.
-     * Checking if EventNotCreatedException throws.
+     * Checking if ObjectNotCreatedException throws.
      */
-    @Test(expected = EventNotCreatedException.class)
-    public void shouldThrowEventNotCreatedExceptionInCaseUsernameEmpty() {
+    @Test(expected = ObjectNotCreatedException.class)
+    public void shouldThrowObjectNotCreatedExceptionInCaseUsernameEmpty() {
         //given
         final String name = "My event";
         final String username  = "";
@@ -140,7 +139,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
         //then
         //throws exception
-        Assert.fail("EventNotCreatedException should be thrown");
+        Assert.fail("ObjectNotCreatedException should be thrown");
     }
 
     /**
@@ -173,8 +172,8 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
 
     }
 
-    @Test(expected=EventNotCreatedException.class)
-    public void shouldThrowEventNotCreatedException() {
+    @Test(expected=ObjectNotCreatedException.class)
+    public void shouldThrowObjectNotCreatedException() {
 
         //given
         final String eventName = "test event";
@@ -187,7 +186,7 @@ public class EventDAOITCase extends AbstractTransactionalJUnit4SpringContextTest
         Event newEvent = eventDAO.addEvent(event, userName);
 
         //then
-        Assert.fail("EventNotCreatedException should be thrown");
+        Assert.fail("ObjectNotCreatedException should be thrown");
     }
 
     /**
