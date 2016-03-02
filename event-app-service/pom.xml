@@ -24,6 +24,14 @@
         </dependency>
 
 
+        <!-- oracle jdbc driver dependency from local maven repository -->
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+        </dependency>
+
+
         <!-- Spring -->
 
         <dependency>
