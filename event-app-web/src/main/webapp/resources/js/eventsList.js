@@ -133,34 +133,24 @@ function getEventFromModel(previewVO) {
         event.picture = previewVO.picture;
         event.eventTime = null;
         if (previewVO.eventTime != null) {
-            event.eventTime = new Date(previewVO.eventTime[0], previewVO.eventTime[1] - 1, previewVO.eventTime[2],
-                            previewVO.eventTime[3], previewVO.eventTime[4] ? previewVO.eventTime[4] : 0,
-                            previewVO.eventTime[5] ? previewVO.eventTime[5] : 0,
-                            previewVO.eventTime[6] ? previewVO.eventTime[6]/1000000 : 0);
+            event.eventTime = convertToLocalTime(previewVO.eventTime);
         }
         event.createTime = null;
         if (previewVO.createTime != null) {
-            event.createTime = new Date(previewVO.createTime[0], previewVO.createTime[1] - 1, previewVO.createTime[2],
-                            previewVO.createTime[3], previewVO.createTime[4], previewVO.createTime[5], previewVO.createTime[6]/1000000);
+            event.createTime = convertToLocalTime(previewVO.createTime);
         }
         return event;
 }
 
-//function for converting datetime to UTC+3 ISO format. Will be deleted when we change server time to UTC
-function convertToLocalTime(date) {
-    return new Date(date.getTime() - window.timezoneOffset * 60000).toISOString();
-}
+
 
 //function returns ISO formatted datetime from dateString if it isn't null or current datetime otherwise
 function getEventDate(dateString) {
     var date;
     if (dateString) {
-        date = new Date(dateString);
-        //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        date = convertToLocalTime(date);
+        date = new Date(dateString).toISOString();
     } else {
-        date = new Date();
-        date = convertToLocalTime(date);
+        date = new Date().toISOString();
     }
     return date;
 }
