@@ -32,23 +32,8 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${version.spring}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
         </dependency>
 
         <dependency>
@@ -62,48 +47,9 @@
             <artifactId>spring-security-test</artifactId>
             <version>${version.spring-security}</version>
         </dependency>
-        <!-- slf4j API -->
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <!-- logback -->
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
 
         <!-- Testing -->
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>${version.hamcrest.library}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -112,7 +58,9 @@
             <scope>test</scope>
         </dependency>
 
-        <!--Jackson-->
+
+        <!-- Jackson -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -125,13 +73,17 @@
             <version>${version.jackson.jsr310}</version>
         </dependency>
 
-        <!--StringUtils-->
+
+        <!-- StringUtils -->
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${version.apache-commons}</version>
         </dependency>
+
     </dependencies>
+
 
     <build>
         <plugins>
