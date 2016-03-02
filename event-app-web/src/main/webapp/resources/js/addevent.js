@@ -49,7 +49,6 @@
                      }
           }
 
-
      $(document).ready(function() {
 
       $('#title').keyup(function(){
@@ -61,29 +60,6 @@
           $("#picker").parent().find('.alert:first').hide();
 
       });
-
-      //reading coordinates if allowed
-      navigator.geolocation.getCurrentPosition(successGettingCoordinates, errorGettingCoordinates, optionsGettingCoordinates);
-
-      var optionsGettingCoordinates = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      };
-
-     //on success getting coordinates
-      function successGettingCoordinates(pos) {
-         crd = pos.coords;
-         latitude = crd.latitude;
-         longitude = crd.longitude;
-      };
-
-      //on error getting coordinates
-      function errorGettingCoordinates(err) {
-            console.log(err);
-            latitude = 0.0;
-            longitude = 0.0;
-      };
 
         //button click handler
         $("#add_event_btn").click(function() {
@@ -113,8 +89,6 @@
               city:         city,
               eventTime:    date.substring(0,date.length-1),
               country:      country,
-              gpsLatitude:  latitude,
-              gpsLongitude: longitude,
               location:     address
            });
 
