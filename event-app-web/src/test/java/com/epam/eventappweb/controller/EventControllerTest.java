@@ -81,8 +81,7 @@ public class EventControllerTest {
         //then
         resultActions.andExpect(status().isOk()).
                 andExpect(jsonPath("$.id", is(0))).
-                andExpect(jsonPath("$.user.username", is("Ivan"))).
-                andExpect(jsonPath("$.user.email", is("ivan@gmail.com"))).
+                andExpect(jsonPath("$.creator", is("Ivan"))).
                 andExpect(jsonPath("$.name", is("Party")));
     }
 
@@ -200,24 +199,20 @@ public class EventControllerTest {
         final String secondEventName = "EPAM fanfest 2";
         final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
         final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
-        final int numberOfNewEvents = 2;
-        final LocalDateTime after = LocalDateTime.now();
-        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final LocalDateTime effectiveTime = LocalDateTime.parse("2005-09-11T15:00");
         final QueryMode queryMode = QueryMode.BEFORE;
         final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
 
-        when(eventServiceMock.getOrderedEvents(before, queryMode)).thenReturn(eventList);
-        when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(numberOfNewEvents);
+        when(eventServiceMock.getOrderedEvents(effectiveTime, queryMode)).thenReturn(eventList);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
-                "&after=" + after + "&before=" + before));
+                "&time=" + effectiveTime));
 
         //then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
-                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
-                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
+                .andExpect(jsonPath("$.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.[1].name", Matchers.is(secondEventName)));
     }
 
     /**
@@ -233,24 +228,20 @@ public class EventControllerTest {
         final String secondEventName = "EPAM fanfest 2";
         final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
         final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
-        final int numberOfNewEvents = 2;
-        final LocalDateTime after = LocalDateTime.now();
-        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final LocalDateTime effectiveTime = LocalDateTime.now();
         final QueryMode queryMode = QueryMode.AFTER;
         final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
 
-        when(eventServiceMock.getOrderedEvents(after, queryMode)).thenReturn(eventList);
-        when(eventServiceMock.getNumberOfNewEvents(firstEventTime)).thenReturn(numberOfNewEvents);
+        when(eventServiceMock.getOrderedEvents(effectiveTime, queryMode)).thenReturn(eventList);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
-                "&after=" + after + "&before=" + before));
+                "&time=" + effectiveTime));
 
         //then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventPreviewVOList.[0].name", Matchers.is(firstEventName)))
-                .andExpect(jsonPath("$.eventPreviewVOList.[1].name", Matchers.is(secondEventName)))
-                .andExpect(jsonPath("$.numberOfNewEvents", Matchers.is(numberOfNewEvents)));
+                .andExpect(jsonPath("$.[0].name", Matchers.is(firstEventName)))
+                .andExpect(jsonPath("$.[1].name", Matchers.is(secondEventName)));
     }
 
     /**
@@ -262,13 +253,12 @@ public class EventControllerTest {
     @Test
     public void shoudReturn400inCaseWrongQueryModeSpecified() throws Exception {
         //given
-        final LocalDateTime after = LocalDateTime.now();
-        final LocalDateTime before = LocalDateTime.parse("2005-09-11T15:00");
+        final LocalDateTime effectiveTime = LocalDateTime.now();
         final String queryMode = "WRONG MODE";
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode +
-                "&after=" + after + "&before=" + before));
+                "&time=" + effectiveTime));
         //then
         resultActions.andExpect(status().isBadRequest());
     }
@@ -312,6 +302,29 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.city", is(city)))
                 .andExpect(jsonPath("$.location", is(location)));
 
+    }
+
+    /**
+     * Testing countNumberOfNewEvents from EventDetailController.
+     * Mock getNumberOfNewEvents then inject it to controller. Using mockMvc to assert the behaviour of controller.
+     * Expect number of new events.
+     * @throws Exception
+     */
+    @Test
+    public void shouldReturnNumberOfNewEvents() throws Exception {
+        //given
+        final LocalDateTime after = LocalDateTime.now();
+        final Integer expectedNumberOfNewEvents = 2;
+        when(eventServiceMock.getNumberOfNewEvents(after)).thenReturn(expectedNumberOfNewEvents);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(get("/event/count?after=" + after));
+
+        //then
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string(expectedNumberOfNewEvents.toString()));
     }
 
     /**

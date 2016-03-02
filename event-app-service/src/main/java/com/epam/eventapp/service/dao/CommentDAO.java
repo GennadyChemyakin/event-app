@@ -1,6 +1,8 @@
 package com.epam.eventapp.service.dao;
 
 import com.epam.eventapp.service.domain.Comment;
+import com.epam.eventapp.service.model.QueryMode;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,12 +22,12 @@ public interface CommentDAO {
     List<Comment> getCommentsListOfFixedSizeByEventIdBeforeDate(int eventId, LocalDateTime before, int amount);
 
     /**
-     * method for counting amount of comments that were added before specified time to event
+     * method for counting amount of comments that were added before or after specified time <commentTime> to event
      * @param eventId id of event
-     * @param before specified time. We are looking for comments that were added before it
-     * @return amount of remaining comments
+     * @param commentTime specified time. We are looking for comments that were added before or after it
+     * @return amount of comments
      */
-    int countOfCommentsAddedBeforeDate(int eventId, LocalDateTime before);
+    int countCommentsAddedBeforeOrAfterDate(int eventId, LocalDateTime commentTime, QueryMode queryMode);
 
     /**
      * method for adding a commentary

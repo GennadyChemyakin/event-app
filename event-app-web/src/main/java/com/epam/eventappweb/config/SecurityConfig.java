@@ -1,5 +1,6 @@
 package com.epam.eventappweb.config;
 
+import com.epam.eventappweb.filter.PreLoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +12,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
+import javax.servlet.Filter;
 import javax.sql.DataSource;
 
 /**
@@ -35,6 +38,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+
+    @Bean
+    public Filter loginFilter(){
+        return new PreLoginFilter();
+    }
 
     /**
      * Method for configuring data store options.
@@ -77,19 +85,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resources/js/*").permitAll()
                 .antMatchers("/event/*").permitAll()
                 .antMatchers(HttpMethod.GET,"/comment*").permitAll()
+                .antMatchers(HttpMethod.GET,"/comment/*").permitAll()
+                .antMatchers(HttpMethod.GET,"/user*").permitAll()
                 .antMatchers("/header.html").permitAll()
                 .antMatchers("/user/current").permitAll()
                 .antMatchers("/detail.html").permitAll()
                 .antMatchers(HttpMethod.GET,"/images/users/*").permitAll()
                 .antMatchers("/events.html").permitAll()
+                .antMatchers("/profile.html").permitAll()
                 .and().authorizeRequests().anyRequest().hasRole("USER");
+
+        http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
-        SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-        authenticationSuccessHandler.setUseReferer(true);
-        return authenticationSuccessHandler;
+        AuthSuccessHandler authSuccessHandler = new AuthSuccessHandler();
+        authSuccessHandler.setDefaultTargetUrl("/events.html");
+        return authSuccessHandler;
     }
 
     @Bean
@@ -101,6 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * bean that describes auth manager that used by Spring Security to authenticate against a JDBC user store.
+     *
      * @return AuthenticationManager Bean
      * @throws Exception
      */

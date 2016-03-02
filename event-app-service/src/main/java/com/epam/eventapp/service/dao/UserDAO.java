@@ -1,7 +1,6 @@
 package com.epam.eventapp.service.dao;
 
 import com.epam.eventapp.service.domain.User;
-import org.springframework.stereotype.Repository;
 
 /**
  * interface for user DAO
@@ -26,7 +25,7 @@ public interface UserDAO {
 
     /**
      * Method for checking that Email is in database.
-     * @Param username - string with user email
+     * @Param email - string with user email
      * @return returns true if email is already in the database
      */
     boolean isEmailRegistered(String email);

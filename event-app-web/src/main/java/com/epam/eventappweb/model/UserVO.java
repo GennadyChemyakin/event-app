@@ -34,7 +34,7 @@ public final class UserVO {
     }
 
     public static Builder builder(String username, String email){
-        return new Builder();
+        return new Builder(username, email);
     }
 
     public static Builder builder(){
@@ -57,6 +57,11 @@ public final class UserVO {
 
         private Builder() {
 
+        }
+
+        public Builder(String username, String email) {
+            this.username = username;
+            this.email = email;
         }
 
         public Builder username(String username){

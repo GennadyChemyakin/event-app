@@ -25,4 +25,8 @@ $(document).ready(function () {
     $("#addEventButton").click(function () {
         window.location.href = "/event-app/create.html";
     });
+    $("#profile").click(function () {
+       window.location.href = "profile.html?name="+window.username;
+    });
+
 });

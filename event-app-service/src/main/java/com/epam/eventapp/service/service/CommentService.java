@@ -3,6 +3,8 @@ package com.epam.eventapp.service.service;
 
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,5 +43,13 @@ public interface CommentService {
      * @param comment deleting commentary
      */
     void deleteComment(Comment comment);
+
+    /**
+     * method for counting amount of comments that were added before or after specified time <commentTime> to event
+     * @param eventId id of event
+     * @param commentTime specified time. We are looking for comments that were added before or after it
+     * @return amount of remaining comments
+     */
+    int countCommentsAddedBeforeOrAfterDate(int eventId, LocalDateTime commentTime, QueryMode queryMode);
 
 }

@@ -134,4 +134,3 @@ CREATE SEQUENCE VIDEO_ID_SEQ START WITH 1 INCREMENT BY 1;
 
 ALTER TABLE event ADD create_time TIMESTAMP NOT NULL;
 COMMENT ON COLUMN event.create_time IS 'time of creation of event';
-

@@ -52,7 +52,6 @@
 
      $(document).ready(function() {
 
-
       $('#title').keyup(function(){
            markField($('#title'), isValidTitle());
       });
@@ -63,10 +62,8 @@
 
       });
 
-
       //reading coordinates if allowed
       navigator.geolocation.getCurrentPosition(successGettingCoordinates, errorGettingCoordinates, optionsGettingCoordinates);
-
 
       var optionsGettingCoordinates = {
         enableHighAccuracy: true,

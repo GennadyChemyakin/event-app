@@ -3,6 +3,7 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
 import com.epam.eventapp.service.model.CommentPack;
+import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.CommentPackVO;
@@ -39,37 +40,28 @@ public class CommentController {
 
     /**
      * method for getting list of of comments that were added
-     * before commentTime for event by event id
+     * before specified <before> time for event by event id
      *
      * @param eventId id of event
      * @param before  we are looking for comments that were added before this time
      * @return pack of comments
      */
     @RequestMapping(value = "/comment", method = RequestMethod.GET)
-    public ResponseEntity<CommentPackVO> getCommentList(@RequestParam("eventId") int eventId,
-                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("before") LocalDateTime before) {
+    public CommentPackVO getCommentList(@RequestParam("eventId") int eventId,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        @RequestParam("before") LocalDateTime before) {
 
         LOGGER.info("getCommentList started. Param: eventId = {}, before = {} ", eventId, before);
 
         CommentPack commentPack = commentService.getCommentsListOfFixedSizeByEventIdBeforeDate(eventId, before, COMMENTS_AMOUNT);
-        ResponseEntity<CommentPackVO> resultResponseEntity;
         CommentPackVO commentPackVO;
-        List<CommentVO> commentViews = new ArrayList<>();
-        if (commentPack.getComments().size() > 0) {
-            for (Comment comment : commentPack.getComments()) {
-                CommentVO commentView = CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
-                        eventId(comment.getEventId()).username(comment.getUser().getUsername()).
-                        userPhoto(comment.getUser().getPhoto()).commentTime(comment.getCommentTime()).build();
-                commentViews.add(commentView);
-            }
-        }
-        commentPackVO = new CommentPackVO(commentViews, commentPack.getRemainingCommentsCount());
-        resultResponseEntity = new ResponseEntity<>(commentPackVO, HttpStatus.OK);
+        List<CommentVO>  commentViews = commentPack.getComments().stream().map(comment -> CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
+                eventId(comment.getEventId()).username(comment.getUser().getUsername()).
+                userPhoto(comment.getUser().getPhoto()).commentTime(comment.getCommentTime()).build()).collect(Collectors.toList());
 
-        LOGGER.info("getCommentList finished. Result:"
-                + " Status code: {}; Body: {}", resultResponseEntity.getStatusCode(), commentPackVO);
-        return resultResponseEntity;
+        commentPackVO = new CommentPackVO(commentViews, commentPack.getRemainingCommentsCount());
+        LOGGER.info("getCommentList finished. Result: {}", commentPackVO);
+        return commentPackVO;
     }
 
     /**
@@ -77,20 +69,18 @@ public class CommentController {
      *
      * @param commentVO new commentary
      * @param principal principle of logged user
-     * @return status code 200 in case of success
+     * @return status code 204 in case of success
      */
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
-    public ResponseEntity addComment(@RequestBody CommentVO commentVO, Principal principal) {
+    public void addComment(@RequestBody CommentVO commentVO, Principal principal) {
 
         LOGGER.info("addComment started. Param: commentVO = {}, principal = {}", commentVO, principal);
-        ResponseEntity resultResponseEntity;
         User user = userService.getUserByUsername(principal.getName());
         Comment addedComment = Comment.builder().eventId(commentVO.getEventId()).message(commentVO.getMessage()).
                 commentTime(commentVO.getCommentTime()).user(user).build();
         commentService.addComment(addedComment);
-        resultResponseEntity = new ResponseEntity<>(HttpStatus.OK);
-        LOGGER.info("addComment finished. Result: OK");
-        return resultResponseEntity;
+        LOGGER.info("addComment finished.");
     }
 
 
@@ -111,7 +101,7 @@ public class CommentController {
         List<CommentVO> newCommentsVO = newComments.stream().map(comment -> CommentVO.builder().id(comment.getId()).eventId(comment.getEventId()).
                 username(comment.getUser().getUsername()).message(comment.getMessage()).
                 commentTime(comment.getCommentTime()).userPhoto(comment.getUser().getPhoto()).build()).collect(Collectors.toList());
-        LOGGER.info("showNewComments finished. Result:", newCommentsVO);
+        LOGGER.info("showNewComments finished. Result: {}", newCommentsVO);
         return newCommentsVO;
     }
 
@@ -131,5 +121,18 @@ public class CommentController {
         commentService.deleteComment(comment);
         LOGGER.info("deleteCommentary finished.");
     }
+
+    @RequestMapping(value = "/comment/count", method = RequestMethod.GET)
+    public int countCommentsAddedBeforeOrAfterDate(@RequestParam("queryMode") QueryMode queryMode,
+                                                   @RequestParam("eventId") int eventId,
+                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       @RequestParam("commentTime") LocalDateTime commentTime) {
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate started. Param: queryMode = {}, eventId = {}, commentTime = {}", queryMode, eventId, commentTime);
+        int count = commentService.countCommentsAddedBeforeOrAfterDate(eventId, commentTime, queryMode);
+        LOGGER.debug("countCommentsAddedBeforeOrAfterDate finished. Result: {}", count);
+        return count;
+
+    }
+
 
 }
