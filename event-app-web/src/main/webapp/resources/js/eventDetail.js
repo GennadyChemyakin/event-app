@@ -3,12 +3,10 @@ $(document).ready(function () {
         type: "GET",
         url: "/event-app/event/" + urlParam("id")
     }).then(function (data) {
-
         var event = {};
         event.name = data.name;
         event.description = data.description != null ? data.description : "no description";
         event.date = null;
-
         if (data.eventTime != null) {
             event.date = convertToLocalTime(data.eventTime);
         }
