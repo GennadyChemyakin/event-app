@@ -12,8 +12,17 @@ $(document).ready(function () {
         $(".nav-stacked > li").toggleClass("active");
     });
 
-    $("#file-4").attr("data-upload-url", "images/users/" + window.username.id);
+    $.ajax({
+            type: "GET",
+            url: "/event-app/user/current"
+    }).then(function (data) {
 
-    $("#user_photo").attr("src", "/event-app/images/users/" + window.username.id);
+        $("#user_photo").attr("src", "/event-app/image/user/" + data.username );
+        $("#file-4").attr("data-upload-url", "/event-app/image/user/" + data.username );
+        var $input = $('input.file[type=file]');
+        if ($input.length) {
+            $input.fileinput();
+        }
+    });
 
 });

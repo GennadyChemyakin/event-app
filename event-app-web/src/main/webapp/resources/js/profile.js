@@ -21,6 +21,7 @@ $(document).ready(function () {
         $('#gender').text(gender);
         $('#bio').text(bio);
         $('#city').text(city);
+        $('.img-circle').attr("src", "/event-app/image/user/" + username);
 
     } );
  });

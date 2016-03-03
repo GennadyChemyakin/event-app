@@ -2737,13 +2737,5 @@
 
     $.fn.fileinput.Constructor = FileInput;
 
-    /**
-     * Convert automatically file inputs with class 'file' into a bootstrap fileinput control.
-     */
-    $(document).ready(function () {
-        var $input = $('input.file[type=file]');
-        if ($input.length) {
-            $input.fileinput();
-        }
-    });
+
 }));

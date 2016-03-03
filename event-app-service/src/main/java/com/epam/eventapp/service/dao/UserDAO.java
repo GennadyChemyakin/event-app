@@ -39,9 +39,9 @@ public interface UserDAO {
 
     /**
      * Method for updating user photo
-     * @param photo - URL to the photo
+     * @param photoLink - URL to the photo
      * @param userName - id of the user
      * @return number of updated rows
      */
-    int updateUserPhoto(String userName, String photo);
+    int updateUserPhotoURL(String userName, String photoLink);
 }

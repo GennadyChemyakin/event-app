@@ -47,4 +47,5 @@ public class DataAccessConfig {
     public DataSourceTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
     }
+
 }

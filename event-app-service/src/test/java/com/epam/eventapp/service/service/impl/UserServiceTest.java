@@ -152,13 +152,13 @@ public class UserServiceTest {
         //given
         final String username = "username";
         final String photoLink = "\\\\EPRUPETW0518\\images\\users\\username";
-        when(userDAOMock.updateUserPhoto(username,photoLink)).thenReturn(1);
+        when(userDAOMock.updateUserPhotoURL(username,photoLink)).thenReturn(1);
 
         //when
         int rowsUpdated = userService.updateUserPhotoByUsername(username,photoLink);
 
         //then
-        // no exception is thrown
+        Assert.assertEquals(1,rowsUpdated);
 
     }
 

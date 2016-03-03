@@ -9,14 +9,13 @@ import javax.servlet.ServletRegistration;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-    private static final String TEMP_FILES = "\temp";
+    private static final String TEMP_FILES_CATALOG = "\temp";
 
     private static final long MAX_FILE_SIZE = 5242880;
 
     private static final long MAX_REQUEST_SIZE = 20971520;
 
     private static final int FILE_SIZE_THRESHOLD = 0;
-
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -25,12 +24,12 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] { WebAppConfig.class };
+        return new Class[]{WebAppConfig.class};
     }
 
     @Override
     protected String[] getServletMappings() {
-        return new String[] { "/" };
+        return new String[]{"/"};
     }
 
     @Override
@@ -39,7 +38,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     }
 
     private MultipartConfigElement getMultipartConfigElement() {
-        MultipartConfigElement multipartConfigElement = new MultipartConfigElement( TEMP_FILES, MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(TEMP_FILES_CATALOG, MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
         return multipartConfigElement;
     }
 

@@ -26,7 +26,7 @@ $(document).ready(function () {
         window.location.href = "/event-app/create.html";
     });
     $("#profile").click(function () {
-       window.location.href = "profile.html?name="+window.username;
+       window.location.href = "/event-app/edit_profile.html";
     });
 
 });

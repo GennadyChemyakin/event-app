@@ -22,10 +22,10 @@ public interface UserService {
 
     /**
      * Method for updating user photo
-     * @param userName identifier of user
-     * @param photo photo link
+     * @param username identifier of user
+     * @param photoLink link to the photo locations
      * @return numbers of updated rows
      */
-    int updateUserPhotoByUsername(String userName, String photo);
+    int updateUserPhotoByUsername(String username, String photoLink);
 
 }

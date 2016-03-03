@@ -87,7 +87,7 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
         final String photoLink = "\\\\EPRUPETW0518\\images\\users\\username";
 
         //when
-        int rowsUpdated = userDAO.updateUserPhoto(username, photoLink);
+        int rowsUpdated = userDAO.updateUserPhotoURL(username, photoLink);
 
         //then
         Assert.assertEquals(1,rowsUpdated);
