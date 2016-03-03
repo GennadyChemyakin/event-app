@@ -3,6 +3,7 @@ package com.epam.eventappweb.controller;
 import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
+import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
@@ -47,6 +48,9 @@ public class EventControllerTest {
 
     @Mock
     private EventService eventServiceMock;
+
+    @Mock
+    private CommentService commentServiceMock;
 
     @InjectMocks
     private EventController controller;
@@ -173,13 +177,13 @@ public class EventControllerTest {
      * @param secondEventName name of second Event
      * @return list of expected Events
      */
-    private static List<Event> getExpectedEventsList(String firstEventName, String secondEventName,
-                                                     LocalDateTime firstEventTime, LocalDateTime secondEventTime) {
+    private static List<Event> getExpectedEventsList(String firstEventName, String secondEventName, int firstEventId,
+                                                     int secondEventId, LocalDateTime firstEventTime, LocalDateTime secondEventTime) {
         final String username = "Vasya";
         final String email = "vasya@vasya.com";
         final User user = User.builder(username, email).build();
-        final Event firstEvent = Event.builder(firstEventName).id(0).user(user).creationTime(firstEventTime).build();
-        final Event secondEvent = Event.builder(secondEventName).id(1).user(user).creationTime(secondEventTime).build();
+        final Event firstEvent = Event.builder(firstEventName).id(firstEventId).user(user).creationTime(firstEventTime).build();
+        final Event secondEvent = Event.builder(secondEventName).id(secondEventId).user(user).creationTime(secondEventTime).build();
         final List<Event> expectedEventsList = new ArrayList<>();
         expectedEventsList.add(firstEvent);
         expectedEventsList.add(secondEvent);
@@ -195,15 +199,23 @@ public class EventControllerTest {
     @Test
     public void shouldReturnEventsBeforeTimeAsJSON() throws Exception {
         //given
+        final int firstEventId = 0;
+        final int secondEventId = 1;
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
+        final int expectedCommentCount = 3;
         final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
         final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
         final LocalDateTime effectiveTime = LocalDateTime.parse("2005-09-11T15:00");
         final QueryMode queryMode = QueryMode.BEFORE;
-        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventId, secondEventId,
+                firstEventTime, secondEventTime);
 
         when(eventServiceMock.getOrderedEvents(effectiveTime, queryMode)).thenReturn(eventList);
+        when(commentServiceMock.countCommentsAddedBeforeOrAfterDate(firstEventId, effectiveTime, queryMode))
+                .thenReturn(expectedCommentCount);
+        when(commentServiceMock.countCommentsAddedBeforeOrAfterDate(firstEventId, effectiveTime, queryMode))
+                .thenReturn(expectedCommentCount);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
@@ -224,15 +236,23 @@ public class EventControllerTest {
     @Test
     public void shouldReturnEventsAfterTimeAsJSON() throws Exception {
         //given
+        final int firstEventId = 0;
+        final int secondEventId = 1;
         final String firstEventName = "EPAM fanfest 1";
         final String secondEventName = "EPAM fanfest 2";
+        final int expectedCommentCount = 3;
         final LocalDateTime firstEventTime = LocalDateTime.parse("2008-09-11T15:00");
         final LocalDateTime secondEventTime = LocalDateTime.parse("2007-09-11T15:00");
         final LocalDateTime effectiveTime = LocalDateTime.now();
         final QueryMode queryMode = QueryMode.AFTER;
-        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventTime, secondEventTime);
+        final List<Event> eventList = getExpectedEventsList(firstEventName, secondEventName, firstEventId, secondEventId,
+                firstEventTime, secondEventTime);
 
         when(eventServiceMock.getOrderedEvents(effectiveTime, queryMode)).thenReturn(eventList);
+        when(commentServiceMock.countCommentsAddedBeforeOrAfterDate(firstEventId, effectiveTime, queryMode))
+                .thenReturn(expectedCommentCount);
+        when(commentServiceMock.countCommentsAddedBeforeOrAfterDate(firstEventId, effectiveTime, queryMode))
+                .thenReturn(expectedCommentCount);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/event/?queryMode=" + queryMode.toString() +
