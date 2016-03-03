@@ -14,6 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 
 /**
@@ -42,34 +43,34 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
     @Override
     @Transactional
     public void createUser(User user) {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            SqlParameterSource ps = new MapSqlParameterSource()
-                                    .addValue("username", user.getUsername())
-                                    .addValue("password", user.getPassword())
-                                    .addValue("email"   , user.getEmail())
-                                    .addValue("name"    , user.getName())
-                                    .addValue("surname" , user.getSurname())
-                                    .addValue("gender"  , user.getGender())
-                                    .addValue("photo"   , user.getPhoto())
-                                    .addValue("country" , user.getCountry())
-                                    .addValue("city"    , user.getCountry())
-                                    .addValue("bio"     , user.getBio());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource ps = new MapSqlParameterSource()
+                .addValue("username", user.getUsername())
+                .addValue("password", user.getPassword())
+                .addValue("email", user.getEmail())
+                .addValue("name", user.getName().orElse(null))
+                .addValue("surname", user.getSurname().orElse(null))
+                .addValue("gender", user.getGender().orElse(null))
+                .addValue("photo", user.getPhoto().orElse(null))
+                .addValue("country", user.getCountry().orElse(null))
+                .addValue("city", user.getCountry().orElse(null))
+                .addValue("bio", user.getBio().orElse(null));
 
-          try {
+        try {
 
-              getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder, new String[]{"id"});
+            getNamedParameterJdbcTemplate().update(CREATE_USER_QUERY, ps, keyHolder, new String[]{"id"});
 
-              user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue())
-                      .password("")
-                      .build();
+            user.builder(user.getUsername(), user.getEmail()).id(keyHolder.getKey().intValue())
+                    .password("")
+                    .build();
 
-              getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
-                      .addValue("id", keyHolder.getKey().intValue()));
+            getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
+                    .addValue("id", keyHolder.getKey().intValue()));
 
-          } catch(DataAccessException ex) {
-              final String msg = String.format("Failed to connect to database and create user: %s ", user);
-              throw new UserNotCreatedException(msg);
-          }
+        } catch (DataAccessException ex) {
+            final String msg = String.format("Failed to connect to database and create user: %s ", user);
+            throw new UserNotCreatedException(msg);
+        }
 
     }
 
