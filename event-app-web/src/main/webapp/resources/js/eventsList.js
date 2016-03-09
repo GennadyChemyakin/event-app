@@ -95,7 +95,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
         $("#" + event.id).find("#eventCreator").attr("id", "eventCreator" + event.id);
         $("#" + event.id).find("#numberOfCommentsForEvent").attr("id", 'numberOfCommentsForEvent' + event.id);
         $("#" + event.id).find("#createTime").attr("id", 'createTime' + event.id);
-        $("#" + 'name' + event.id).text(event.name + ' ');
+        $("#" + 'name' + event.id).text(event.name);
         $("#" + 'name' + event.id).attr("href", '/event-app/detail.html?id=' + event.id);
         $("#" + 'picture' + event.id).attr("href", '/event-app/detail.html?id=' + event.id);
         if(event.eventTime != null) {
@@ -114,7 +114,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
             $("#" + 'address' + event.id).text(" " + address);
         }
         $("#" + 'description' + event.id).text(event.description);
-        $("#" + 'eventCreator' + event.id).text(event.creator + ' ');
+        $("#" + 'eventCreator' + event.id).text(event.creator);
         $("#" + 'eventCreator' + event.id).attr("href", '/event-app/profile.html?username=' + event.creator);
         $("#" + 'numberOfCommentsForEvent' + event.id).text(event.numberOfComments);
         $("#" + event.id).slideDown();
