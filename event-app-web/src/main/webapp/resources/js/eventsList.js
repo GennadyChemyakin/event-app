@@ -73,7 +73,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
                     '<div class="panel-body">' +
                         '<h4 id="description"></h4>' +
                     '</div>' +
-                    '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
+                    '<h4 class="glyphicon glyphicon-user"><a href="" id="eventCreator"></a></h4>' +
                     '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsForEvent"></h4>' +
                     '<div id="createTime" style="display:none"></div>' +
                 '</div>' +
@@ -95,7 +95,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
         $("#" + event.id).find("#eventCreator").attr("id", "eventCreator" + event.id);
         $("#" + event.id).find("#numberOfCommentsForEvent").attr("id", 'numberOfCommentsForEvent' + event.id);
         $("#" + event.id).find("#createTime").attr("id", 'createTime' + event.id);
-        $("#" + 'name' + event.id).text(event.name + ' ');
+        $("#" + 'name' + event.id).text(event.name);
         $("#" + 'name' + event.id).attr("href", '/event-app/detail.html?id=' + event.id);
         $("#" + 'picture' + event.id).attr("href", '/event-app/detail.html?id=' + event.id);
         if(event.eventTime != null) {
@@ -115,6 +115,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
         }
         $("#" + 'description' + event.id).text(event.description);
         $("#" + 'eventCreator' + event.id).text(event.creator);
+        $("#" + 'eventCreator' + event.id).attr("href", '/event-app/profile.html?username=' + event.creator);
         $("#" + 'numberOfCommentsForEvent' + event.id).text(event.numberOfComments);
         $("#" + event.id).slideDown();
 }
