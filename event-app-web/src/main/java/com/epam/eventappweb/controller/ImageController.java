@@ -36,16 +36,16 @@ public class ImageController {
     /**
      * Method for saving user image into the catalog and in SEC_USER table in db
      * @param userName - username of user the picture belongs to.
-     * @param Mfile  - Multipart file to load
+     * @param multipartFile  - Multipart file to load
      */
     @RequestMapping(value = "/image/user/{userName}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void handleImageUpload(@PathVariable String userName,
-                                  @RequestParam("users_photo") MultipartFile Mfile) throws IOException {
+                                  @RequestParam("users_photo") MultipartFile multipartFile) throws IOException {
 
-        LOGGER.info("handleImageUpload started. Params: username - {}, Mfile - {}", userName, Mfile);
+        LOGGER.info("handleImageUpload started. Params: username - {}, Mfile - {}", userName, multipartFile);
 
-        String photoLink = imageService.saveUserImage(userName, Mfile.getBytes());
+        String photoLink = imageService.saveUserImage(userName, multipartFile.getBytes());
         userService.updateUserPhotoByUsername(userName, photoLink);
 
         LOGGER.info("handleImageUpload finished.");
@@ -57,7 +57,7 @@ public class ImageController {
      * @return an image in bytes
      */
     @RequestMapping(value = "/image/user/{userName}", method = RequestMethod.GET, produces = "image/png")
-    public byte[] getImage(@PathVariable String userName) throws IOException {
+    public byte[] getImage(@PathVariable String userName) {
 
         LOGGER.info("getImage started. PathVariables: id - {}", userName);
 
