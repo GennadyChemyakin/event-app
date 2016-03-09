@@ -2,10 +2,9 @@ package com.epam.eventapp.service.service.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.EmailAlreadyExistsException;
-import com.epam.eventapp.service.exceptions.UserNameAlreadyExistsException;
-import com.epam.eventapp.service.exceptions.UserNotCreatedException;
-import com.epam.eventapp.service.exceptions.UserNotFoundException;
+import com.epam.eventapp.service.exceptions.InvalidIdentifierException;
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
 import com.epam.eventapp.service.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,10 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.mockito.Mockito.when;
-
 
 
 /**
@@ -44,7 +41,7 @@ public class UserServiceTest {
     public void userCreatedTest() {
 
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         Mockito.doNothing().when(userDAOMock).createUser(user);
 
         //when
@@ -56,27 +53,27 @@ public class UserServiceTest {
     }
 
 
-    @Test(expected = UserNotCreatedException.class)
-    public void shouldThrowUserNotCreatedExceptionIfDataAccessException() {
+    @Test(expected = ObjectNotCreatedException.class)
+    public void shouldThrowObjectCreatedExceptionIfDataAccessException() {
 
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
-        Mockito.doThrow(UserNotCreatedException.class).doNothing().when(userDAOMock).createUser(user);
+        User user = User.builder("Danil", "Danya@mail.com").build();
+        Mockito.doThrow(ObjectNotCreatedException.class).doNothing().when(userDAOMock).createUser(user);
 
         //when
         userService.createUser(user);
 
         //then
         // exception should be thrown if data does not get to the table
-        Assert.fail("UserNotCreatedException is expected to be thrown");
+        Assert.fail("ObjectNotCreatedException is expected to be thrown");
 
     }
 
-    @Test(expected = UserNameAlreadyExistsException.class)
-    public void shouldThrowUserNameExistsInTheDatabase() {
+    @Test(expected = InvalidIdentifierException.class)
+    public void shouldThrowExceptionIfUserNameExistsInTheDatabase() {
 
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         when(userDAOMock.isUserNameRegistered(user.getUsername())).thenReturn(true);
 
         //when
@@ -84,17 +81,14 @@ public class UserServiceTest {
 
         //then
         // exception should be thrown if UserName is in db
-        Assert.fail("UserNameAlreadyExistsException is expected to be thrown");
+        Assert.fail("InvalidIdentifierException is expected to be thrown");
 
     }
 
-    /**
-     * Method tests if email already in the database
-     */
-    @Test(expected = EmailAlreadyExistsException.class)
-    public void shouldThrowEmailExistsInTheDatabase() {
+    @Test(expected = InvalidIdentifierException.class)
+    public void shouldThrowExceptionIfEmailExistsInTheDatabase() {
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);
 
         //when
@@ -102,7 +96,7 @@ public class UserServiceTest {
 
         //then
         // exception should be thrown if Email is in db
-        Assert.fail("EmailAlreadyExistsException is expected to be thrown");
+        Assert.fail("InvalidIdentifierException is expected to be thrown");
 
     }
 
@@ -128,18 +122,23 @@ public class UserServiceTest {
         Assert.assertEquals(user.getEmail(), email);
     }
 
-    @Test(expected = UsernameNotFoundException.class)
-    public void shouldThrowUserNotFoundException() {
+    /**
+     * testing getUserByUsername method form
+     * looking for user with username = 'wrong username'.
+     * expect ObjectNotFoundException
+     */
+    @Test(expected = ObjectNotFoundException.class)
+    public void shouldThrowObjectNotFoundException() {
         //given
-        final String username  = "wrong username";
-        User expectedUser      = User.builder().username(username).build();
-        when(userDAOMock.getUserByUsername(username)).thenThrow(UsernameNotFoundException.class);
+        final String username = "wrong username";
+
+        when(userDAOMock.getUserByUsername(username)).thenThrow(ObjectNotFoundException.class);
 
         //when
-        User user = userService.getUserByUsername(username);
+        userService.getUserByUsername(username);
 
         //then
-        Assert.fail("UserNotFoundException should be thrown");
+        Assert.fail("ObjectNotFoundException should be thrown");
 
     }
 

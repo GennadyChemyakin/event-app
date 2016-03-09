@@ -1,11 +1,11 @@
 package com.epam.eventappweb.controller;
 
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
 import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.EventService;
-import com.epam.eventappweb.exceptions.EventNotFoundException;
-import com.epam.eventappweb.exceptions.EventNotUpdatedException;
+import com.epam.eventappweb.exceptions.ObjectNotUpdatedException;
 import com.epam.eventappweb.model.EventPreviewVO;
 import com.epam.eventappweb.model.EventVO;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class EventController {
         LOGGER.info("getEventDetail started. Param: id = {} ", eventId);
         Optional<Event> eventOptional = eventService.findById(eventId);
         if (!eventOptional.isPresent()) {
-            throw new EventNotFoundException("Event Not Found by ID = " + eventId);
+            throw new ObjectNotFoundException("Event Not Found by ID = " + eventId);
         }
         Event event = eventOptional.get();
         EventVO eventVO = EventVO.builder(event.getName())
@@ -76,7 +76,7 @@ public class EventController {
 
         int updatedEntries = eventService.updateEvent(event);
         if (updatedEntries != 1) {
-            throw new EventNotUpdatedException("Event with id = " + eventId + " not updated with new fields value: " + eventVO);
+            throw new ObjectNotUpdatedException("Event with id = " + eventId + " not updated with new fields value: " + eventVO);
         }
         LOGGER.info("updateEvent finished.");
     }

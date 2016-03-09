@@ -3,9 +3,8 @@ package com.epam.eventapp.service.dao.impl;
 import com.epam.eventapp.service.config.TestDataAccessConfig;
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.UserNotFoundException;
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +61,9 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
 
     /**
      * testing method getUserByUsername from UserDAOImpl
-     * expect UserNotFoundException thrown
+     * expect ObjectNotFoundException thrown
      */
-    @Test(expected = UserNotFoundException.class)
+    @Test(expected = ObjectNotFoundException.class)
     public void shouldThrowExceptionInCaseOfWrongUsername(){
         //given
         final String username = "wrongUsername";
@@ -73,7 +72,7 @@ public class UserDAOITCase extends AbstractTransactionalJUnit4SpringContextTests
         User user = userDAO.getUserByUsername(username);
 
         //then
-        Assert.fail("UserNotFoundException not thrown");
+        Assert.fail("ObjectNotFoundException not thrown");
     }
 
 }

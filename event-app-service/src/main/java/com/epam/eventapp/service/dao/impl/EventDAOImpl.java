@@ -1,11 +1,10 @@
 package com.epam.eventapp.service.dao.impl;
 
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
 import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.dao.EventDAO;
 import com.epam.eventapp.service.domain.Event;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.EventNotCreatedException;
-import org.slf4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,9 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.time.zone.ZoneRules;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -123,7 +119,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
             return event;
         } catch (DataAccessException ex) {
             final String msg = String.format("Failed to create event. Date: %s, User name: %s, Event: %s ", now, userName, event);
-            throw new EventNotCreatedException(msg);
+            throw new ObjectNotCreatedException(msg);
         }
 
     }

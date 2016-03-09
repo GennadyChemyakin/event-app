@@ -3,7 +3,7 @@ package com.epam.eventapp.service.dao.impl;
 import com.epam.eventapp.service.dao.CommentDAO;
 import com.epam.eventapp.service.domain.Comment;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.CommentaryNotAddedException;
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
 import com.epam.eventapp.service.model.QueryMode;
 import org.springframework.dao.DataAccessException;
@@ -92,7 +92,7 @@ public class CommentDAOImpl extends GenericDAO implements CommentDAO {
         try {
             getNamedParameterJdbcTemplate().update(ADD_COMMENTARY, params);
         } catch (DataAccessException e) {
-            throw new CommentaryNotAddedException(e.getMessage());
+            throw new ObjectNotCreatedException(e.getMessage());
         }
 
     }

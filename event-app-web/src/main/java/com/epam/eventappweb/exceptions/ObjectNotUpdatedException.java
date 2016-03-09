@@ -4,12 +4,12 @@ package com.epam.eventappweb.exceptions;
 /**
  * class for representing exceptions that is thrown when event is not updated
  */
-public class EventNotUpdatedException extends RuntimeException {
+public class ObjectNotUpdatedException extends RuntimeException {
 
-    public EventNotUpdatedException() {
+    public ObjectNotUpdatedException() {
     }
 
-    public EventNotUpdatedException(String message) {
+    public ObjectNotUpdatedException(String message) {
         super(message);
     }
 }
