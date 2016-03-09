@@ -2,6 +2,7 @@ package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.model.QueryMode;
 import com.epam.eventapp.service.domain.Event;
+import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.exceptions.EventNotFoundException;
 import com.epam.eventappweb.exceptions.EventNotUpdatedException;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -32,6 +32,9 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private CommentService commentService;
 
     @RequestMapping(value = "/event/{id}", method = RequestMethod.GET)
     public EventVO getEventDetail(@PathVariable("id") int eventId) {
@@ -86,6 +89,8 @@ public class EventController {
         List<EventPreviewVO> eventPreviewVOList = new LinkedList<>();
         List<Event> eventList =  eventService.getOrderedEvents(effectiveTime, queryMode);
         for (Event event : eventList) {
+            int numberOfComments = commentService.countCommentsAddedBeforeOrAfterDate(event.getId(), LocalDateTime.now(),
+                    QueryMode.BEFORE);
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getId()).
                     name(event.getName()).
                     creator(event.getUser().getUsername()).
@@ -93,7 +98,7 @@ public class EventController {
                     country(event.getCountry()).
                     city(event.getCity()).
                     location(event.getLocation()).
-                    numberOfComments(5).
+                    numberOfComments(numberOfComments).
                     picture(new byte[0]).
                     eventTime(event.getEventTime()).
                     creationTime(event.getCreationTime()).build();
