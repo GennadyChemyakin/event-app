@@ -12,12 +12,22 @@
 </head>
 <body>
 <br>
+
 <div class="container">
     <div class="col-md-8">
         <div class="container-fluid" id="eventPhoto">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title" id="eventName"/>
+                    <div class="col-md-11">
+                        <h3 class="panel-title" id="eventName"/>
+                    </div>
+                    <div>
+                        <!--<button id="editEventButton" type="button" class="btn btn-success" aria-haspopup="true"-->
+                        <!--aria-expanded="false">Edit Event-->
+                        <!--</button>-->
+                        <a role="button" id="editEventButton" style="color:transparent">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit</a>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <!-- img for example. if future wi we will insert here real event photo-->
@@ -42,6 +52,7 @@
             </div>
             <br>
             <textarea class="form-control" rows="3" id="commentArea"></textarea>
+
             <div class="alert alert-danger" id="addCommentFailMessage" role="alert" style="display: none;">You must be
                 logged!
             </div>
