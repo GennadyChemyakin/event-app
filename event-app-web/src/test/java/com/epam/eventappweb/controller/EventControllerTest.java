@@ -54,10 +54,15 @@ public class EventControllerTest {
 
     private MockMvc mockMvc;
 
+    private ObjectMapper objectMapper;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = standaloneSetup(controller).build();
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new Jdk8Module());
     }
 
     /**
@@ -128,8 +133,6 @@ public class EventControllerTest {
                 city(newCity).
                 location(newLocation).build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Jdk8Module());
         final String contentString = objectMapper.writeValueAsString(updatedEventVO);
 
         when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(1);
@@ -159,8 +162,6 @@ public class EventControllerTest {
                 city(newCity).
                 location(newLocation).build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Jdk8Module());
         final String contentString = objectMapper.writeValueAsString(updatedEventVO);
 
         when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity,
@@ -295,19 +296,17 @@ public class EventControllerTest {
         Event event = Event.builder(eventName).location(location).city(city).build();
         UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName, password);
 
-        String jsonObj = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .registerModule(new Jdk8Module())
-                .writeValueAsString(eventVO);
+        String jsonObj = objectMapper.writeValueAsString(eventVO);
+
 
         Mockito.when(eventServiceMock.createEvent(argThat(allOf(Matchers.isA(Event.class), hasProperty("location", Matchers.is(Optional.of(location))),
                 hasProperty("name", Matchers.is(eventName)), hasProperty("city", Matchers.is(Optional.of(city))))), eq(userName))).thenReturn(event);
 
         //when
         ResultActions resultActions = mockMvc.perform(post("/event")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonObj)
-                        .principal(principal)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonObj)
+                .principal(principal)
         );
 
         //then

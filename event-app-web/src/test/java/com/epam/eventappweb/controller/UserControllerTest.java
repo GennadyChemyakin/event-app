@@ -77,23 +77,24 @@ public class UserControllerTest {
     /**
      * testing user controller for getting user details by
      * sending username as a parameter.
+     *
      * @throws Exception
      */
     @Test
     public void shouldGetUserByName() throws Exception {
 
         //given
-        final String userName   = "UserTest";
-        final String userEmail  = "UserTest@mail.ru";
-        final String country    = "Russia";
+        final String userName = "UserTest";
+        final String userEmail = "UserTest@mail.ru";
+        final String country = "Russia";
 
-        User user = User.builder(userName,userEmail).country(country).build();
+        User user = User.builder(userName, userEmail).country(country).build();
 
         Mockito.when(userServiceMock.getUserByUsername(userName)).thenReturn(user);
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/user")
-                .param("username",userName));
+                .param("username", userName));
 
         //then
         resultActions.andExpect(status().isOk())
