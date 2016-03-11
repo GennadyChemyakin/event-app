@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import static org.mockito.Mockito.when;
 
 
-
 /**
  * Unit tests for {@link UserService}
  */
@@ -43,7 +42,7 @@ public class UserServiceTest {
     public void userCreatedTest() {
 
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         Mockito.doNothing().when(userDAOMock).createUser(user);
 
         //when
@@ -59,7 +58,7 @@ public class UserServiceTest {
     public void shouldThrowUserNotCreatedExceptionIfDataAccessException() {
 
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         Mockito.doThrow(UserNotCreatedException.class).doNothing().when(userDAOMock).createUser(user);
 
         //when
@@ -75,7 +74,7 @@ public class UserServiceTest {
     public void shouldThrowUserNameExistsInTheDatabase() {
 
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         when(userDAOMock.isUserNameRegistered(user.getUsername())).thenReturn(true);
 
         //when
@@ -88,12 +87,12 @@ public class UserServiceTest {
     }
 
     /**
-     * Method tests if email already in the database
+     * Method tests if email already exists
      */
     @Test(expected = EmailAlreadyExistsException.class)
     public void shouldThrowEmailExistsInTheDatabase() {
         //given
-        User user = User.builder("Danil","Danya@mail.com").build();
+        User user = User.builder("Danil", "Danya@mail.com").build();
         when(userDAOMock.isEmailRegistered(user.getEmail())).thenReturn(true);
 
         //when
@@ -130,8 +129,8 @@ public class UserServiceTest {
     @Test(expected = UsernameNotFoundException.class)
     public void shouldThrowUserNotFoundException() {
         //given
-        final String username  = "wrong username";
-        User expectedUser      = User.builder().username(username).build();
+        final String username = "wrong username";
+        User expectedUser = User.builder().username(username).build();
         when(userDAOMock.getUserByUsername(username)).thenThrow(UsernameNotFoundException.class);
 
         //when
@@ -152,13 +151,13 @@ public class UserServiceTest {
         //given
         final String username = "username";
         final String photoLink = "\\\\EPRUPETW0518\\images\\users\\username";
-        when(userDAOMock.updateUserPhotoURL(username,photoLink)).thenReturn(1);
+        when(userDAOMock.updateUserPhotoURL(username, photoLink)).thenReturn(1);
 
         //when
-        int rowsUpdated = userService.updateUserPhotoByUsername(username,photoLink);
+        int rowsUpdated = userService.updateUserPhotoByUsername(username, photoLink);
 
         //then
-        Assert.assertEquals(1,rowsUpdated);
+        Assert.assertEquals(1, rowsUpdated);
 
     }
 

@@ -1,13 +1,12 @@
 package com.epam.eventapp.service.service.impl;
 
-import com.epam.eventapp.service.exceptions.ImageNotReadFromDiskException;
-import com.epam.eventapp.service.exceptions.ImageNotSavedToDiskException;
+import com.epam.eventapp.service.exceptions.ImageReadException;
+import com.epam.eventapp.service.exceptions.ImageWriteException;
 import com.epam.eventapp.service.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,38 +27,38 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String saveUserImage(String username, byte[] photo) {
-        LOGGER.info("saveUserImage started. Params: username - {}, photo {} bytes", username, photo.length);
+        LOGGER.info("saveUserImage started. Params: username: {}, bytes: {}", username, photo.length);
         try {
-            Path path = Paths.get(environment.getRequiredProperty("USER_IMAGE_PATH")).resolve(username);
+            Path path = Paths.get(environment.getRequiredProperty("image.path.user")).resolve(username);
             if(!Files.isReadable(path)) {
                 Files.createDirectory(path);
             }
             Files.write(path.resolve(username), photo);
-            LOGGER.info("saveUserImage finished. Returns: photoLink - {}", path.getParent());
+            LOGGER.info("saveUserImage finished. Returns: photoLink: {}", path.getParent());
             return path.toString();
         } catch (IOException e) {
-            throw new ImageNotSavedToDiskException(e.getMessage());
+            throw new ImageWriteException(e.getMessage(), e);
         }
     }
 
     @Override
     public byte[] getUserPhoto(String photoLink,  String username) {
 
-        LOGGER.info("getUserPhoto started. Params: photoLink - {}, username {}", photoLink, username);
+        LOGGER.info("getUserPhoto started. Params: photoLink: {}, username: {}", photoLink, username);
 
         Path path;
         if (photoLink == null) {
-            path = Paths.get(environment.getRequiredProperty("DEFAULT_USER_IMAGE_PATH"));
+            path = Paths.get(environment.getRequiredProperty("image.path.user.default"));
         } else {
             path = Paths.get(photoLink).resolve(username);
         }
 
         try {
             byte[] photo = Files.readAllBytes(path);
-            LOGGER.info("getUserPhoto finished. Returns: photo data size - {} bytes", photo.length);
+            LOGGER.info("getUserPhoto finished. Returns: bytes: {} ", photo.length);
             return photo;
         } catch (IOException e) {
-            throw new ImageNotReadFromDiskException(e.getMessage());
+            throw new ImageReadException(e.getMessage(), e);
         }
 
     }

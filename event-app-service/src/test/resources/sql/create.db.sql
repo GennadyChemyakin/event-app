@@ -137,6 +137,3 @@ COMMENT ON COLUMN event.create_time IS 'time of creation of event';
 
 ALTER TABLE SEC_USER drop column photo;
 ALTER TABLE SEC_USER add PHOTO_URL VARCHAR2(600 char);
-
-ALTER TABLE PHOTO drop column PHOTO_DATA;
-ALTER TABLE PHOTO add PHOTO_URL VARCHAR2(600 char);

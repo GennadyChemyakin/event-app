@@ -1,7 +1,7 @@
 package com.epam.eventappweb.controller;
 
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.ImageNotReadFromDiskException;
+import com.epam.eventapp.service.exceptions.ImageReadException;
 import com.epam.eventapp.service.service.ImageService;
 import com.epam.eventapp.service.service.UserService;
 import org.hamcrest.Matchers;
@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.NestedServletException;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -97,15 +98,13 @@ public class ImageControllerTest {
 
         //then
         resultActions.andExpect(status().isOk())
-                        .andExpect(status().isOk())
-                        .andExpect(content().bytes(photo))
-                        .andExpect(content().contentType(MediaType.IMAGE_PNG));
+                        .andExpect(content().bytes(photo));
 
 
     }
 
     /**
-     *  Test that method will throw ImageNotReadFromDiskException in case image not found
+     *  Test that method will throw ImageReadException in case image not found
      */
     @Test
     public void shouldThrowExceptionIfNoPhotoIsFound() throws Exception {
@@ -116,16 +115,16 @@ public class ImageControllerTest {
         final byte[] photo = new byte[] {1,0,0,0,0,0};
         User user = User.builder().username(username).photo(photoURL).build();
 
-        when(imageServiceMock.getUserPhoto(photoURL,username)).thenThrow(ImageNotReadFromDiskException.class);
+        when(imageServiceMock.getUserPhoto(photoURL,username)).thenThrow(ImageReadException.class);
         when(userServiceMock.getUserByUsername(username)).thenReturn(user);
 
         thrown.expect(NestedServletException.class);
-        thrown.expectCause(Matchers.isA(ImageNotReadFromDiskException.class));
+        thrown.expectCause(Matchers.isA(ImageReadException.class));
         //when
         ResultActions resultActions = mockMvc.perform(get("/image/user/" + username));
 
         //then
-        Assert.fail("ImageNotReadFromDiskException should be throwm");
+        Assert.fail("ImageReadException should be throwm");
 
     }
 

@@ -54,10 +54,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int updateUserPhotoByUsername(String userName, String photoLink) {
-        LOGGER.debug("updateUserPhotoByUsername started: Params username = {}, photo = {}", userName, photoLink);
-        int updatedRow = userDao.updateUserPhotoURL(userName,photoLink);
-        LOGGER.debug("updateUserPhotoByUsername finished, rows updated = {}", updatedRow);
+    public int updateUserPhotoByUsername(String username, String photoURL) {
+        LOGGER.debug("updateUserPhotoByUsername started. Params: username: {}, photoURL: {}", username, photoURL);
+        int updatedRow = userDao.updateUserPhotoURL(username,photoURL);
+        LOGGER.debug("updateUserPhotoByUsername finished, rows updated: {}", updatedRow);
         return updatedRow;
     }
 
