@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * class describes Event model for list of Events
@@ -12,30 +13,30 @@ public final class EventPreviewVO {
     private final int id;
     private final String name;
     private final String creator;
-    private final String description;
-    private final String country;
-    private final String city;
-    private final String location;
+    private final Optional<String> description;
+    private final Optional<String> country;
+    private final Optional<String> city;
+    private final Optional<String> location;
     private final int numberOfComments;
-    private final byte[] picture;
-    private final LocalDateTime eventTime;
+    private final Optional<byte[]> picture;
+    private final Optional<LocalDateTime> eventTime;
     private final LocalDateTime createTime;
 
     private EventPreviewVO(EventPreviewModelBuilder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.creator = builder.creator;
-        this.description = builder.description;
-        this.country = builder.country;
-        this.city = builder.city;
-        this.location = builder.location;
+        this.description = Optional.ofNullable(builder.description);
+        this.country = Optional.ofNullable(builder.country);
+        this.city = Optional.ofNullable(builder.city);
+        this.location = Optional.ofNullable(builder.location);
         this.numberOfComments = builder.numberOfComments;
-        this.picture = builder.picture;
-        this.eventTime = builder.eventTime;
+        this.picture = Optional.ofNullable(builder.picture);
+        this.eventTime = Optional.ofNullable(builder.eventTime);
         this.createTime = builder.createTime;
     }
 
-    public static EventPreviewModelBuilder builder(int id){
+    public static EventPreviewModelBuilder builder(int id) {
         return new EventPreviewModelBuilder(id);
     }
 
@@ -125,19 +126,19 @@ public final class EventPreviewVO {
         return name;
     }
 
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return description;
     }
 
-    public String getCountry() {
+    public Optional<String> getCountry() {
         return country;
     }
 
-    public String getCity() {
+    public Optional<String> getCity() {
         return city;
     }
 
-    public String getLocation() {
+    public Optional<String> getLocation() {
         return location;
     }
 
@@ -145,11 +146,11 @@ public final class EventPreviewVO {
         return numberOfComments;
     }
 
-    public byte[] getPicture() {
+    public Optional<byte[]> getPicture() {
         return picture;
     }
 
-    public LocalDateTime getEventTime() {
+    public Optional<LocalDateTime> getEventTime() {
         return eventTime;
     }
 

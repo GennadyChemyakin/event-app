@@ -40,7 +40,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
             "e.city as e_city, e.address, e.gps_latitude, e.gps_longitude, e.event_time, e.create_time, u.id as u_id, " +
             "u.username, u.email, u.name as u_name, u.surname, u.country as u_country, u.city as u_city, " +
             "u.bio from event e JOIN sec_user u on e.sec_user_id = u.id where e.id=:id";
-	private static final String UPDATE_EVENT_BY_ID = "UPDATE event SET name=:name, description=:description, country=:country," +
+    private static final String UPDATE_EVENT_BY_ID = "UPDATE event SET name=:name, description=:description, country=:country," +
             " city=:city, address=:address, gps_latitude=:gps_latitude, gps_longitude=:gps_longitude, " +
             "event_time=:event_time WHERE id=:id";
 
@@ -50,7 +50,7 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
                     "e.create_time, u.id as u_id, u.username, u.email, u.name as u_name, u.surname, " +
                     "u.country as u_country, u.city as u_city, u.bio FROM event e JOIN sec_user u on e.sec_user_id = u.id ";
     private static final String WHERE_CREATION_TIME_BEFORE =
-                    "WHERE e.create_time < :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
+            "WHERE e.create_time < :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
     private static final String WHERE_CREATION_TIME_AFTER =
             "WHERE e.create_time > :creation_time ORDER BY e.create_time DESC) event_alias WHERE rownum <= :amount";
 
@@ -91,13 +91,13 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
         SqlParameterSource ps = new MapSqlParameterSource()
                 .addValue("name", event.getName())
-                .addValue("country", event.getCountry())
-                .addValue("city", event.getCity())
-                .addValue("description", event.getDescription())
+                .addValue("country", event.getCountry().orElse(null))
+                .addValue("city", event.getCity().orElse(null))
+                .addValue("description", event.getDescription().orElse(null))
                 .addValue("gps_latitude", event.getGpsLatitude())
                 .addValue("gps_longitude", event.getGpsLongitude())
-                .addValue("address", event.getLocation())
-                .addValue("event_time", event.getEventTime() != null ? Timestamp.valueOf(event.getEventTime()) : null)
+                .addValue("address", event.getLocation().orElse(null))
+                .addValue("event_time", event.getEventTime().isPresent() ? Timestamp.valueOf(event.getEventTime().get()) : null)
                 .addValue("create_time", Timestamp.valueOf(now))
                 .addValue("username", userName);
 
@@ -107,13 +107,13 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
 
             event = Event.builder(event.getName())
                     .id(keyHolder.getKey().intValue())
-                    .country(event.getCountry())
-                    .city(event.getCity())
-                    .description(event.getDescription())
+                    .country(event.getCountry().orElse(null))
+                    .city(event.getCity().orElse(null))
+                    .description(event.getDescription().orElse(null))
                     .gpsLatitude(event.getGpsLatitude())
                     .gpsLongitude(event.getGpsLongitude())
-                    .eventTime(event.getEventTime())
-                    .location(event.getLocation())
+                    .eventTime(event.getEventTime().orElse(null))
+                    .location(event.getLocation().orElse(null))
                     .build();
 
             return event;
@@ -129,13 +129,14 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
         namedParameters.addValue("id", updatedEvent.getId());
         namedParameters.addValue("name", updatedEvent.getName());
-        namedParameters.addValue("description", updatedEvent.getDescription());
-        namedParameters.addValue("country", updatedEvent.getCountry());
-        namedParameters.addValue("city", updatedEvent.getCity());
-        namedParameters.addValue("address", updatedEvent.getLocation());
+        namedParameters.addValue("description", updatedEvent.getDescription().orElse(null));
+        namedParameters.addValue("country", updatedEvent.getCountry().orElse(null));
+        namedParameters.addValue("city", updatedEvent.getCity().orElse(null));
+        namedParameters.addValue("address", updatedEvent.getLocation().orElse(null));
         namedParameters.addValue("gps_latitude", updatedEvent.getGpsLatitude());
         namedParameters.addValue("gps_longitude", updatedEvent.getGpsLongitude());
-        namedParameters.addValue("event_time", Timestamp.valueOf(updatedEvent.getEventTime()));
+        namedParameters.addValue("event_time",
+                updatedEvent.getEventTime().isPresent() ? Timestamp.valueOf(updatedEvent.getEventTime().get()) : null);
         return getNamedParameterJdbcTemplate().update(UPDATE_EVENT_BY_ID, namedParameters);
     }
 
@@ -158,25 +159,25 @@ public class EventDAOImpl extends GenericDAO implements EventDAO {
         }
 
         List<Event> eventList = getNamedParameterJdbcTemplate().query(sqlQuery, params, ((resultSet, i) -> {
-                        return Event.builder(resultSet.getString("e_name")).
-                                user(User.builder(resultSet.getString("username"), resultSet.getString("email")).
-                                        name(resultSet.getString("u_name")).
-                                        id(resultSet.getInt("u_id")).
-                                        surname(resultSet.getString("surname")).
-                                        country(resultSet.getString("u_country")).
-                                        city(resultSet.getString("u_city")).
-                                        bio(resultSet.getString("bio")).build()).
-                                id(resultSet.getInt("e_id")).
-                                description(resultSet.getString("description")).
-                                country(resultSet.getString("e_country")).
-                                city(resultSet.getString("e_city")).
-                                location(resultSet.getString("address")).
-                                gpsLatitude(resultSet.getDouble("gps_latitude")).
-                                gpsLongitude(resultSet.getDouble("gps_longitude")).
-                                eventTime((resultSet.getTimestamp("event_time") == null) ? null : resultSet.getTimestamp("event_time").toLocalDateTime()).
-                                creationTime(resultSet.getTimestamp("create_time").toLocalDateTime()).build();
-                    })
-            );
+                    return Event.builder(resultSet.getString("e_name")).
+                            user(User.builder(resultSet.getString("username"), resultSet.getString("email")).
+                                    name(resultSet.getString("u_name")).
+                                    id(resultSet.getInt("u_id")).
+                                    surname(resultSet.getString("surname")).
+                                    country(resultSet.getString("u_country")).
+                                    city(resultSet.getString("u_city")).
+                                    bio(resultSet.getString("bio")).build()).
+                            id(resultSet.getInt("e_id")).
+                            description(resultSet.getString("description")).
+                            country(resultSet.getString("e_country")).
+                            city(resultSet.getString("e_city")).
+                            location(resultSet.getString("address")).
+                            gpsLatitude(resultSet.getDouble("gps_latitude")).
+                            gpsLongitude(resultSet.getDouble("gps_longitude")).
+                            eventTime((resultSet.getTimestamp("event_time") == null) ? null : resultSet.getTimestamp("event_time").toLocalDateTime()).
+                            creationTime(resultSet.getTimestamp("create_time").toLocalDateTime()).build();
+                })
+        );
         return eventList;
     }
 

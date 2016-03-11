@@ -29,4 +29,8 @@
 		<sqlFile relativeToChangelogFile="true" path="sql/6.added.creation.time.to.event.sql"/>
 	</changeSet>
 
+	<changeSet id="8" author="Gennady_Chemyakin">
+		<sqlFile relativeToChangelogFile="true" path="sql/8.added.notnull.constraints.to.commentary.table.sql"/>
+	</changeSet>
+
 </databaseChangeLog>

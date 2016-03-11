@@ -45,15 +45,15 @@ public class EventController {
         }
         Event event = eventOptional.get();
         EventVO eventVO = EventVO.builder(event.getName())
-                .city(event.getCity())
-                .country(event.getCountry())
-                .description(event.getDescription())
+                .city(event.getCity().orElse(null))
+                .country(event.getCountry().orElse(null))
+                .description(event.getDescription().orElse(null))
                 .id(event.getId())
                 .creator(event.getUser().getUsername())
-                .creatorName(event.getUser().getName())
-                .creatorSurname(event.getUser().getSurname())
-                .eventTime(event.getEventTime())
-                .location(event.getLocation())
+                .creatorName(event.getUser().getName().orElse(null))
+                .creatorSurname(event.getUser().getSurname().orElse(null))
+                .eventTime(event.getEventTime().orElse(null))
+                .location(event.getLocation().orElse(null))
                 .build();
         LOGGER.info("getEventDetail finished. Result: {}", eventVO);
         return eventVO;
@@ -66,13 +66,13 @@ public class EventController {
 
         Event event = Event.builder(eventVO.getName()).
                 id(eventId).
-                description(eventVO.getDescription()).
-                country(eventVO.getCountry()).
-                city(eventVO.getCity()).
-                location(eventVO.getLocation()).
+                description(eventVO.getDescription().orElse(null)).
+                country(eventVO.getCountry().orElse(null)).
+                city(eventVO.getCity().orElse(null)).
+                location(eventVO.getLocation().orElse(null)).
                 gpsLatitude(eventVO.getGpsLatitude()).
                 gpsLongitude(eventVO.getGpsLongitude()).
-                eventTime(eventVO.getEventTime()).build();
+                eventTime(eventVO.getEventTime().orElse(null)).build();
 
         int updatedEntries = eventService.updateEvent(event);
         if (updatedEntries != 1) {
@@ -83,24 +83,24 @@ public class EventController {
 
     @RequestMapping(value = "/event/", method = RequestMethod.GET)
     public List<EventPreviewVO> getEventList(@RequestParam("queryMode") QueryMode queryMode,
-                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        @RequestParam("time") LocalDateTime effectiveTime) {
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                             @RequestParam("time") LocalDateTime effectiveTime) {
         LOGGER.info("getEventList started. Param: effectiveTime = {},queryMode = {} ", effectiveTime, queryMode);
         List<EventPreviewVO> eventPreviewVOList = new LinkedList<>();
-        List<Event> eventList =  eventService.getOrderedEvents(effectiveTime, queryMode);
+        List<Event> eventList = eventService.getOrderedEvents(effectiveTime, queryMode);
         for (Event event : eventList) {
             int numberOfComments = commentService.countCommentsAddedBeforeOrAfterDate(event.getId(), LocalDateTime.now(),
                     QueryMode.BEFORE);
             EventPreviewVO eventPreviewVO = EventPreviewVO.builder(event.getId()).
                     name(event.getName()).
                     creator(event.getUser().getUsername()).
-                    description(event.getDescription()).
-                    country(event.getCountry()).
-                    city(event.getCity()).
-                    location(event.getLocation()).
-                    numberOfComments(numberOfComments).
+                    description(event.getDescription().orElse(null)).
+                    country(event.getCountry().orElse(null)).
+                    city(event.getCity().orElse(null)).
+                    location(event.getLocation().orElse(null)).
+                    numberOfComments(5).
                     picture(new byte[0]).
-                    eventTime(event.getEventTime()).
+                    eventTime(event.getEventTime().orElse(null)).
                     creationTime(event.getCreationTime()).build();
             eventPreviewVOList.add(eventPreviewVO);
         }
@@ -114,36 +114,36 @@ public class EventController {
         LOGGER.info("addEvent started. Param: user name = {}; event = {} ", principal.getName(), eventVO);
 
         Event event = Event.builder(eventVO.getName()).
-                description(eventVO.getDescription()).
-                country(eventVO.getCountry()).
-                city(eventVO.getCity()).
-                location(eventVO.getLocation()).
+                description(eventVO.getDescription().orElse(null)).
+                country(eventVO.getCountry().orElse(null)).
+                city(eventVO.getCity().orElse(null)).
+                location(eventVO.getLocation().orElse(null)).
                 gpsLatitude(eventVO.getGpsLatitude()).
                 gpsLongitude(eventVO.getGpsLongitude()).
-                eventTime(eventVO.getEventTime()).
+                eventTime(eventVO.getEventTime().orElse(null)).
                 build();
 
         Event newEvent = eventService.createEvent(event, principal.getName());
 
         EventVO newEventVO = EventVO.builder(newEvent.getName())
-                .city(newEvent.getCity())
-                .country(newEvent.getCountry())
-                .description(newEvent.getDescription())
+                .city(newEvent.getCity().orElse(null))
+                .country(newEvent.getCountry().orElse(null))
+                .description(newEvent.getDescription().orElse(null))
                 .id(newEvent.getId())
-                .eventTime(newEvent.getEventTime())
+                .eventTime(newEvent.getEventTime().orElse(null))
                 .gpsLatitude(newEvent.getGpsLatitude())
                 .gpsLongitude(newEvent.getGpsLongitude())
-                .location(newEvent.getLocation())
+                .location(newEvent.getLocation().orElse(null))
                 .build();
 
         LOGGER.info("addEvent finished. eventVO = {}", newEventVO);
         return newEventVO;
     }
 
-    @RequestMapping(value = "/event/count", method =  RequestMethod.GET)
+    @RequestMapping(value = "/event/count", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public int countNumberOfNewEvents(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                          @RequestParam("after") LocalDateTime after) {
+                                      @RequestParam("after") LocalDateTime after) {
         LOGGER.info("countNumberOfNewEvents started. Param: after = {} ", after);
         int numberOfNewEvents = eventService.getNumberOfNewEvents(after);
         LOGGER.info("countNumberOfNewEvents finished. numberOfNewEvents = {}", numberOfNewEvents);

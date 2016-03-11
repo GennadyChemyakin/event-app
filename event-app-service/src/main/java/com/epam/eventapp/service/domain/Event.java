@@ -1,6 +1,7 @@
 package com.epam.eventapp.service.domain;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * class describes EVENT domain
@@ -10,30 +11,30 @@ public class Event {
     private final int id;
     private final User user;
     private final String name;
-    private final String description;
-    private final String country;
-    private final String city;
-    private final String location;
+    private final Optional<String> description;
+    private final Optional<String> country;
+    private final Optional<String> city;
+    private final Optional<String> location;
     private final double gpsLatitude;
     private final double gpsLongitude;
-    private final LocalDateTime eventTime;
+    private final Optional<LocalDateTime> eventTime;
     private final LocalDateTime creationTime;
 
     private Event(EventBuilder builder) {
         this.id = builder.id;
         this.user = builder.user;
         this.name = builder.name;
-        this.description = builder.description;
-        this.country = builder.country;
-        this.city = builder.city;
-        this.location = builder.location;
+        this.description = Optional.ofNullable(builder.description);
+        this.country = Optional.ofNullable(builder.country);
+        this.city = Optional.ofNullable(builder.city);
+        this.location = Optional.ofNullable(builder.location);
         this.gpsLatitude = builder.gpsLatitude;
         this.gpsLongitude = builder.gpsLongitude;
-        this.eventTime = builder.eventTime;
+        this.eventTime = Optional.ofNullable(builder.eventTime);
         this.creationTime = builder.creationTime;
     }
 
-    public static EventBuilder builder(String name){
+    public static EventBuilder builder(String name) {
         return new EventBuilder(name);
     }
 
@@ -121,19 +122,19 @@ public class Event {
         return name;
     }
 
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return description;
     }
 
-    public String getCountry() {
+    public Optional<String> getCountry() {
         return country;
     }
 
-    public String getCity() {
+    public Optional<String> getCity() {
         return city;
     }
 
-    public String getLocation() {
+    public Optional<String> getLocation() {
         return location;
     }
 
@@ -145,7 +146,7 @@ public class Event {
         return gpsLongitude;
     }
 
-    public LocalDateTime getEventTime() {
+    public Optional<LocalDateTime> getEventTime() {
         return eventTime;
     }
 

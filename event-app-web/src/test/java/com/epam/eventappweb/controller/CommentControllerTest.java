@@ -9,6 +9,7 @@ import com.epam.eventapp.service.service.CommentService;
 import com.epam.eventapp.service.service.UserService;
 import com.epam.eventappweb.model.CommentVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -63,10 +64,15 @@ public class CommentControllerTest {
 
     private MockMvc mockMvc;
 
+    private ObjectMapper objectMapper;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = standaloneSetup(sut).build();
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jdk8Module());
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     /**
@@ -187,8 +193,7 @@ public class CommentControllerTest {
         Comment newComment = Comment.builder().user(newCommentUser).id(newCommentVO.getId()).eventId(newCommentVO.getEventId()).
                 message(newCommentVO.getMessage()).commentTime(newCommentVO.getCommentTime()).build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        String contentString = objectMapper.writeValueAsString(newCommentVO);
 
         when(userServiceMock.getUserByUsername(newCommentUser.getUsername())).thenReturn(newCommentUser);
         Mockito.doNothing().when(commentServiceMock).addComment(newComment);
@@ -197,7 +202,7 @@ public class CommentControllerTest {
         ResultActions resultActions = mockMvc.perform(post("/comment").
                 principal(new TestingAuthenticationToken(newCommentUser.getUsername(), null)).
                 contentType(MediaType.APPLICATION_JSON).
-                content(objectMapper.writeValueAsString(newCommentVO)));
+                content(contentString));
 
         //then
         resultActions.andExpect(status().isNoContent());
@@ -222,16 +227,14 @@ public class CommentControllerTest {
         Comment comment = Comment.builder().user(commentUser).id(commentVO.getId()).eventId(commentVO.getEventId()).
                 message(commentVO.getMessage()).commentTime(commentVO.getCommentTime()).id(0).build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        String content = objectMapper.writeValueAsString(commentVO);
+        String contentString = objectMapper.writeValueAsString(commentVO);
 
         Mockito.doNothing().when(commentServiceMock).deleteComment(comment);
 
         //when
         ResultActions resultActions = mockMvc.perform(delete("/comment").
                 contentType(MediaType.APPLICATION_JSON).
-                content(content));
+                content(contentString));
 
         //then
         resultActions.andExpect(status().isNoContent());
@@ -260,15 +263,14 @@ public class CommentControllerTest {
         Mockito.doThrow(ObjectNotDeletedException.class).when(commentServiceMock).
                 deleteComment(argThat(allOf(Matchers.isA(Comment.class), hasProperty("id", is(comment.getId())))));
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        String contentString = objectMapper.writeValueAsString(commentVO);
 
         //when
         thrown.expect(NestedServletException.class);
         thrown.expectCause(Matchers.isA(ObjectNotDeletedException.class));
         mockMvc.perform(delete("/comment").
                 contentType(MediaType.APPLICATION_JSON).
-                content(objectMapper.writeValueAsString(commentVO)));
+                content(contentString));
 
         //then
         Assert.fail("ObjectNotDeletedException not thrown");
@@ -277,6 +279,7 @@ public class CommentControllerTest {
     /**
      * testing countCommentsAddedBeforeOrAfterDate from CommentController
      * expect status 200 and amount of comments that were added after specified date
+     *
      * @throws Exception
      */
     @Test

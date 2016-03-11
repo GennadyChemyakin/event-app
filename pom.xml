@@ -32,6 +32,7 @@
         <version.h2>1.4.190</version.h2>
         <version.jackson>2.7.1</version.jackson>
         <version.apache-commons>3.0</version.apache-commons>
+        <version.jackson.jdk8>2.6.3</version.jackson.jdk8>
     </properties>
 
     <modules>

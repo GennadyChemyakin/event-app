@@ -9,6 +9,7 @@ import com.epam.eventapp.service.service.EventService;
 import com.epam.eventappweb.exceptions.ObjectNotUpdatedException;
 import com.epam.eventappweb.model.EventVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -57,10 +58,15 @@ public class EventControllerTest {
 
     private MockMvc mockMvc;
 
+    private ObjectMapper objectMapper;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = standaloneSetup(controller).build();
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new Jdk8Module());
     }
 
     /**
@@ -131,12 +137,14 @@ public class EventControllerTest {
                 city(newCity).
                 location(newLocation).build();
 
+        final String contentString = objectMapper.writeValueAsString(updatedEventVO);
+
         when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(1);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/event/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
+                .content(contentString));
 
         //then
         resultActions.andExpect(status().isOk());
@@ -158,14 +166,17 @@ public class EventControllerTest {
                 city(newCity).
                 location(newLocation).build();
 
-        when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity, newLocation)))).thenReturn(0);
+        final String contentString = objectMapper.writeValueAsString(updatedEventVO);
+
+        when(eventServiceMock.updateEvent(argThat(equalToEvent(id, newName, newCity,
+                newLocation)))).thenReturn(0);
 
         //when
         thrown.expect(NestedServletException.class);
         thrown.expectCause(org.hamcrest.Matchers.isA(ObjectNotUpdatedException.class));
         mockMvc.perform(put("/event/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updatedEventVO)));
+                .content(contentString));
 
         //then
         Assert.fail("ObjectNotUpdatedException not thrown");
@@ -173,7 +184,8 @@ public class EventControllerTest {
 
     /**
      * Method for getting prepared list of Events
-     * @param firstEventName name of first Event
+     *
+     * @param firstEventName  name of first Event
      * @param secondEventName name of second Event
      * @return list of expected Events
      */
@@ -194,6 +206,7 @@ public class EventControllerTest {
      * Testing getEventList from EventController in <BEFORE> queryMode.
      * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields.
+     *
      * @throws Exception
      */
     @Test
@@ -231,6 +244,7 @@ public class EventControllerTest {
      * Testing getEventList from EventController in <AFTER> queryMode.
      * Mock eventService then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * expect JSON with right fields.
+     *
      * @throws Exception
      */
     @Test
@@ -268,6 +282,7 @@ public class EventControllerTest {
      * Testing getEventList from EventDetailController.
      * Passing as parameter string that doesn't correspond with existing enum value.
      * Expect 400 status.
+     *
      * @throws Exception
      */
     @Test
@@ -291,22 +306,21 @@ public class EventControllerTest {
     public void shouldCreateEvent() throws Exception {
 
         //given
-        final String userName  = "Admin";
+        final String userName = "Admin";
         final String eventName = "test event";
-        final String location  = "Obvodniy kanal";
-        final String city      = "spb";
-        final String password  = "1234";
+        final String location = "Obvodniy kanal";
+        final String city = "spb";
+        final String password = "1234";
 
         EventVO eventVO = EventVO.builder(eventName).location(location).city(city).build();
-        Event   event   = Event.builder(eventName).location(location).city(city).build();
-        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName,password);
+        Event event = Event.builder(eventName).location(location).city(city).build();
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userName, password);
 
-        String jsonObj = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .writeValueAsString(eventVO);
+        String jsonObj = objectMapper.writeValueAsString(eventVO);
 
-        Mockito.when(eventServiceMock.createEvent(argThat(allOf(Matchers.isA(Event.class),hasProperty("location", Matchers.is(location)),
-                hasProperty("name", Matchers.is(eventName)), hasProperty("city", Matchers.is(city)))), eq(userName))).thenReturn(event);
+
+        Mockito.when(eventServiceMock.createEvent(argThat(allOf(Matchers.isA(Event.class), hasProperty("location", Matchers.is(Optional.of(location))),
+                hasProperty("name", Matchers.is(eventName)), hasProperty("city", Matchers.is(Optional.of(city))))), eq(userName))).thenReturn(event);
 
         //when
         ResultActions resultActions = mockMvc.perform(post("/event")
@@ -328,6 +342,7 @@ public class EventControllerTest {
      * Testing countNumberOfNewEvents from EventDetailController.
      * Mock getNumberOfNewEvents then inject it to controller. Using mockMvc to assert the behaviour of controller.
      * Expect number of new events.
+     *
      * @throws Exception
      */
     @Test
@@ -349,6 +364,7 @@ public class EventControllerTest {
 
     /**
      * Matcher for Events, checks if both events are instances of same class and have same id field
+     *
      * @param id value to compare with
      * @return Matcher
      */
@@ -357,8 +373,8 @@ public class EventControllerTest {
                 is(instanceOf(Event.class)),
                 hasProperty("id", is(equalTo(id))),
                 hasProperty("name", is(equalTo(name))),
-                hasProperty("city", is(equalTo(city))),
-                hasProperty("location", is(equalTo(location)))
+                hasProperty("city", is(equalTo(Optional.of(city)))),
+                hasProperty("location", is(equalTo(Optional.of(location))))
         );
     }
 }
