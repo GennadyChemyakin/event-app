@@ -98,7 +98,7 @@ public class EventController {
                     country(event.getCountry().orElse(null)).
                     city(event.getCity().orElse(null)).
                     location(event.getLocation().orElse(null)).
-                    numberOfComments(5).
+                    numberOfComments(numberOfComments).
                     picture(new byte[0]).
                     eventTime(event.getEventTime().orElse(null)).
                     creationTime(event.getCreationTime()).build();
