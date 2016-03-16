@@ -33,4 +33,8 @@
 		<sqlFile relativeToChangelogFile="true" path="sql/7.modified.columns.types.for.photo.links.saving.sql"/>
 	</changeSet>
 
+	<changeSet id="8" author="Gennady_Chemyakin">
+		<sqlFile relativeToChangelogFile="true" path="sql/8.added.notnull.constraints.to.commentary.table.sql"/>
+	</changeSet>
+
 </databaseChangeLog>

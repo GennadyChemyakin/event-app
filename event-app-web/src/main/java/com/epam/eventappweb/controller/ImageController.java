@@ -45,12 +45,12 @@ public class ImageController {
     public void saveUserImage(@PathVariable String userName,
                               @RequestParam("users_photo") MultipartFile multipartFile) throws IOException {
 
-        LOGGER.info("handleImageUpload started. Params: username: {}, multipartFile: {}", userName, multipartFile);
+        LOGGER.info("saveUserImage started. Params: username: {}, multipartFile: {}", userName, multipartFile);
 
         String photoLink = imageService.saveUserImage(userName, multipartFile.getBytes());
         userService.updateUserPhotoByUsername(userName, photoLink);
 
-        LOGGER.info("handleImageUpload finished.");
+        LOGGER.info("saveUserImage finished.");
     }
 
     /**
@@ -62,12 +62,12 @@ public class ImageController {
     @RequestMapping(value = "/image/user/{username}", method = RequestMethod.GET, produces = {"image/png", "image/jpg", "image/jpeg"})
     public byte[] getUserImage(@PathVariable String username) {
 
-        LOGGER.info("getImage started. Params: username: {}", username);
+        LOGGER.info("getUserImage started. Params: username: {}", username);
 
-        String photoLink = userService.getUserByUsername(username).getPhoto();
+        String photoLink = userService.getUserByUsername(username).getPhoto().orElse(null);
         byte[] photo = imageService.getUserPhoto(photoLink, username);
 
-        LOGGER.info("getImage finished. Returns bytes: {}", photo.length);
+        LOGGER.info("getUserImage finished. Returns bytes: {}", photo.length);
         return photo;
 
     }

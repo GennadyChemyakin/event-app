@@ -1,6 +1,8 @@
 package com.epam.eventapp.service.domain;
 
 
+import java.util.Optional;
+
 /**
  * class describes User domain
  */
@@ -10,33 +12,33 @@ public class User {
     private final String username;
     private final String password;
     private final String email;
-    private final String name;
-    private final String surname;
-    private final String gender;
-    private final String photo;
-    private final String country;
-    private final String city;
-    private final String bio;
+    private final Optional<String> name;
+    private final Optional<String> surname;
+    private final Optional<String> gender;
+    private final Optional<String> photo;
+    private final Optional<String> country;
+    private final Optional<String> city;
+    private final Optional<String> bio;
 
     private User(UserBuilder builder) {
         this.id = builder.id;
         this.username = builder.username;
         this.password = builder.password;
         this.email = builder.email;
-        this.name = builder.name;
-        this.surname = builder.surname;
-        this.gender = builder.gender;
-        this.photo = builder.photo;
-        this.country = builder.country;
-        this.city = builder.city;
-        this.bio = builder.bio;
+        this.name = Optional.ofNullable(builder.name);
+        this.surname = Optional.ofNullable(builder.surname);
+        this.gender = Optional.ofNullable(builder.gender);
+        this.photo = Optional.ofNullable(builder.photo);
+        this.country = Optional.ofNullable(builder.country);
+        this.city = Optional.ofNullable(builder.city);
+        this.bio = Optional.ofNullable(builder.bio);
     }
 
-    public static UserBuilder builder(String username, String email){
-        return new UserBuilder(username,email);
+    public static UserBuilder builder(String username, String email) {
+        return new UserBuilder(username, email);
     }
 
-    public static UserBuilder builder(){
+    public static UserBuilder builder() {
         return new UserBuilder();
     }
 
@@ -54,45 +56,45 @@ public class User {
         private String city;
         private String bio;
 
-        private UserBuilder(String username, String email){
+        private UserBuilder(String username, String email) {
             this.username = username;
             this.email = email;
         }
 
-        private UserBuilder(){
+        private UserBuilder() {
         }
 
-        public UserBuilder username(String username){
+        public UserBuilder username(String username) {
             this.username = username;
             return this;
         }
 
-        public UserBuilder email(String email){
+        public UserBuilder email(String email) {
             this.email = email;
             return this;
         }
 
-        public UserBuilder id(int id){
+        public UserBuilder id(int id) {
             this.id = id;
             return this;
         }
 
-        public UserBuilder password(String password){
+        public UserBuilder password(String password) {
             this.password = password;
             return this;
         }
 
-        public UserBuilder name(String name){
+        public UserBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public UserBuilder surname(String surname){
+        public UserBuilder surname(String surname) {
             this.surname = surname;
             return this;
         }
 
-        public UserBuilder gender(String gender){
+        public UserBuilder gender(String gender) {
             this.gender = gender;
             return this;
         }
@@ -102,22 +104,22 @@ public class User {
             return this;
         }
 
-        public UserBuilder country(String country){
+        public UserBuilder country(String country) {
             this.country = country;
             return this;
         }
 
-        public UserBuilder city(String city){
+        public UserBuilder city(String city) {
             this.city = city;
             return this;
         }
 
-        public UserBuilder bio(String bio){
+        public UserBuilder bio(String bio) {
             this.bio = bio;
             return this;
         }
 
-        public User build(){
+        public User build() {
             return new User(this);
         }
 
@@ -139,31 +141,31 @@ public class User {
         return email;
     }
 
-    public String getName() {
+    public Optional<String> getName() {
         return name;
     }
 
-    public String getSurname() {
+    public Optional<String> getSurname() {
         return surname;
     }
 
-    public String getGender() {
+    public Optional<String> getGender() {
         return gender;
     }
 
-    public String getPhoto() {
+    public Optional<String> getPhoto() {
         return photo;
     }
 
-    public String getCountry() {
+    public Optional<String> getCountry() {
         return country;
     }
 
-    public String getCity() {
+    public Optional<String> getCity() {
         return city;
     }
 
-    public String getBio() {
+    public Optional<String> getBio() {
         return bio;
     }
 

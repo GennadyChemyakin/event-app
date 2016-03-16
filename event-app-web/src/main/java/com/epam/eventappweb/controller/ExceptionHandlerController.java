@@ -1,10 +1,10 @@
 package com.epam.eventappweb.controller;
 
-import com.epam.eventapp.service.exceptions.EmailAlreadyExistsException;
-import com.epam.eventapp.service.exceptions.UserNameAlreadyExistsException;
+import com.epam.eventapp.service.exceptions.InvalidIdentifierException;
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
 import com.epam.eventapp.service.exceptions.ObjectNotDeletedException;
-import com.epam.eventappweb.exceptions.EventNotFoundException;
-import com.epam.eventappweb.exceptions.EventNotUpdatedException;
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
+import com.epam.eventappweb.exceptions.ObjectNotUpdatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,16 +21,10 @@ public class ExceptionHandlerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Event not found by id")
-    @ExceptionHandler(EventNotFoundException.class)
-    public void handleEventNotFound(EventNotFoundException exception) {
-        LOGGER.error("handleEventNotFound handle exception.", exception);
-    }
-
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Event not updated")
-    @ExceptionHandler(EventNotUpdatedException.class)
-    public void handleEventNotUpdated(EventNotUpdatedException exception) {
-        LOGGER.error("handleEventNotUpdated handle exception.", exception);
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object not updated")
+    @ExceptionHandler(ObjectNotUpdatedException.class)
+    public void handleObjectNotUpdated(ObjectNotUpdatedException exception) {
+        LOGGER.error("handleObjectNotUpdated handle exception.", exception);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object not deleted")
@@ -39,21 +33,27 @@ public class ExceptionHandlerController {
         LOGGER.error("handleObjectNotDeleted handle exception.", exception);
     }
 
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object not found")
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public void handleObjectNotFound(ObjectNotFoundException exception) {
+        LOGGER.error("handleObjectNotFound handle exception.", exception);
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object not found")
+    @ExceptionHandler(ObjectNotCreatedException.class)
+    public void handleObjectNotCreated(ObjectNotCreatedException exception) {
+        LOGGER.error("handleObjectNotCreated handle exception.", exception);
+    }
+
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Forbidden action")
     @ExceptionHandler(AccessDeniedException.class)
     public void handleAccessDenied(AccessDeniedException exception) {
         LOGGER.error("handleAccessDenied handle exception.", exception);
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "username is busy")
-    @ExceptionHandler(UserNameAlreadyExistsException.class)
-    public void handleUserNameAlreadyExists(UserNameAlreadyExistsException exception) {
-        LOGGER.error("handleUserNameAlreadyExists handle exception.", exception);
-    }
-
-    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "email is busy")
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public void handleEmailAlreadyExists(EmailAlreadyExistsException exception) {
-        LOGGER.error("handleEmailAlreadyExists handle exception.", exception);
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Invalid Identifier")
+    @ExceptionHandler(InvalidIdentifierException.class)
+    public void handleInvalidIdentifierException(InvalidIdentifierException exception) {
+        LOGGER.error("handleInvalidIdentifierException handle exception.", exception);
     }
 }

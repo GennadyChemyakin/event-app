@@ -57,7 +57,7 @@ public class CommentController {
         CommentPackVO commentPackVO;
         List<CommentVO>  commentViews = commentPack.getComments().stream().map(comment -> CommentVO.builder().id(comment.getId()).message(comment.getMessage()).
                 eventId(comment.getEventId()).username(comment.getUser().getUsername()).
-                userPhoto(comment.getUser().getPhoto()).commentTime(comment.getCommentTime()).build()).collect(Collectors.toList());
+                userPhoto(comment.getUser().getPhoto().orElse(null)).commentTime(comment.getCommentTime()).build()).collect(Collectors.toList());
 
         commentPackVO = new CommentPackVO(commentViews, commentPack.getRemainingCommentsCount());
         LOGGER.info("getCommentList finished. Result: {}", commentPackVO);
@@ -100,7 +100,7 @@ public class CommentController {
         List<Comment> newComments = commentService.getListOfNewComments(eventId, after);
         List<CommentVO> newCommentsVO = newComments.stream().map(comment -> CommentVO.builder().id(comment.getId()).eventId(comment.getEventId()).
                 username(comment.getUser().getUsername()).message(comment.getMessage()).
-                commentTime(comment.getCommentTime()).userPhoto(comment.getUser().getPhoto()).build()).collect(Collectors.toList());
+                commentTime(comment.getCommentTime()).userPhoto(comment.getUser().getPhoto().orElse(null)).build()).collect(Collectors.toList());
         LOGGER.info("showNewComments finished. Result: {}", newCommentsVO);
         return newCommentsVO;
     }

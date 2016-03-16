@@ -12,6 +12,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * class describes EVENT model
@@ -22,29 +23,29 @@ public final class EventVO {
 
     private final String name;
     private final String creator;
-    private final String creatorName;
-    private final String creatorSurname;
-    private final String description;
-    private final String country;
-    private final String city;
-    private final String location;
+    private final Optional<String> creatorName;
+    private final Optional<String> creatorSurname;
+    private final Optional<String> description;
+    private final Optional<String> country;
+    private final Optional<String> city;
+    private final Optional<String> location;
     private final double gpsLatitude;
     private final double gpsLongitude;
-    private final LocalDateTime eventTime;
+    private final Optional<LocalDateTime> eventTime;
     private final int id;
 
     private EventVO(EventModelBuilder builder) {
         this.name = builder.name;
         this.creator = builder.creator;
-        this.creatorName = builder.creatorName;
-        this.creatorSurname = builder.creatorSurname;
-        this.description = builder.description;
-        this.country = builder.country;
-        this.city = builder.city;
-        this.location = builder.location;
+        this.creatorName = Optional.ofNullable(builder.creatorName);
+        this.creatorSurname = Optional.ofNullable(builder.creatorSurname);
+        this.description = Optional.ofNullable(builder.description);
+        this.country = Optional.ofNullable(builder.country);
+        this.city = Optional.ofNullable(builder.city);
+        this.location = Optional.ofNullable(builder.location);
         this.gpsLatitude = builder.gpsLatitude;
         this.gpsLongitude = builder.gpsLongitude;
-        this.eventTime = builder.eventTime;
+        this.eventTime = Optional.ofNullable(builder.eventTime);
         this.id = builder.id;
     }
 
@@ -136,11 +137,11 @@ public final class EventVO {
         return creator;
     }
 
-    public String getCreatorName() {
+    public Optional<String> getCreatorName() {
         return creatorName;
     }
 
-    public String getCreatorSurname() {
+    public Optional<String> getCreatorSurname() {
         return creatorSurname;
     }
 
@@ -148,19 +149,19 @@ public final class EventVO {
         return name;
     }
 
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return description;
     }
 
-    public String getCountry() {
+    public Optional<String> getCountry() {
         return country;
     }
 
-    public String getCity() {
+    public Optional<String> getCity() {
         return city;
     }
 
-    public String getLocation() {
+    public Optional<String> getLocation() {
         return location;
     }
 
@@ -172,7 +173,7 @@ public final class EventVO {
         return gpsLongitude;
     }
 
-    public LocalDateTime getEventTime() {
+    public Optional<LocalDateTime> getEventTime() {
         return eventTime;
     }
 

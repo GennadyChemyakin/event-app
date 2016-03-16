@@ -73,7 +73,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
                     '<div class="panel-body">' +
                         '<h4 id="description"></h4>' +
                     '</div>' +
-                    '<h4 class="glyphicon glyphicon-user" id="eventCreator"></h4>' +
+                    '<h4 class="glyphicon glyphicon-user"><a href="" id="eventCreator"></a></h4>' +
                     '<h4 class="glyphicon glyphicon-comment col-md-offset-10" id="numberOfCommentsForEvent"></h4>' +
                     '<div id="createTime" style="display:none"></div>' +
                 '</div>' +
@@ -95,7 +95,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
         $("#" + event.id).find("#eventCreator").attr("id", "eventCreator" + event.id);
         $("#" + event.id).find("#numberOfCommentsForEvent").attr("id", 'numberOfCommentsForEvent' + event.id);
         $("#" + event.id).find("#createTime").attr("id", 'createTime' + event.id);
-        $("#" + 'name' + event.id).text(event.name + ' ');
+        $("#" + 'name' + event.id).text(event.name);
         $("#" + 'name' + event.id).attr("href", '/event-app/detail.html?id=' + event.id);
         $("#" + 'picture' + event.id).attr("href", '/event-app/detail.html?id=' + event.id);
         if(event.eventTime != null) {
@@ -115,6 +115,7 @@ function showEvents(eventPreviewVO, isOnBottom, i) {
         }
         $("#" + 'description' + event.id).text(event.description);
         $("#" + 'eventCreator' + event.id).text(event.creator);
+        $("#" + 'eventCreator' + event.id).attr("href", '/event-app/profile.html?username=' + event.creator);
         $("#" + 'numberOfCommentsForEvent' + event.id).text(event.numberOfComments);
         $("#" + event.id).slideDown();
 }
@@ -133,34 +134,24 @@ function getEventFromModel(previewVO) {
         event.picture = previewVO.picture;
         event.eventTime = null;
         if (previewVO.eventTime != null) {
-            event.eventTime = new Date(previewVO.eventTime[0], previewVO.eventTime[1] - 1, previewVO.eventTime[2],
-                            previewVO.eventTime[3], previewVO.eventTime[4] ? previewVO.eventTime[4] : 0,
-                            previewVO.eventTime[5] ? previewVO.eventTime[5] : 0,
-                            previewVO.eventTime[6] ? previewVO.eventTime[6]/1000000 : 0);
+            event.eventTime = convertToLocalTime(previewVO.eventTime);
         }
         event.createTime = null;
         if (previewVO.createTime != null) {
-            event.createTime = new Date(previewVO.createTime[0], previewVO.createTime[1] - 1, previewVO.createTime[2],
-                            previewVO.createTime[3], previewVO.createTime[4], previewVO.createTime[5], previewVO.createTime[6]/1000000);
+            event.createTime = convertToLocalTime(previewVO.createTime);
         }
         return event;
 }
 
-//function for converting datetime to UTC+3 ISO format. Will be deleted when we change server time to UTC
-function convertToLocalTime(date) {
-    return new Date(date.getTime() - window.timezoneOffset * 60000).toISOString();
-}
+
 
 //function returns ISO formatted datetime from dateString if it isn't null or current datetime otherwise
 function getEventDate(dateString) {
     var date;
     if (dateString) {
-        date = new Date(dateString);
-        //getting local datetime in yyyy-MM-dd'T'HH:mm:ss.SSSZ format
-        date = convertToLocalTime(date);
+        date = new Date(dateString).toISOString();
     } else {
-        date = new Date();
-        date = convertToLocalTime(date);
+        date = new Date().toISOString();
     }
     return date;
 }

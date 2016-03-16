@@ -61,14 +61,14 @@ public class UserController {
         LOGGER.info("getUserByName started. Params userName: {}", username);
         User user = userService.getUserByUsername(username);
         UserVO userVO = UserVO.builder(user.getUsername(),user.getEmail())
-                .bio(user.getBio())
-                .city(user.getCity())
-                .country(user.getCountry())
+                .bio(user.getBio().orElse(null))
+                .city(user.getCity().orElse(null))
+                .country(user.getCountry().orElse(null))
                 .email(user.getEmail())
-                .gender(user.getGender())
-                .photo(user.getPhoto())
-                .name(user.getName())
-                .surname(user.getSurname())
+                .gender(user.getGender().orElse(null))
+                .photo(user.getPhoto().orElse(null))
+                .name(user.getName().orElse(null))
+                .surname(user.getSurname().orElse(null))
                 .build();
         LOGGER.info("getUserByName finished. Returns user VO: {}", userVO);
 

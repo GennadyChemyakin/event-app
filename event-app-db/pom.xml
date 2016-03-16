@@ -11,11 +11,15 @@
 
     <dependencies>
 
-        <!--oracle jdbc driver dependency from local maven repository-->
+        <!-- oracle jdbc driver dependency from local maven repository -->
+
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
         </dependency>
+
+
+        <!-- Liquibase -->
 
         <dependency>
             <groupId>org.liquibase</groupId>

@@ -7,7 +7,9 @@ import com.epam.eventapp.service.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Optional;
 /**
  * EventService implementation
  */
+@Transactional
 @Service("eventService")
 public class EventServiceImpl implements EventService {
 
@@ -33,6 +36,7 @@ public class EventServiceImpl implements EventService {
         return event;
     }
 
+    @PreAuthorize("@eventService.findById(#event.getId()).get().getUser().getUsername() == authentication.name")
     @Override
     public int updateEvent(Event event) {
         LOGGER.debug("updateEvent started: Params event = {}", event);

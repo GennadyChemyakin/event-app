@@ -1,6 +1,7 @@
 package com.epam.eventapp.service.domain;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * class describes COMMENTARY domain
@@ -56,7 +57,7 @@ public class Comment {
             return this;
         }
 
-        public Comment build(){
+        public Comment build() {
             return new Comment(this);
         }
 

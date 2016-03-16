@@ -2,11 +2,11 @@ package com.epam.eventapp.service.dao.impl;
 
 import com.epam.eventapp.service.dao.UserDAO;
 import com.epam.eventapp.service.domain.User;
-import com.epam.eventapp.service.exceptions.UserNotFoundException;
+import com.epam.eventapp.service.exceptions.ObjectNotCreatedException;
+import com.epam.eventapp.service.exceptions.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import com.epam.eventapp.service.exceptions.UserNotCreatedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -51,13 +51,13 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                 .addValue("username", user.getUsername())
                 .addValue("password", user.getPassword())
                 .addValue("email", user.getEmail())
-                .addValue("name", user.getName())
-                .addValue("surname", user.getSurname())
-                .addValue("gender", user.getGender())
-                .addValue("photo", user.getPhoto())
-                .addValue("country", user.getCountry())
-                .addValue("city", user.getCountry())
-                .addValue("bio", user.getBio());
+                .addValue("name", user.getName().orElse(null))
+                .addValue("surname", user.getSurname().orElse(null))
+                .addValue("gender", user.getGender().orElse(null))
+                .addValue("photo", user.getPhoto().orElse(null))
+                .addValue("country", user.getCountry().orElse(null))
+                .addValue("city", user.getCountry().orElse(null))
+                .addValue("bio", user.getBio().orElse(null));
 
         try {
 
@@ -67,13 +67,13 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                     .password("")
                     .build();
 
-            getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
-                    .addValue("id", keyHolder.getKey().intValue()));
+              getNamedParameterJdbcTemplate().update(ADD_ROLE_TO_NEW_USER, new MapSqlParameterSource()
+                      .addValue("id", keyHolder.getKey().intValue()));
 
-        } catch (DataAccessException ex) {
-            final String msg = String.format("Failed to connect to database and create user: %s ", user);
-            throw new UserNotCreatedException(msg);
-        }
+          } catch(DataAccessException ex) {
+              final String msg = String.format("Failed to connect to database and create user: %s ", user);
+              throw new ObjectNotCreatedException(msg);
+          }
 
     }
 
@@ -117,7 +117,7 @@ public class UserDAOImpl extends GenericDAO implements UserDAO {
                             photo(resultSet.getString("photo_url")).build()));
             return user;
         } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException("can't find user by username = " + username);
+            throw new ObjectNotFoundException("can't find user by username = " + username);
         }
     }
 
